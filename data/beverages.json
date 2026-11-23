@@ -1,0 +1,1371 @@
+{
+  "version": 1,
+  "updated": "2026-11-22",
+  "notes": "Curated catalog. Facts (names, styles, ABV, brewery location) authored from general knowledge; ABV null when unsure. No barcodes.",
+  "geo": {"source":"Open Brewery DB (openbrewerydb.org)","updated":"2026-11-23","located":276},
+  "makers": [
+    {"id": "budweiser", "name": "Anheuser-Busch", "brand": "Budweiser", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.5955, "lng": -90.2119, "kind": "large", "items": [
+      {"name":"Budweiser","style":"American Lager","abv":5,"pop":3,"aka":["Bud"]},
+      ["Bud Light","American Light Lager",4.2,3],
+      ["Bud Light Lime","American Light Lager",4.2,2],
+      {"name":"Budweiser Zero","style":"Non-Alcoholic Lager","abv":0,"pop":2,"aka":["Bud Zero"]}
+    ]},
+    {"id": "michelob", "name": "Anheuser-Busch", "brand": "Michelob", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.5955, "lng": -90.2119, "kind": "large", "items": [
+      {"name":"Michelob Ultra","style":"American Light Lager","abv":4.2,"pop":3,"aka":["Mich Ultra"]},
+      ["Michelob Ultra Pure Gold","American Light Lager",3.8,2],
+      ["Michelob AmberBock","Bock",5.1,1]
+    ]},
+    {"id": "busch", "name": "Anheuser-Busch", "brand": "Busch", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.5955, "lng": -90.2119, "kind": "large", "items": [
+      ["Busch","American Lager",4.3,3],
+      {"name":"Busch Light","style":"American Light Lager","abv":4.1,"pop":3,"aka":["Busch Latte"]},
+      ["Busch Ice","American Lager",5.9,2],
+      {"name":"Busch NA","style":"Non-Alcoholic Lager","abv":0.5,"pop":2,"aka":["Busch Non-Alcoholic"]}
+    ]},
+    {"id": "natural-light", "name": "Anheuser-Busch", "brand": "Natural Light", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.5955, "lng": -90.2119, "kind": "large", "items": [
+      {"name":"Natural Light","style":"American Light Lager","abv":4.2,"pop":3,"aka":["Natty Light","Natty"]},
+      {"name":"Natural Ice","style":"American Lager","abv":5.9,"pop":2,"aka":["Natty Ice"]}
+    ]},
+    {"id": "rolling-rock", "name": "Anheuser-Busch", "brand": "Rolling Rock", "city": "Latrobe", "state": "PA", "country": "US", "type": "Beer", "lat": 40.3212, "lng": -79.3795, "approx": true, "items": [
+      {"name":"Extra Pale","style":"American Lager","abv":4.4,"pop":2,"aka":["Rolling Rock"]}
+    ]},
+    {"id": "shock-top", "name": "Shock Top Brewing Co.", "brand": "Shock Top", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.6273, "lng": -90.1979, "approx": true, "items": [
+      ["Belgian White","Witbier",5.2,2]
+    ]},
+    {"id": "coors", "name": "Molson Coors Beverage Co.", "brand": "Coors", "city": "Golden", "state": "CO", "country": "US", "type": "Beer", "lat": 39.7555, "lng": -105.2211, "approx": true, "items": [
+      ["Coors Light","American Light Lager",4.2,3],
+      {"name":"Coors Banquet","style":"American Lager","abv":5,"pop":3,"aka":["Coors Original","Banquet"]}
+    ]},
+    {"id": "miller", "name": "Molson Coors Beverage Co.", "brand": "Miller", "city": "Milwaukee", "state": "WI", "country": "US", "type": "Beer", "lat": 43.0389, "lng": -87.9065, "approx": true, "items": [
+      ["Miller Lite","American Light Lager",4.2,3],
+      {"name":"Miller High Life","style":"American Lager","abv":4.6,"pop":3,"aka":["High Life"]},
+      {"name":"Miller Genuine Draft","style":"American Lager","abv":4.7,"pop":2,"aka":["MGD"]},
+      ["Miller64","American Light Lager",2.8,1]
+    ]},
+    {"id": "keystone", "name": "Molson Coors Beverage Co.", "brand": "Keystone", "city": "Golden", "state": "CO", "country": "US", "type": "Beer", "lat": 39.7555, "lng": -105.2211, "approx": true, "items": [
+      {"name":"Keystone Light","style":"American Light Lager","abv":4.1,"pop":3,"aka":["Stones","Stone Light"]},
+      ["Keystone Ice","American Lager",5.9,2]
+    ]},
+    {"id": "milwaukees-best", "name": "Molson Coors Beverage Co.", "brand": "Milwaukee's Best", "city": "Milwaukee", "state": "WI", "country": "US", "type": "Beer", "lat": 43.0389, "lng": -87.9065, "approx": true, "items": [
+      {"name":"Milwaukee's Best Light","style":"American Light Lager","abv":4.1,"pop":2,"aka":["Beast Light"]},
+      {"name":"Milwaukee's Best Ice","style":"American Lager","abv":5.9,"pop":2,"aka":["Beast Ice"]}
+    ]},
+    {"id": "hamms", "name": "Molson Coors Beverage Co.", "brand": "Hamm's", "city": "St. Paul", "state": "MN", "country": "US", "type": "Beer", "lat": 44.9344, "lng": -93.0599, "approx": true, "items": [
+      ["Hamm's","American Lager",4.7,1]
+    ]},
+    {"id": "steel-reserve", "name": "Molson Coors Beverage Co.", "brand": "Steel Reserve", "city": "Milwaukee", "state": "WI", "country": "US", "type": "Beer", "lat": 43.0389, "lng": -87.9065, "approx": true, "items": [
+      {"name":"Steel Reserve 211","style":"American Lager","abv":8.1,"pop":2,"aka":["211"]}
+    ]},
+    {"id": "blue-moon", "name": "Blue Moon Brewing Co.", "brand": "Blue Moon", "city": "Denver", "state": "CO", "country": "US", "type": "Beer", "lat": 39.7736, "lng": -104.9769, "kind": "large", "items": [
+      ["Belgian White","Witbier",5.4,3],
+      ["LightSky Citrus Wheat","American Wheat",4,2],
+      ["Harvest Pumpkin Wheat","Pumpkin Ale",null,1,"fall"]
+    ]},
+    {"id": "leinenkugels", "name": "Jacob Leinenkugel Brewing Co.", "brand": "Leinenkugel's", "city": "Chippewa Falls", "state": "WI", "country": "US", "type": "Beer", "lat": 44.9446, "lng": -91.3964, "kind": "large", "items": [
+      {"name":"Summer Shandy","style":"Shandy","abv":4.2,"pop":2,"season":"summer","aka":["Leinie's Summer Shandy"]},
+      ["Honey Weiss","American Wheat",4.9,1],
+      ["Original","American Lager",4.7,1],
+      ["Snowdrift Vanilla Porter","Porter",null,1,"winter"]
+    ]},
+    {"id": "pabst", "name": "Pabst Brewing Co.", "brand": "Pabst", "city": "Milwaukee", "state": "WI", "country": "US", "type": "Beer", "lat": 43.0455, "lng": -87.9255, "kind": "large", "items": [
+      {"name":"Pabst Blue Ribbon","style":"American Lager","abv":4.8,"pop":3,"aka":["PBR"]}
+    ]},
+    {"id": "old-milwaukee", "name": "Pabst Brewing Co.", "brand": "Old Milwaukee", "city": "Milwaukee", "state": "WI", "country": "US", "type": "Beer", "lat": 43.0389, "lng": -87.9065, "approx": true, "items": [
+      ["Old Milwaukee","American Lager",null,1]
+    ]},
+    {"id": "national-bohemian", "name": "Pabst Brewing Co.", "brand": "National Bohemian", "city": "Baltimore", "state": "MD", "country": "US", "type": "Beer", "lat": 39.2904, "lng": -76.6122, "approx": true, "items": [
+      {"name":"National Bohemian","style":"American Lager","abv":null,"pop":1,"aka":["Natty Boh"]}
+    ]},
+    {"id": "colt-45", "name": "Pabst Brewing Co.", "brand": "Colt 45", "city": "Baltimore", "state": "MD", "country": "US", "type": "Beer", "lat": 39.2904, "lng": -76.6122, "approx": true, "items": [
+      ["Colt 45","American Lager",null,2]
+    ]},
+    {"id": "lone-star", "name": "Pabst Brewing Co.", "brand": "Lone Star", "city": "San Antonio", "state": "TX", "country": "US", "type": "Beer", "lat": 29.4241, "lng": -98.4936, "approx": true, "items": [
+      ["Lone Star","American Lager",null,1]
+    ]},
+    {"id": "rainier", "name": "Pabst Brewing Co.", "brand": "Rainier", "city": "Seattle", "state": "WA", "country": "US", "type": "Beer", "lat": 47.6062, "lng": -122.3321, "approx": true, "items": [
+      ["Rainier","American Lager",null,1]
+    ]},
+    {"id": "olympia", "name": "Pabst Brewing Co.", "brand": "Olympia", "city": "Tumwater", "state": "WA", "country": "US", "type": "Beer", "lat": 47.0073, "lng": -122.9093, "approx": true, "items": [
+      {"name":"Olympia","style":"American Lager","abv":null,"pop":1,"aka":["Oly"]}
+    ]},
+    {"id": "old-style", "name": "Pabst Brewing Co.", "brand": "Old Style", "city": "La Crosse", "state": "WI", "country": "US", "type": "Beer", "lat": 43.8014, "lng": -91.2396, "approx": true, "items": [
+      ["Old Style","American Lager",null,1]
+    ]},
+    {"id": "yuengling", "name": "D.G. Yuengling & Son", "brand": "Yuengling", "city": "Pottsville", "state": "PA", "country": "US", "type": "Beer", "lat": 40.6857, "lng": -76.1955, "approx": true, "items": [
+      {"name":"Lager","style":"Amber Lager","abv":4.5,"pop":2,"aka":["Traditional Lager","Yuengling Traditional Lager","Yuengling Lager"]},
+      ["Light Lager","American Light Lager",3.8,2],
+      ["Flight","American Light Lager",4.2,2],
+      {"name":"Dark Brewed Porter","style":"Porter","abv":4.7,"pop":1,"aka":["Yuengling Porter"]},
+      ["Black & Tan","Dark Lager",4.7,1],
+      ["Oktoberfest","Märzen",null,1,"fall"]
+    ]},
+    {"id": "samuel-adams", "name": "The Boston Beer Co.", "brand": "Samuel Adams", "city": "Boston", "state": "MA", "country": "US", "type": "Beer", "lat": 42.3593, "lng": -71.0564, "kind": "taproom", "items": [
+      {"name":"Boston Lager","style":"Vienna Lager","abv":5,"pop":3,"aka":["Sam Adams"]},
+      ["OctoberFest","Märzen",5.3,2,"fall"],
+      ["Summer Ale","American Wheat",5.3,2,"summer"],
+      ["Winter Lager","Bock",5.6,1,"winter"],
+      ["Cold Snap","Witbier",5.3,1,"spring"],
+      ["Just the Haze","Non-Alcoholic IPA",0.5,1]
+    ]},
+    {"id": "genesee", "name": "Genesee Brewing Co.", "brand": "Genesee", "city": "Rochester", "state": "NY", "country": "US", "type": "Beer", "lat": 43.1636, "lng": -77.6148, "kind": "brewpub", "items": [
+      {"name":"Cream Ale","style":"Cream Ale","abv":5.1,"pop":2,"aka":["Genny Cream","Genny Cream Ale"]},
+      {"name":"Genesee Beer","style":"American Lager","abv":4.5,"pop":1,"aka":["Genny"]},
+      {"name":"Genesee Light","style":"American Light Lager","abv":3.6,"pop":1,"aka":["Genny Light"]}
+    ]},
+    {"id": "straub", "name": "Straub Brewery", "brand": "Straub", "city": "St. Marys", "state": "PA", "country": "US", "type": "Beer", "lat": 41.4259, "lng": -78.5535, "kind": "regional", "items": [
+      ["American Lager","American Lager",null,1]
+    ]},
+    {"id": "iron-city", "name": "Iron City Brewing Co.", "brand": "Iron City", "city": "Pittsburgh", "state": "PA", "country": "US", "type": "Beer", "lat": 40.4406, "lng": -79.9959, "approx": true, "items": [
+      ["Iron City Beer","American Lager",null,1],
+      ["IC Light","American Light Lager",null,1]
+    ]},
+    {"id": "grain-belt", "name": "August Schell Brewing Co.", "brand": "Grain Belt", "city": "New Ulm", "state": "MN", "country": "US", "type": "Beer", "lat": 44.3125, "lng": -94.4605, "approx": true, "items": [
+      {"name":"Premium","style":"American Lager","abv":4.6,"pop":1,"aka":["Grain Belt Premium"]},
+      ["Nordeast","Amber Lager",4.7,1]
+    ]},
+    {"id": "sierra-nevada", "name": "Sierra Nevada Brewing Co.", "brand": "Sierra Nevada", "city": "Chico", "state": "CA", "country": "US", "type": "Beer", "lat": 39.7258, "lng": -121.8099, "kind": "regional", "items": [
+      ["Pale Ale","Pale Ale",5.6,3],
+      ["Torpedo Extra IPA","IPA",7.2,2],
+      ["Hazy Little Thing","Hazy IPA",6.7,2],
+      ["Celebration","IPA",6.8,2,"winter"],
+      ["Big Little Thing","Double IPA",9,1],
+      ["Bigfoot","Barleywine",9.6,1,"winter"],
+      ["Trail Pass IPA","Non-Alcoholic IPA",0.5,1]
+    ]},
+    {"id": "lagunitas", "name": "Lagunitas Brewing Co.", "brand": "Lagunitas", "city": "Petaluma", "state": "CA", "country": "US", "type": "Beer", "lat": 38.2726, "lng": -122.6619, "kind": "large", "items": [
+      ["IPA","IPA",6.2,2],
+      ["Little Sumpin' Sumpin'","Pale Ale",7.5,1],
+      ["Maximus","Double IPA",8.2,1],
+      ["IPNA","Non-Alcoholic IPA",0.5,1],
+      {"name":"Hoppy Refresher","style":"Flavored Seltzer","abv":0,"pop":1,"type":"Carbonated"}
+    ]},
+    {"id": "stone", "name": "Stone Brewing", "brand": "Stone", "city": "Escondido", "state": "CA", "country": "US", "type": "Beer", "lat": 33.11, "lng": -117.1156, "kind": "regional", "items": [
+      ["IPA","IPA",6.9,2],
+      ["Delicious IPA","IPA",7.7,1],
+      ["Ruination Double IPA 2.0","Double IPA",8.5,1],
+      ["Buenaveza Salt & Lime Lager","Mexican Lager",4.7,1]
+    ]},
+    {"id": "ballast-point", "name": "Ballast Point Brewing Co.", "brand": "Ballast Point", "city": "San Diego", "state": "CA", "country": "US", "type": "Beer", "lat": 32.888, "lng": -117.1587, "kind": "large", "items": [
+      ["Sculpin","IPA",7,2],
+      ["Grapefruit Sculpin","IPA",7,1],
+      ["Victory at Sea","Porter",10,1]
+    ]},
+    {"id": "firestone-walker", "name": "Firestone Walker Brewing Co.", "brand": "Firestone Walker", "city": "Paso Robles", "state": "CA", "country": "US", "type": "Beer", "lat": 35.5961, "lng": -120.6943, "kind": "regional", "items": [
+      ["805","Blonde Ale",4.7,2],
+      ["Mind Haze","Hazy IPA",6.2,1],
+      ["Double Jack","Double IPA",9.5,1],
+      ["Pivo Pils","Pilsner",5.3,1],
+      ["Cali Squeeze Blood Orange Hefeweizen","Hefeweizen",5.4,1]
+    ]},
+    {"id": "anchor", "name": "Anchor Brewing Co.", "brand": "Anchor", "city": "San Francisco", "state": "CA", "country": "US", "type": "Beer", "lat": 37.7631, "lng": -122.4011, "kind": "large", "items": [
+      {"name":"Steam Beer","style":"Amber Lager","abv":4.9,"pop":1,"aka":["Anchor Steam"]}
+    ]},
+    {"id": "golden-road", "name": "Golden Road Brewing", "brand": "Golden Road", "city": "Los Angeles", "state": "CA", "country": "US", "type": "Beer", "lat": 34.1505, "lng": -118.2745, "kind": "large", "items": [
+      ["Mango Cart","Fruit Beer",4,2]
+    ]},
+    {"id": "russian-river", "name": "Russian River Brewing Co.", "brand": "Russian River", "city": "Windsor", "state": "CA", "country": "US", "type": "Beer", "lat": 38.4418, "lng": -122.7117, "kind": "regional", "items": [
+      ["Pliny the Elder","Double IPA",8,1]
+    ]},
+    {"id": "21st-amendment", "name": "21st Amendment Brewery", "brand": "21st Amendment", "city": "San Leandro", "state": "CA", "country": "US", "type": "Beer", "lat": 37.7113, "lng": -122.1773, "kind": "regional", "items": [
+      ["Hell or High Watermelon","Fruit Beer",4.9,1],
+      ["Brew Free! or Die IPA","IPA",7,1]
+    ]},
+    {"id": "lost-coast", "name": "Lost Coast Brewery", "brand": "Lost Coast", "city": "Eureka", "state": "CA", "country": "US", "type": "Beer", "lat": 40.803, "lng": -124.1648, "kind": "regional", "items": [
+      ["Great White","Witbier",4.8,1]
+    ]},
+    {"id": "north-coast", "name": "North Coast Brewing Co.", "brand": "North Coast", "city": "Fort Bragg", "state": "CA", "country": "US", "type": "Beer", "lat": 39.4462, "lng": -123.8058, "kind": "regional", "items": [
+      ["Old Rasputin","Imperial Stout",9,1],
+      ["PranQster","Belgian Strong Golden",7.6,1]
+    ]},
+    {"id": "bear-republic", "name": "Bear Republic Brewing Co.", "brand": "Bear Republic", "city": "Healdsburg", "state": "CA", "country": "US", "type": "Beer", "lat": 38.611, "lng": -122.8713, "kind": "regional", "items": [
+      ["Racer 5 IPA","IPA",7.5,1]
+    ]},
+    {"id": "alesmith", "name": "AleSmith Brewing Co.", "brand": "AleSmith", "city": "San Diego", "state": "CA", "country": "US", "type": "Beer", "lat": 32.8886, "lng": -117.1495, "kind": "regional", "items": [
+      [".394 Pale Ale","Pale Ale",6,1],
+      ["Speedway Stout","Imperial Stout",12,1]
+    ]},
+    {"id": "karl-strauss", "name": "Karl Strauss Brewing Co.", "brand": "Karl Strauss", "city": "San Diego", "state": "CA", "country": "US", "type": "Beer", "lat": 32.8326, "lng": -117.2314, "kind": "regional", "items": [
+      ["Aurora Hoppyalis","IPA",7,1],
+      ["Red Trolley Ale","Red Ale",5.8,1]
+    ]},
+    {"id": "deschutes", "name": "Deschutes Brewery", "brand": "Deschutes", "city": "Bend", "state": "OR", "country": "US", "type": "Beer", "lat": 44.0478, "lng": -121.3246, "kind": "regional", "items": [
+      ["Fresh Squeezed IPA","IPA",6.4,2],
+      ["Black Butte Porter","Porter",5.2,1],
+      ["Mirror Pond Pale Ale","Pale Ale",5,1],
+      ["Obsidian Stout","Stout",6.4,1],
+      ["Jubelale","Winter Warmer",6.7,1,"winter"]
+    ]},
+    {"id": "rogue", "name": "Rogue Ales", "brand": "Rogue", "city": "Newport", "state": "OR", "country": "US", "type": "Beer", "lat": 44.6287, "lng": -124.0565, "kind": "regional", "items": [
+      ["Dead Guy Ale","Bock",6.8,1]
+    ]},
+    {"id": "full-sail", "name": "Full Sail Brewing Co.", "brand": "Full Sail", "city": "Hood River", "state": "OR", "country": "US", "type": "Beer", "lat": 45.7104, "lng": -121.5165, "kind": "regional", "items": [
+      ["Session Lager","American Lager",5.1,1]
+    ]},
+    {"id": "ninkasi", "name": "Ninkasi Brewing Co.", "brand": "Ninkasi", "city": "Eugene", "state": "OR", "country": "US", "type": "Beer", "lat": 44.0573, "lng": -123.1109, "kind": "regional", "items": [
+      ["Total Domination IPA","IPA",6.7,1]
+    ]},
+    {"id": "widmer", "name": "Widmer Brothers Brewing", "brand": "Widmer Brothers", "city": "Portland", "state": "OR", "country": "US", "type": "Beer", "lat": 45.5411, "lng": -122.6763, "kind": "regional", "items": [
+      ["Hefe","American Wheat",4.9,1]
+    ]},
+    {"id": "elysian", "name": "Elysian Brewing Co.", "brand": "Elysian", "city": "Seattle", "state": "WA", "country": "US", "type": "Beer", "lat": 47.614, "lng": -122.3158, "kind": "large", "items": [
+      ["Space Dust IPA","IPA",8.2,2],
+      ["Night Owl Pumpkin Ale","Pumpkin Ale",null,1,"fall"]
+    ]},
+    {"id": "fremont", "name": "Fremont Brewing", "brand": "Fremont", "city": "Seattle", "state": "WA", "country": "US", "type": "Beer", "lat": 47.6492, "lng": -122.3444, "kind": "regional", "items": [
+      ["Interurban IPA","IPA",null,1]
+    ]},
+    {"id": "bale-breaker", "name": "Bale Breaker Brewing Co.", "brand": "Bale Breaker", "city": "Yakima", "state": "WA", "country": "US", "type": "Beer", "lat": 46.5769, "lng": -120.4356, "kind": "regional", "items": [
+      ["Top Cutter IPA","IPA",6.8,1]
+    ]},
+    {"id": "alaskan", "name": "Alaskan Brewing Co.", "brand": "Alaskan", "city": "Juneau", "state": "AK", "country": "US", "type": "Beer", "lat": 58.3568, "lng": -134.4919, "kind": "regional", "items": [
+      ["Amber","Amber Ale",5.3,1],
+      ["White","Witbier",5.3,1],
+      ["Smoked Porter","Porter",6.5,1]
+    ]},
+    {"id": "kona", "name": "Kona Brewing Co.", "brand": "Kona", "city": "Kailua-Kona", "state": "HI", "country": "US", "type": "Beer", "lat": 19.643, "lng": -155.9995, "kind": "regional", "items": [
+      ["Big Wave Golden Ale","Blonde Ale",4.4,2],
+      ["Longboard Island Lager","American Lager",4.6,1]
+    ]},
+    {"id": "maui", "name": "Maui Brewing Co.", "brand": "Maui Brewing", "city": "Kihei", "state": "HI", "country": "US", "type": "Beer", "lat": 20.7496, "lng": -156.4402, "kind": "brewpub", "items": [
+      ["Bikini Blonde Lager","Helles",null,1],
+      ["Coconut Hiwa Porter","Porter",6,1]
+    ]},
+    {"id": "new-belgium", "name": "New Belgium Brewing Co.", "brand": "New Belgium", "city": "Fort Collins", "state": "CO", "country": "US", "type": "Beer", "lat": 40.5934, "lng": -105.0678, "kind": "regional", "items": [
+      ["Fat Tire","Amber Ale",5.2,2],
+      ["Voodoo Ranger IPA","IPA",7,2],
+      ["Voodoo Ranger Juicy Haze IPA","Hazy IPA",7.5,2],
+      ["Voodoo Ranger Imperial IPA","Double IPA",9,2],
+      ["Voodoo Ranger Juice Force","Double IPA",9.5,1]
+    ]},
+    {"id": "odell", "name": "Odell Brewing Co.", "brand": "Odell", "city": "Fort Collins", "state": "CO", "country": "US", "type": "Beer", "lat": 40.5895, "lng": -105.0633, "kind": "regional", "items": [
+      ["IPA","IPA",7,1],
+      ["90 Shilling","Amber Ale",5.3,1],
+      ["Sippin' Pretty","Fruited Sour",4.5,1]
+    ]},
+    {"id": "oskar-blues", "name": "Oskar Blues Brewery", "brand": "Oskar Blues", "city": "Longmont", "state": "CO", "country": "US", "type": "Beer", "lat": 40.2245, "lng": -105.2677, "kind": "brewpub", "items": [
+      ["Dale's Pale Ale","Pale Ale",6.5,2],
+      ["Mama's Little Yella Pils","Pilsner",5.3,1],
+      ["Old Chub","Scotch Ale",8,1],
+      ["Ten FIDY","Imperial Stout",10.5,1]
+    ]},
+    {"id": "great-divide", "name": "Great Divide Brewing Co.", "brand": "Great Divide", "city": "Denver", "state": "CO", "country": "US", "type": "Beer", "lat": 39.7539, "lng": -104.9885, "kind": "regional", "items": [
+      ["Yeti Imperial Stout","Imperial Stout",9.5,1],
+      ["Titan IPA","IPA",7.1,1]
+    ]},
+    {"id": "avery", "name": "Avery Brewing Co.", "brand": "Avery", "city": "Boulder", "state": "CO", "country": "US", "type": "Beer", "lat": 40.0626, "lng": -105.2048, "kind": "regional", "items": [
+      ["White Rascal","Witbier",5.6,1],
+      ["Ellie's Brown Ale","Brown Ale",5.5,1],
+      ["IPA","IPA",6.5,1]
+    ]},
+    {"id": "left-hand", "name": "Left Hand Brewing Co.", "brand": "Left Hand", "city": "Longmont", "state": "CO", "country": "US", "type": "Beer", "lat": 40.1587, "lng": -105.1168, "kind": "regional", "items": [
+      ["Milk Stout Nitro","Milk Stout",6,1]
+    ]},
+    {"id": "breckenridge", "name": "Breckenridge Brewery", "brand": "Breckenridge", "city": "Littleton", "state": "CO", "country": "US", "type": "Beer", "lat": 39.4762, "lng": -106.0446, "kind": "large", "items": [
+      ["Vanilla Porter","Porter",null,1],
+      ["Avalanche Ale","Amber Ale",5.4,1],
+      ["Christmas Ale","Winter Warmer",7.1,1,"winter"]
+    ]},
+    {"id": "ska", "name": "Ska Brewing", "brand": "Ska", "city": "Durango", "state": "CO", "country": "US", "type": "Beer", "lat": 37.2753, "lng": -107.8801, "approx": true, "items": [
+      ["Modus Hoperandi","IPA",6.8,1]
+    ]},
+    {"id": "weldwerks", "name": "WeldWerks Brewing Co.", "brand": "WeldWerks", "city": "Greeley", "state": "CO", "country": "US", "type": "Beer", "lat": 40.3998, "lng": -104.6911, "kind": "micro", "items": [
+      ["Juicy Bits","Hazy IPA",null,1]
+    ]},
+    {"id": "uinta", "name": "Uinta Brewing Co.", "brand": "Uinta", "city": "Salt Lake City", "state": "UT", "country": "US", "type": "Beer", "lat": 40.7326, "lng": -111.9542, "kind": "regional", "items": [
+      ["Cutthroat Pale Ale","Pale Ale",4,1],
+      ["Baba Black Lager","Dark Lager",4,1]
+    ]},
+    {"id": "wasatch", "name": "Wasatch Brewery", "brand": "Wasatch", "city": "Salt Lake City", "state": "UT", "country": "US", "type": "Beer", "lat": 40.6988, "lng": -111.8503, "kind": "brewpub", "items": [
+      ["Polygamy Porter","Porter",4,1]
+    ]},
+    {"id": "four-peaks", "name": "Four Peaks Brewing Co.", "brand": "Four Peaks", "city": "Tempe", "state": "AZ", "country": "US", "type": "Beer", "lat": 33.4029, "lng": -111.9447, "kind": "large", "items": [
+      ["Kilt Lifter","Scotch Ale",6,1],
+      ["Hop Knot IPA","IPA",6.7,1]
+    ]},
+    {"id": "santan", "name": "SanTan Brewing Co.", "brand": "SanTan", "city": "Chandler", "state": "AZ", "country": "US", "type": "Beer", "lat": 33.3032, "lng": -111.8423, "kind": "regional", "items": [
+      ["MoonJuice IPA","IPA",null,1]
+    ]},
+    {"id": "la-cumbre", "name": "La Cumbre Brewing Co.", "brand": "La Cumbre", "city": "Albuquerque", "state": "NM", "country": "US", "type": "Beer", "lat": 35.1179, "lng": -106.6139, "kind": "micro", "items": [
+      ["Elevated IPA","IPA",7.2,1]
+    ]},
+    {"id": "santa-fe", "name": "Santa Fe Brewing Co.", "brand": "Santa Fe Brewing", "city": "Santa Fe", "state": "NM", "country": "US", "type": "Beer", "lat": 35.5965, "lng": -106.0516, "kind": "regional", "items": [
+      ["Happy Camper IPA","IPA",6.6,1]
+    ]},
+    {"id": "payette", "name": "Payette Brewing Co.", "brand": "Payette", "city": "Boise", "state": "ID", "country": "US", "type": "Beer", "lat": 43.613, "lng": -116.2145, "kind": "micro", "items": [
+      ["Outlaw IPA","IPA",null,1]
+    ]},
+    {"id": "big-sky", "name": "Big Sky Brewing Co.", "brand": "Big Sky", "city": "Missoula", "state": "MT", "country": "US", "type": "Beer", "lat": 46.9224, "lng": -114.073, "kind": "regional", "items": [
+      ["Moose Drool Brown Ale","Brown Ale",5.1,1]
+    ]},
+    {"id": "kettlehouse", "name": "KettleHouse Brewing Co.", "brand": "KettleHouse", "city": "Missoula", "state": "MT", "country": "US", "type": "Beer", "lat": 46.8656, "lng": -113.9988, "kind": "micro", "items": [
+      ["Cold Smoke Scotch Ale","Scotch Ale",6.5,1]
+    ]},
+    {"id": "great-basin", "name": "Great Basin Brewing Co.", "brand": "Great Basin", "city": "Sparks", "state": "NV", "country": "US", "type": "Beer", "lat": 39.5353, "lng": -119.775, "kind": "brewpub", "items": [
+      ["Icky IPA","IPA",null,1]
+    ]},
+    {"id": "black-tooth", "name": "Black Tooth Brewing Co.", "brand": "Black Tooth", "city": "Sheridan", "state": "WY", "country": "US", "type": "Beer", "lat": 44.8009, "lng": -106.9535, "kind": "micro", "items": [
+      ["Saddle Bronc Brown Ale","Brown Ale",null,1]
+    ]},
+    {"id": "founders", "name": "Founders Brewing Co.", "brand": "Founders", "city": "Grand Rapids", "state": "MI", "country": "US", "type": "Beer", "lat": 42.9525, "lng": -85.6766, "kind": "regional", "items": [
+      ["All Day IPA","Session IPA",4.7,3],
+      ["Breakfast Stout","Imperial Stout",8.3,2,"winter"],
+      ["Centennial IPA","IPA",7.2,1],
+      ["Solid Gold","American Lager",4.4,1],
+      ["Dirty Bastard","Scotch Ale",8.5,1],
+      ["Porter","Porter",6.5,1]
+    ]},
+    {"id": "bells", "name": "Bell's Brewery", "brand": "Bell's", "city": "Kalamazoo", "state": "MI", "country": "US", "type": "Beer", "lat": 42.2949, "lng": -85.5789, "kind": "brewpub", "items": [
+      {"name":"Two Hearted IPA","style":"IPA","abv":7,"pop":2,"aka":["Two Hearted Ale"]},
+      ["Oberon","American Wheat",5.8,2,"summer"],
+      ["Official Hazy IPA","Hazy IPA",6.4,1],
+      ["Amber Ale","Amber Ale",5.8,1],
+      ["Hopslam","Double IPA",10,1,"winter"],
+      ["Light Hearted IPA","Session IPA",3.7,1],
+      ["Best Brown","Brown Ale",5.8,1,"fall"]
+    ]},
+    {"id": "shorts", "name": "Short's Brewing Co.", "brand": "Short's", "city": "Bellaire", "state": "MI", "country": "US", "type": "Beer", "lat": 44.9756, "lng": -85.2101, "kind": "brewpub", "items": [
+      ["Soft Parade","Fruit Beer",7.5,1],
+      ["Huma Lupa Licious","IPA",7.7,1]
+    ]},
+    {"id": "new-holland", "name": "New Holland Brewing Co.", "brand": "New Holland", "city": "Holland", "state": "MI", "country": "US", "type": "Beer", "lat": 42.7901, "lng": -86.1041, "kind": "regional", "items": [
+      ["Dragon's Milk","Imperial Stout",11,1]
+    ]},
+    {"id": "atwater", "name": "Atwater Brewery", "brand": "Atwater", "city": "Detroit", "state": "MI", "country": "US", "type": "Beer", "lat": 42.4191, "lng": -83.0729, "kind": "regional", "items": [
+      ["Dirty Blonde","American Wheat",4.5,1]
+    ]},
+    {"id": "great-lakes", "name": "Great Lakes Brewing Co.", "brand": "Great Lakes", "city": "Cleveland", "state": "OH", "country": "US", "type": "Beer", "lat": 41.4841, "lng": -81.7057, "kind": "regional", "items": [
+      ["Dortmunder Gold","Helles",5.8,1],
+      ["Edmund Fitzgerald","Porter",6,1],
+      ["Eliot Ness","Vienna Lager",6.1,1],
+      ["Burning River Pale Ale","Pale Ale",6,1],
+      ["Christmas Ale","Winter Warmer",7.5,1,"winter"]
+    ]},
+    {"id": "rhinegeist", "name": "Rhinegeist Brewery", "brand": "Rhinegeist", "city": "Cincinnati", "state": "OH", "country": "US", "type": "Beer", "lat": 39.1172, "lng": -84.5199, "kind": "regional", "items": [
+      ["Truth","IPA",7.2,1],
+      ["Cougar","Blonde Ale",4.8,1]
+    ]},
+    {"id": "madtree", "name": "MadTree Brewing", "brand": "MadTree", "city": "Cincinnati", "state": "OH", "country": "US", "type": "Beer", "lat": 39.1564, "lng": -84.424, "kind": "regional", "items": [
+      ["PsycHOPathy","IPA",6.9,1]
+    ]},
+    {"id": "fat-heads", "name": "Fat Head's Brewery", "brand": "Fat Head's", "city": "Middleburg Heights", "state": "OH", "country": "US", "type": "Beer", "lat": 41.4267, "lng": -81.8944, "kind": "brewpub", "items": [
+      ["Head Hunter IPA","IPA",7.5,1]
+    ]},
+    {"id": "columbus-brewing", "name": "Columbus Brewing Co.", "brand": "Columbus Brewing", "city": "Columbus", "state": "OH", "country": "US", "type": "Beer", "lat": 39.9676, "lng": -83.0693, "kind": "regional", "items": [
+      ["Bodhi","Double IPA",8.5,1]
+    ]},
+    {"id": "three-floyds", "name": "3 Floyds Brewing Co.", "brand": "3 Floyds", "city": "Munster", "state": "IN", "country": "US", "type": "Beer", "lat": 41.5645, "lng": -87.5125, "approx": true, "items": [
+      ["Zombie Dust","Pale Ale",6.2,1],
+      ["Alpha King","Pale Ale",6.7,1],
+      ["Gumballhead","American Wheat",5.6,1]
+    ]},
+    {"id": "sun-king", "name": "Sun King Brewing", "brand": "Sun King", "city": "Indianapolis", "state": "IN", "country": "US", "type": "Beer", "lat": 39.8096, "lng": -86.1449, "kind": "regional", "items": [
+      ["Wee Mac","Scotch Ale",5.4,1],
+      ["Sunlight Cream Ale","Cream Ale",5.3,1]
+    ]},
+    {"id": "goose-island", "name": "Goose Island Beer Co.", "brand": "Goose Island", "city": "Chicago", "state": "IL", "country": "US", "type": "Beer", "lat": 41.887, "lng": -87.6722, "kind": "large", "items": [
+      ["IPA","IPA",5.9,2],
+      ["312 Urban Wheat Ale","American Wheat",4.2,2],
+      ["Matilda","Belgian Pale Ale",7,1],
+      ["Sofie","Saison",6.5,1],
+      ["Bourbon County Brand Stout","Imperial Stout",null,1,"winter"]
+    ]},
+    {"id": "revolution", "name": "Revolution Brewing", "brand": "Revolution", "city": "Chicago", "state": "IL", "country": "US", "type": "Beer", "lat": 41.929, "lng": -87.7075, "kind": "regional", "items": [
+      ["Anti-Hero IPA","IPA",6.7,1],
+      ["Fist City","Pale Ale",5.5,1]
+    ]},
+    {"id": "half-acre", "name": "Half Acre Beer Co.", "brand": "Half Acre", "city": "Chicago", "state": "IL", "country": "US", "type": "Beer", "lat": 41.9592, "lng": -87.682, "kind": "regional", "items": [
+      ["Daisy Cutter","Pale Ale",5.2,1]
+    ]},
+    {"id": "new-glarus", "name": "New Glarus Brewing Co.", "brand": "New Glarus", "city": "New Glarus", "state": "WI", "country": "US", "type": "Beer", "lat": 42.8095, "lng": -89.6313, "kind": "regional", "items": [
+      ["Spotted Cow","Cream Ale",4.8,1],
+      ["Moon Man","Pale Ale",5,1],
+      ["Wisconsin Belgian Red","Fruit Beer",4,1]
+    ]},
+    {"id": "lakefront", "name": "Lakefront Brewery", "brand": "Lakefront", "city": "Milwaukee", "state": "WI", "country": "US", "type": "Beer", "lat": 43.0548, "lng": -87.9052, "kind": "regional", "items": [
+      ["Riverwest Stein","Amber Lager",5.8,1]
+    ]},
+    {"id": "toppling-goliath", "name": "Toppling Goliath Brewing Co.", "brand": "Toppling Goliath", "city": "Decorah", "state": "IA", "country": "US", "type": "Beer", "lat": 43.2727, "lng": -91.7251, "kind": "micro", "items": [
+      ["PseudoSue","Pale Ale",5.8,1],
+      ["King Sue","Double IPA",7.8,1]
+    ]},
+    {"id": "surly", "name": "Surly Brewing Co.", "brand": "Surly", "city": "Minneapolis", "state": "MN", "country": "US", "type": "Beer", "lat": 45.0429, "lng": -93.3244, "kind": "regional", "items": [
+      ["Todd the Axe Man","IPA",7.2,1]
+    ]},
+    {"id": "summit", "name": "Summit Brewing Co.", "brand": "Summit", "city": "St. Paul", "state": "MN", "country": "US", "type": "Beer", "lat": 44.914, "lng": -93.1396, "kind": "regional", "items": [
+      ["Extra Pale Ale","Pale Ale",5.3,1],
+      ["Keller Pils","Pilsner",5.1,1]
+    ]},
+    {"id": "boulevard", "name": "Boulevard Brewing Co.", "brand": "Boulevard", "city": "Kansas City", "state": "MO", "country": "US", "type": "Beer", "lat": 39.082, "lng": -94.5968, "kind": "regional", "items": [
+      ["Unfiltered Wheat","American Wheat",4.4,1],
+      ["Tank 7","Saison",8.5,1]
+    ]},
+    {"id": "schlafly", "name": "Saint Louis Brewery", "brand": "Schlafly", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.633, "lng": -90.2097, "kind": "regional", "items": [
+      ["Pale Ale","English Pale Ale",null,1]
+    ]},
+    {"id": "free-state", "name": "Free State Brewing Co.", "brand": "Free State", "city": "Lawrence", "state": "KS", "country": "US", "type": "Beer", "lat": 38.9724, "lng": -95.2358, "kind": "brewpub", "items": [
+      ["Ad Astra Ale","Amber Ale",null,1]
+    ]},
+    {"id": "shiner", "name": "Spoetzl Brewery", "brand": "Shiner", "city": "Shiner", "state": "TX", "country": "US", "type": "Beer", "lat": 29.4291, "lng": -97.1705, "approx": true, "items": [
+      ["Bock","Bock",4.4,2],
+      ["Ruby Redbird","Fruit Beer",4,1]
+    ]},
+    {"id": "saint-arnold", "name": "Saint Arnold Brewing Co.", "brand": "Saint Arnold", "city": "Houston", "state": "TX", "country": "US", "type": "Beer", "lat": 29.7711, "lng": -95.3485, "kind": "regional", "items": [
+      ["Fancy Lawnmower","Kölsch",4.9,1]
+    ]},
+    {"id": "karbach", "name": "Karbach Brewing Co.", "brand": "Karbach", "city": "Houston", "state": "TX", "country": "US", "type": "Beer", "lat": 29.8064, "lng": -95.4605, "kind": "large", "items": [
+      ["Love Street","Kölsch",4.9,1],
+      ["Hopadillo","IPA",6.6,1]
+    ]},
+    {"id": "real-ale", "name": "Real Ale Brewing Co.", "brand": "Real Ale", "city": "Blanco", "state": "TX", "country": "US", "type": "Beer", "lat": 30.1133, "lng": -98.4129, "kind": "regional", "items": [
+      ["Firemans #4","Blonde Ale",5.1,1]
+    ]},
+    {"id": "austin-beerworks", "name": "Austin Beerworks", "brand": "Austin Beerworks", "city": "Austin", "state": "TX", "country": "US", "type": "Beer", "lat": 30.3796, "lng": -97.7298, "kind": "regional", "items": [
+      ["Pearl-Snap","Pilsner",5.3,1]
+    ]},
+    {"id": "live-oak", "name": "Live Oak Brewing Co.", "brand": "Live Oak", "city": "Austin", "state": "TX", "country": "US", "type": "Beer", "lat": 30.2672, "lng": -97.7431, "approx": true, "items": [
+      ["Hefeweizen","Hefeweizen",null,1]
+    ]},
+    {"id": "deep-ellum", "name": "Deep Ellum Brewing Co.", "brand": "Deep Ellum", "city": "Dallas", "state": "TX", "country": "US", "type": "Beer", "lat": 32.7806, "lng": -96.7816, "kind": "regional", "items": [
+      ["Dallas Blonde","Blonde Ale",null,1]
+    ]},
+    {"id": "lakewood", "name": "Lakewood Brewing Co.", "brand": "Lakewood", "city": "Garland", "state": "TX", "country": "US", "type": "Beer", "lat": 32.8884, "lng": -96.6814, "kind": "micro", "items": [
+      ["Temptress","Milk Stout",9.1,1]
+    ]},
+    {"id": "revolver", "name": "Revolver Brewing", "brand": "Revolver", "city": "Granbury", "state": "TX", "country": "US", "type": "Beer", "lat": 32.4421, "lng": -97.7942, "approx": true, "items": [
+      ["Blood & Honey","American Wheat",7,1]
+    ]},
+    {"id": "prairie", "name": "Prairie Artisan Ales", "brand": "Prairie", "city": "Tulsa", "state": "OK", "country": "US", "type": "Beer", "lat": 36.1591, "lng": -95.9939, "kind": "micro", "items": [
+      ["Bomb!","Imperial Stout",13,1]
+    ]},
+    {"id": "abita", "name": "Abita Brewing Co.", "brand": "Abita", "city": "Abita Springs", "state": "LA", "country": "US", "type": "Beer", "lat": 30.482, "lng": -90.0565, "kind": "regional", "items": [
+      ["Amber","Amber Lager",4.5,1],
+      ["Purple Haze","Fruit Beer",4.2,1],
+      ["Andygator","Doppelbock",8,1],
+      {"name":"Root Beer","style":"Root Beer","abv":null,"pop":1,"type":"Soft Drink"}
+    ]},
+    {"id": "parish", "name": "Parish Brewing Co.", "brand": "Parish", "city": "Broussard", "state": "LA", "country": "US", "type": "Beer", "lat": 30.1592, "lng": -91.9485, "kind": "micro", "items": [
+      ["Ghost in the Machine","Double IPA",null,1]
+    ]},
+    {"id": "devils-backbone", "name": "Devils Backbone Brewing Co.", "brand": "Devils Backbone", "city": "Roseland", "state": "VA", "country": "US", "type": "Beer", "lat": 37.7476, "lng": -78.9759, "approx": true, "items": [
+      ["Vienna Lager","Vienna Lager",4.9,1]
+    ]},
+    {"id": "hardywood", "name": "Hardywood Park Craft Brewery", "brand": "Hardywood", "city": "Richmond", "state": "VA", "country": "US", "type": "Beer", "lat": 38.0326, "lng": -78.4951, "kind": "micro", "items": [
+      ["Gingerbread Stout","Imperial Stout",9.2,1,"winter"]
+    ]},
+    {"id": "port-city", "name": "Port City Brewing Co.", "brand": "Port City", "city": "Alexandria", "state": "VA", "country": "US", "type": "Beer", "lat": 38.808, "lng": -77.1015, "kind": "regional", "items": [
+      ["Optimal Wit","Witbier",4.9,1]
+    ]},
+    {"id": "foothills", "name": "Foothills Brewing", "brand": "Foothills", "city": "Winston-Salem", "state": "NC", "country": "US", "type": "Beer", "lat": 36.0482, "lng": -80.3268, "kind": "regional", "items": [
+      ["Hoppyum IPA","IPA",null,1]
+    ]},
+    {"id": "highland", "name": "Highland Brewing Co.", "brand": "Highland", "city": "Asheville", "state": "NC", "country": "US", "type": "Beer", "lat": 35.601, "lng": -82.554, "approx": true, "items": [
+      ["Gaelic Ale","Amber Ale",null,1]
+    ]},
+    {"id": "wicked-weed", "name": "Wicked Weed Brewing", "brand": "Wicked Weed", "city": "Asheville", "state": "NC", "country": "US", "type": "Beer", "lat": 35.5917, "lng": -82.5511, "kind": "large", "items": [
+      ["Pernicious IPA","IPA",7.3,1]
+    ]},
+    {"id": "noda", "name": "NoDa Brewing Co.", "brand": "NoDa", "city": "Charlotte", "state": "NC", "country": "US", "type": "Beer", "lat": 35.3343, "lng": -80.7191, "kind": "regional", "items": [
+      ["Hop Drop 'n Roll","IPA",7.2,1]
+    ]},
+    {"id": "olde-mecklenburg", "name": "Olde Mecklenburg Brewery", "brand": "Olde Mecklenburg", "city": "Charlotte", "state": "NC", "country": "US", "type": "Beer", "lat": 35.1874, "lng": -80.882, "kind": "regional", "items": [
+      ["Copper","Amber Ale",null,1]
+    ]},
+    {"id": "westbrook", "name": "Westbrook Brewing Co.", "brand": "Westbrook", "city": "Mount Pleasant", "state": "SC", "country": "US", "type": "Beer", "lat": 32.7941, "lng": -79.8626, "approx": true, "items": [
+      ["White Thai","Witbier",5,1],
+      ["Gose","Gose",4,1]
+    ]},
+    {"id": "holy-city", "name": "Holy City Brewing", "brand": "Holy City", "city": "North Charleston", "state": "SC", "country": "US", "type": "Beer", "lat": 32.873, "lng": -79.9788, "kind": "micro", "items": [
+      ["Pluff Mud Porter","Porter",null,1]
+    ]},
+    {"id": "sweetwater", "name": "SweetWater Brewing Co.", "brand": "SweetWater", "city": "Atlanta", "state": "GA", "country": "US", "type": "Beer", "lat": 33.808, "lng": -84.3811, "kind": "regional", "items": [
+      ["420 Extra Pale Ale","Pale Ale",5.4,2],
+      ["IPA","IPA",6.3,1],
+      ["Blue","Fruit Beer",4.6,1]
+    ]},
+    {"id": "terrapin", "name": "Terrapin Beer Co.", "brand": "Terrapin", "city": "Athens", "state": "GA", "country": "US", "type": "Beer", "lat": 33.9885, "lng": -83.3978, "kind": "large", "items": [
+      ["Hopsecutioner","IPA",7.3,1]
+    ]},
+    {"id": "creature-comforts", "name": "Creature Comforts Brewing Co.", "brand": "Creature Comforts", "city": "Athens", "state": "GA", "country": "US", "type": "Beer", "lat": 33.9592, "lng": -83.3801, "kind": "regional", "items": [
+      ["Tropicália","IPA",6.5,1]
+    ]},
+    {"id": "monday-night", "name": "Monday Night Brewing", "brand": "Monday Night", "city": "Atlanta", "state": "GA", "country": "US", "type": "Beer", "lat": 33.7948, "lng": -84.4099, "kind": "micro", "items": [
+      ["Drafty Kilt","Scotch Ale",null,1]
+    ]},
+    {"id": "cigar-city", "name": "Cigar City Brewing", "brand": "Cigar City", "city": "Tampa", "state": "FL", "country": "US", "type": "Beer", "lat": 27.9592, "lng": -82.5092, "kind": "regional", "items": [
+      ["Jai Alai IPA","IPA",7.5,1],
+      ["Maduro Brown Ale","Brown Ale",5.5,1]
+    ]},
+    {"id": "funky-buddha", "name": "Funky Buddha Brewery", "brand": "Funky Buddha", "city": "Oakland Park", "state": "FL", "country": "US", "type": "Beer", "lat": 26.364, "lng": -80.0805, "kind": "large", "items": [
+      ["Floridian Hefeweizen","Hefeweizen",null,1]
+    ]},
+    {"id": "lazy-magnolia", "name": "Lazy Magnolia Brewing Co.", "brand": "Lazy Magnolia", "city": "Kiln", "state": "MS", "country": "US", "type": "Beer", "lat": 30.3769, "lng": -89.4495, "kind": "micro", "items": [
+      ["Southern Pecan","Brown Ale",4.4,1]
+    ]},
+    {"id": "wiseacre", "name": "Wiseacre Brewing Co.", "brand": "Wiseacre", "city": "Memphis", "state": "TN", "country": "US", "type": "Beer", "lat": 35.1476, "lng": -89.9685, "kind": "micro", "items": [
+      ["Tiny Bomb","Pilsner",null,1]
+    ]},
+    {"id": "kentucky-bourbon-barrel", "name": "Lexington Brewing & Distilling Co.", "brand": "Kentucky Bourbon Barrel", "city": "Lexington", "state": "KY", "country": "US", "type": "Beer", "lat": 37.9887, "lng": -84.4777, "approx": true, "items": [
+      {"name":"Kentucky Bourbon Barrel Ale","style":"Amber Ale","abv":8.2,"pop":1,"aka":["KBBA"]},
+      ["Kentucky Bourbon Barrel Stout","Stout",8,1]
+    ]},
+    {"id": "west-sixth", "name": "West Sixth Brewing", "brand": "West Sixth", "city": "Lexington", "state": "KY", "country": "US", "type": "Beer", "lat": 38.0466, "lng": -84.4971, "kind": "micro", "items": [
+      ["IPA","IPA",7,1]
+    ]},
+    {"id": "allagash", "name": "Allagash Brewing Co.", "brand": "Allagash", "city": "Portland", "state": "ME", "country": "US", "type": "Beer", "lat": 43.7031, "lng": -70.318, "kind": "regional", "items": [
+      ["White","Witbier",5.2,2],
+      ["Tripel","Tripel",9,1],
+      ["Saison","Saison",6.1,1]
+    ]},
+    {"id": "maine-beer", "name": "Maine Beer Co.", "brand": "Maine Beer Co.", "city": "Freeport", "state": "ME", "country": "US", "type": "Beer", "lat": 43.857, "lng": -70.1031, "approx": true, "items": [
+      ["Lunch","IPA",7,1],
+      ["MO","Pale Ale",6,1],
+      ["Peeper","Pale Ale",5.5,1]
+    ]},
+    {"id": "shipyard", "name": "Shipyard Brewing Co.", "brand": "Shipyard", "city": "Portland", "state": "ME", "country": "US", "type": "Beer", "lat": 43.6616, "lng": -70.2486, "kind": "regional", "items": [
+      ["Export Ale","Blonde Ale",5.1,1],
+      ["Pumpkinhead","Pumpkin Ale",4.5,1,"fall"]
+    ]},
+    {"id": "bissell-brothers", "name": "Bissell Brothers Brewing Co.", "brand": "Bissell Brothers", "city": "Portland", "state": "ME", "country": "US", "type": "Beer", "lat": 43.6514, "lng": -70.2904, "kind": "micro", "items": [
+      ["Substance","IPA",6.6,1]
+    ]},
+    {"id": "baxter", "name": "Baxter Brewing Co.", "brand": "Baxter", "city": "Lewiston", "state": "ME", "country": "US", "type": "Beer", "lat": 44.0957, "lng": -70.2196, "kind": "regional", "items": [
+      ["Stowaway IPA","IPA",null,1]
+    ]},
+    {"id": "smuttynose", "name": "Smuttynose Brewing Co.", "brand": "Smuttynose", "city": "Hampton", "state": "NH", "country": "US", "type": "Beer", "lat": 42.9455, "lng": -70.8535, "kind": "regional", "items": [
+      ["Finestkind IPA","IPA",6.9,1]
+    ]},
+    {"id": "the-alchemist", "name": "The Alchemist", "brand": "The Alchemist", "city": "Stowe", "state": "VT", "country": "US", "type": "Beer", "lat": 44.4653, "lng": -72.6846, "approx": true, "items": [
+      {"name":"Heady Topper","style":"Double IPA","abv":8,"pop":1,"size":"16 fl oz"},
+      {"name":"Focal Banger","style":"IPA","abv":7,"pop":1,"size":"16 fl oz"}
+    ]},
+    {"id": "long-trail", "name": "Long Trail Brewing Co.", "brand": "Long Trail", "city": "Bridgewater Corners", "state": "VT", "country": "US", "type": "Beer", "lat": 43.5884, "lng": -72.6559, "approx": true, "items": [
+      ["Long Trail Ale","Amber Ale",4.6,1]
+    ]},
+    {"id": "lawsons-finest", "name": "Lawson's Finest Liquids", "brand": "Lawson's Finest", "city": "Waitsfield", "state": "VT", "country": "US", "type": "Beer", "lat": 44.1901, "lng": -72.8248, "approx": true, "items": [
+      ["Sip of Sunshine","IPA",8,1]
+    ]},
+    {"id": "fiddlehead", "name": "Fiddlehead Brewing Co.", "brand": "Fiddlehead", "city": "Shelburne", "state": "VT", "country": "US", "type": "Beer", "lat": 44.3661, "lng": -73.2326, "kind": "regional", "items": [
+      ["Fiddlehead IPA","IPA",6.2,1]
+    ]},
+    {"id": "magic-hat", "name": "Magic Hat Brewing Co.", "brand": "Magic Hat", "city": "South Burlington", "state": "VT", "country": "US", "type": "Beer", "lat": 44.467, "lng": -73.171, "approx": true, "items": [
+      ["#9","Fruit Beer",5.1,1]
+    ]},
+    {"id": "harpoon", "name": "Harpoon Brewery", "brand": "Harpoon", "city": "Boston", "state": "MA", "country": "US", "type": "Beer", "lat": 42.3466, "lng": -71.0348, "kind": "regional", "items": [
+      ["IPA","IPA",5.9,1],
+      ["UFO White","Witbier",4.8,1],
+      ["Rec. League","Pale Ale",3.8,1],
+      ["Octoberfest","Märzen",5.5,1,"fall"]
+    ]},
+    {"id": "wachusett", "name": "Wachusett Brewing Co.", "brand": "Wachusett", "city": "Westminster", "state": "MA", "country": "US", "type": "Beer", "lat": 42.5578, "lng": -71.8729, "kind": "regional", "items": [
+      ["Blueberry Ale","Fruit Beer",4.5,1]
+    ]},
+    {"id": "jacks-abby", "name": "Jack's Abby Craft Lagers", "brand": "Jack's Abby", "city": "Framingham", "state": "MA", "country": "US", "type": "Beer", "lat": 42.2801, "lng": -71.4109, "kind": "regional", "items": [
+      ["House Lager","Helles",5.2,1],
+      ["Post Shift Pilsner","Pilsner",4.7,1]
+    ]},
+    {"id": "tree-house", "name": "Tree House Brewing Co.", "brand": "Tree House", "city": "Charlton", "state": "MA", "country": "US", "type": "Beer", "lat": 42.1367, "lng": -72.0126, "kind": "regional", "items": [
+      {"name":"Julius","style":"Hazy IPA","abv":6.8,"pop":1,"size":"16 fl oz"}
+    ]},
+    {"id": "night-shift", "name": "Night Shift Brewing", "brand": "Night Shift", "city": "Everett", "state": "MA", "country": "US", "type": "Beer", "lat": 42.4059, "lng": -71.0677, "kind": "regional", "items": [
+      ["Santilli","IPA",null,1]
+    ]},
+    {"id": "cisco", "name": "Cisco Brewers", "brand": "Cisco", "city": "Nantucket", "state": "MA", "country": "US", "type": "Beer", "lat": 41.2614, "lng": -70.1293, "kind": "micro", "items": [
+      ["Whale's Tale Pale Ale","English Pale Ale",null,1]
+    ]},
+    {"id": "mighty-squirrel", "name": "Mighty Squirrel Brewing Co.", "brand": "Mighty Squirrel", "city": "Waltham", "state": "MA", "country": "US", "type": "Beer", "lat": 42.3877, "lng": -71.2011, "kind": "regional", "items": [
+      ["Cloud Candy","Hazy IPA",null,1]
+    ]},
+    {"id": "narragansett", "name": "Narragansett Brewing Co.", "brand": "Narragansett", "city": "Providence", "state": "RI", "country": "US", "type": "Beer", "lat": 41.8185, "lng": -71.3904, "kind": "brewpub", "items": [
+      {"name":"Lager","style":"American Lager","abv":5,"pop":1,"aka":["Gansett","Narragansett Lager"]},
+      ["Del's Shandy","Shandy",null,1,"summer"]
+    ]},
+    {"id": "two-roads", "name": "Two Roads Brewing Co.", "brand": "Two Roads", "city": "Stratford", "state": "CT", "country": "US", "type": "Beer", "lat": 41.1844, "lng": -73.1512, "kind": "regional", "items": [
+      ["Lil' Heaven","Session IPA",4.8,1],
+      ["Road 2 Ruin","Double IPA",8,1],
+      ["Two Juicy","Hazy IPA",8.2,1]
+    ]},
+    {"id": "new-england-brewing", "name": "New England Brewing Co.", "brand": "New England Brewing", "city": "Woodbridge", "state": "CT", "country": "US", "type": "Beer", "lat": 41.3386, "lng": -72.9805, "kind": "micro", "items": [
+      ["Sea Hag IPA","IPA",null,1]
+    ]},
+    {"id": "victory", "name": "Victory Brewing Co.", "brand": "Victory", "city": "Downingtown", "state": "PA", "country": "US", "type": "Beer", "lat": 40.0065, "lng": -75.7033, "approx": true, "items": [
+      ["Golden Monkey","Tripel",9.5,2],
+      ["Prima Pils","Pilsner",5.3,1],
+      ["HopDevil","IPA",6.7,1],
+      ["Sour Monkey","Sour",9.5,1],
+      ["Summer Love","Blonde Ale",5.2,1],
+      ["Dirtwolf","Double IPA",8.7,1],
+      ["Storm King Stout","Imperial Stout",9.1,1],
+      ["Festbier","Festbier",5.6,1,"fall"]
+    ]},
+    {"id": "troegs", "name": "Tröegs Independent Brewing", "brand": "Tröegs", "city": "Hershey", "state": "PA", "country": "US", "type": "Beer", "lat": 40.2859, "lng": -76.6502, "approx": true, "items": [
+      ["Perpetual IPA","IPA",7.5,1],
+      ["Mad Elf","Belgian Strong Dark",11,2,"winter"],
+      ["DreamWeaver Wheat","Hefeweizen",4.8,1],
+      ["Troegenator","Doppelbock",8.2,1],
+      ["Sunshine Pils","Pilsner",4.5,1,"summer"],
+      ["JavaHead Stout","Stout",7.5,1],
+      ["Hopback Amber Ale","Amber Ale",6,1]
+    ]},
+    {"id": "yards", "name": "Yards Brewing Co.", "brand": "Yards", "city": "Philadelphia", "state": "PA", "country": "US", "type": "Beer", "lat": 39.9655, "lng": -75.1324, "kind": "regional", "items": [
+      {"name":"Philadelphia Pale Ale","style":"Pale Ale","abv":4.6,"pop":1,"aka":["PPA"]},
+      ["IPA","IPA",7,1],
+      ["General Washington's Tavern Porter","Porter",7,1],
+      ["Extra Special Ale","ESB",null,1]
+    ]},
+    {"id": "sly-fox", "name": "Sly Fox Brewing Co.", "brand": "Sly Fox", "city": "Pottstown", "state": "PA", "country": "US", "type": "Beer", "lat": 40.2634, "lng": -75.6663, "kind": "regional", "items": [
+      ["Pikeland Pils","Pilsner",4.9,1],
+      ["Helles Golden Lager","Helles",4.9,1],
+      {"name":"Route 113 IPA","style":"IPA","abv":7,"pop":1,"aka":["Rt. 113 IPA"]}
+    ]},
+    {"id": "weyerbacher", "name": "Weyerbacher Brewing Co.", "brand": "Weyerbacher", "city": "Easton", "state": "PA", "country": "US", "type": "Beer", "lat": 40.6884, "lng": -75.2207, "approx": true, "items": [
+      ["Merry Monks","Tripel",9.3,1],
+      ["Imperial Pumpkin Ale","Pumpkin Ale",8,1,"fall"]
+    ]},
+    {"id": "lancaster", "name": "Lancaster Brewing Co.", "brand": "Lancaster", "city": "Lancaster", "state": "PA", "country": "US", "type": "Beer", "lat": 40.0439, "lng": -76.2985, "kind": "micro", "items": [
+      ["Milk Stout","Milk Stout",5.3,1],
+      ["Strawberry Wheat","Fruit Beer",null,1]
+    ]},
+    {"id": "philadelphia-brewing", "name": "Philadelphia Brewing Co.", "brand": "Philadelphia Brewing", "city": "Philadelphia", "state": "PA", "country": "US", "type": "Beer", "lat": 39.9828, "lng": -75.1277, "kind": "micro", "items": [
+      ["Kenzinger","Blonde Ale",4.5,1],
+      ["Walt Wit","Witbier",4.9,1]
+    ]},
+    {"id": "evil-genius", "name": "Evil Genius Beer Co.", "brand": "Evil Genius", "city": "Philadelphia", "state": "PA", "country": "US", "type": "Beer", "lat": 39.9758, "lng": -75.134, "kind": "micro", "items": [
+      ["Purple Monkey Dishwasher","Porter",null,1]
+    ]},
+    {"id": "2sp", "name": "2SP Brewing Co.", "brand": "2SP", "city": "Aston", "state": "PA", "country": "US", "type": "Beer", "lat": 39.8743, "lng": -75.4482, "approx": true, "items": [
+      ["Delco Lager","Amber Lager",null,1]
+    ]},
+    {"id": "lionshead", "name": "The Lion Brewery", "brand": "Lionshead", "city": "Wilkes-Barre", "state": "PA", "country": "US", "type": "Beer", "lat": 41.2549, "lng": -75.8594, "kind": "regional", "items": [
+      {"name":"Lionshead","style":"American Lager","abv":null,"pop":1,"aka":["Lionshead Deluxe Pilsner"]}
+    ]},
+    {"id": "cape-may", "name": "Cape May Brewing Co.", "brand": "Cape May", "city": "Cape May", "state": "NJ", "country": "US", "type": "Beer", "lat": 39.0007, "lng": -74.9129, "kind": "micro", "items": [
+      ["Cape May IPA","IPA",null,1],
+      ["Coastal Evacuation","Double IPA",null,1]
+    ]},
+    {"id": "flying-fish", "name": "Flying Fish Brewing Co.", "brand": "Flying Fish", "city": "Somerdale", "state": "NJ", "country": "US", "type": "Beer", "lat": 39.8539, "lng": -75.0209, "kind": "regional", "items": [
+      ["XPA","Pale Ale",null,1]
+    ]},
+    {"id": "river-horse", "name": "River Horse Brewing Co.", "brand": "River Horse", "city": "Ewing", "state": "NJ", "country": "US", "type": "Beer", "lat": 40.2765, "lng": -74.7966, "kind": "micro", "items": [
+      ["Tripel Horse","Tripel",10,1],
+      ["Hipp-O-Lantern","Pumpkin Ale",null,1,"fall"]
+    ]},
+    {"id": "kane", "name": "Kane Brewing Co.", "brand": "Kane", "city": "Ocean", "state": "NJ", "country": "US", "type": "Beer", "lat": 40.2366, "lng": -74.0449, "kind": "micro", "items": [
+      ["Head High","IPA",6.6,1],
+      ["Overhead","Double IPA",8.2,1]
+    ]},
+    {"id": "carton", "name": "Carton Brewing Co.", "brand": "Carton", "city": "Atlantic Highlands", "state": "NJ", "country": "US", "type": "Beer", "lat": 40.4118, "lng": -74.0382, "kind": "micro", "items": [
+      ["Boat Beer","Pale Ale",4.2,1],
+      ["077XX","Double IPA",7.8,1]
+    ]},
+    {"id": "forgotten-boardwalk", "name": "Forgotten Boardwalk Brewing", "brand": "Forgotten Boardwalk", "city": "Cherry Hill", "state": "NJ", "country": "US", "type": "Beer", "lat": 39.9348, "lng": -75.0307, "approx": true, "items": [
+      ["Funnel Cake","Cream Ale",null,1]
+    ]},
+    {"id": "brooklyn", "name": "Brooklyn Brewery", "brand": "Brooklyn", "city": "Brooklyn", "state": "NY", "country": "US", "type": "Beer", "lat": 40.6501, "lng": -73.9496, "approx": true, "items": [
+      {"name":"Lager","style":"Amber Lager","abv":5.2,"pop":2,"aka":["Brooklyn Lager"]},
+      ["Defender IPA","IPA",null,1],
+      ["Bel Air Sour","Sour",5.8,1],
+      ["Stonewall Inn IPA","Session IPA",null,1],
+      ["Black Chocolate Stout","Imperial Stout",10,1,"winter"],
+      {"name":"Special Effects Hoppy Amber","style":"Non-Alcoholic Lager","abv":0.5,"pop":1,"aka":["Special Effects"]}
+    ]},
+    {"id": "ommegang", "name": "Brewery Ommegang", "brand": "Ommegang", "city": "Cooperstown", "state": "NY", "country": "US", "type": "Beer", "lat": 42.7534, "lng": -74.8551, "kind": "regional", "items": [
+      ["Hennepin","Saison",7.7,1],
+      ["Three Philosophers","Quadrupel",9.7,1],
+      ["Abbey Ale","Dubbel",8.2,1]
+    ]},
+    {"id": "southern-tier", "name": "Southern Tier Brewing Co.", "brand": "Southern Tier", "city": "Lakewood", "state": "NY", "country": "US", "type": "Beer", "lat": 42.1042, "lng": -79.3331, "approx": true, "items": [
+      ["IPA","IPA",null,1],
+      ["2X IPA","Double IPA",8.2,1],
+      ["Pumking","Pumpkin Ale",8.6,1,"fall"]
+    ]},
+    {"id": "sixpoint", "name": "Sixpoint Brewery", "brand": "Sixpoint", "city": "Brooklyn", "state": "NY", "country": "US", "type": "Beer", "lat": 40.674, "lng": -74.0119, "kind": "regional", "items": [
+      ["Bengali","IPA",6.6,1],
+      ["Resin","Double IPA",9.1,1],
+      ["The Crisp","Pilsner",5.4,1]
+    ]},
+    {"id": "captain-lawrence", "name": "Captain Lawrence Brewing Co.", "brand": "Captain Lawrence", "city": "Elmsford", "state": "NY", "country": "US", "type": "Beer", "lat": 41.0349, "lng": -73.8391, "kind": "regional", "items": [
+      ["Freshchester Pale Ale","Pale Ale",null,1],
+      ["Captain's Kolsch","Kölsch",null,1]
+    ]},
+    {"id": "industrial-arts", "name": "Industrial Arts Brewing Co.", "brand": "Industrial Arts", "city": "Garnerville", "state": "NY", "country": "US", "type": "Beer", "lat": 41.2018, "lng": -73.9943, "approx": true, "items": [
+      ["Wrench","Hazy IPA",null,1]
+    ]},
+    {"id": "other-half", "name": "Other Half Brewing Co.", "brand": "Other Half", "city": "Brooklyn", "state": "NY", "country": "US", "type": "Beer", "lat": 40.6738, "lng": -73.9991, "kind": "micro", "items": [
+      ["Green City","Hazy IPA",null,1]
+    ]},
+    {"id": "montauk", "name": "Montauk Brewing Co.", "brand": "Montauk", "city": "Montauk", "state": "NY", "country": "US", "type": "Beer", "lat": 41.0367, "lng": -71.9441, "kind": "micro", "items": [
+      ["Wave Chaser IPA","IPA",null,1]
+    ]},
+    {"id": "blue-point", "name": "Blue Point Brewing Co.", "brand": "Blue Point", "city": "Patchogue", "state": "NY", "country": "US", "type": "Beer", "lat": 40.7591, "lng": -73.0216, "kind": "large", "items": [
+      ["Toasted Lager","Amber Lager",5.5,1]
+    ]},
+    {"id": "ithaca", "name": "Ithaca Beer Co.", "brand": "Ithaca", "city": "Ithaca", "state": "NY", "country": "US", "type": "Beer", "lat": 42.4406, "lng": -76.4966, "approx": true, "items": [
+      ["Flower Power","IPA",7.2,1]
+    ]},
+    {"id": "saranac", "name": "Matt Brewing Co.", "brand": "Saranac", "city": "Utica", "state": "NY", "country": "US", "type": "Beer", "lat": 43.1036, "lng": -75.2441, "kind": "regional", "items": [
+      ["Pale Ale","Pale Ale",null,1]
+    ]},
+    {"id": "dogfish-head", "name": "Dogfish Head Craft Brewery", "brand": "Dogfish Head", "city": "Milton", "state": "DE", "country": "US", "type": "Beer", "lat": 38.7669, "lng": -75.3116, "kind": "regional", "items": [
+      ["60 Minute IPA","IPA",6,2],
+      ["90 Minute IPA","Double IPA",9,2],
+      ["SeaQuench Ale","Sour",4.9,1],
+      ["Slightly Mighty","Session IPA",4,1],
+      ["Hazy-O!","Hazy IPA",7.1,1],
+      ["Indian Brown Ale","Brown Ale",7.2,1],
+      ["Punkin Ale","Pumpkin Ale",7,1,"fall"]
+    ]},
+    {"id": "flying-dog", "name": "Flying Dog Brewery", "brand": "Flying Dog", "city": "Frederick", "state": "MD", "country": "US", "type": "Beer", "lat": 39.3628, "lng": -77.4268, "kind": "regional", "items": [
+      ["Raging Bitch","IPA",8.3,1],
+      ["Snake Dog IPA","IPA",7.1,1],
+      ["The Truth","Double IPA",8.7,1],
+      ["Bloodline","IPA",7,1],
+      ["Easy IPA","Session IPA",4.7,1]
+    ]},
+    {"id": "heavy-seas", "name": "Heavy Seas Beer", "brand": "Heavy Seas", "city": "Halethorpe", "state": "MD", "country": "US", "type": "Beer", "lat": 39.2321, "lng": -76.6784, "kind": "regional", "items": [
+      ["Loose Cannon","IPA",null,1],
+      ["TropiCannon","IPA",null,1]
+    ]},
+    {"id": "duclaw", "name": "DuClaw Brewing Co.", "brand": "DuClaw", "city": "Rosedale", "state": "MD", "country": "US", "type": "Beer", "lat": 39.3201, "lng": -76.5155, "approx": true, "items": [
+      ["Sweet Baby Jesus!","Porter",6.5,1]
+    ]},
+    {"id": "union-craft", "name": "Union Craft Brewing", "brand": "Union Craft", "city": "Baltimore", "state": "MD", "country": "US", "type": "Beer", "lat": 39.3363, "lng": -76.6442, "kind": "micro", "items": [
+      ["Duckpin Pale Ale","Pale Ale",null,1]
+    ]},
+    {"id": "rar", "name": "RAR Brewing", "brand": "RAR", "city": "Cambridge", "state": "MD", "country": "US", "type": "Beer", "lat": 38.5702, "lng": -76.0775, "kind": "proprietor", "items": [
+      ["Nanticoke Nectar","IPA",null,1]
+    ]},
+    {"id": "dc-brau", "name": "DC Brau Brewing Co.", "brand": "DC Brau", "city": "Washington", "state": "DC", "country": "US", "type": "Beer", "lat": 38.9298, "lng": -76.9601, "kind": "regional", "items": [
+      ["The Public","Pale Ale",6,1]
+    ]},
+    {"id": "modelo", "name": "Grupo Modelo", "brand": "Modelo", "city": "Mexico City", "country": "MX", "type": "Beer", "items": [
+      ["Modelo Especial","Mexican Lager",4.4,3],
+      {"name":"Modelo Negra","style":"Dark Lager","abv":5.4,"pop":2,"aka":["Negra Modelo"]},
+      ["Modelo Oro","Mexican Lager",4,1]
+    ]},
+    {"id": "corona", "name": "Grupo Modelo", "brand": "Corona", "city": "Mexico City", "country": "MX", "type": "Beer", "items": [
+      ["Extra","Mexican Lager",4.6,3],
+      ["Light","Mexican Lager",4,2],
+      ["Premier","Mexican Lager",4,2],
+      ["Familiar","Mexican Lager",4.8,1]
+    ]},
+    {"id": "pacifico", "name": "Cervecería del Pacífico", "brand": "Pacifico", "city": "Mazatlán", "country": "MX", "type": "Beer", "items": [
+      ["Clara","Mexican Lager",4.4,2]
+    ]},
+    {"id": "victoria", "name": "Grupo Modelo", "brand": "Victoria", "city": "Mexico City", "country": "MX", "type": "Beer", "items": [
+      ["Victoria","Vienna Lager",4,2]
+    ]},
+    {"id": "dos-equis", "name": "Cervecería Cuauhtémoc Moctezuma", "brand": "Dos Equis", "city": "Monterrey", "country": "MX", "type": "Beer", "items": [
+      {"name":"Lager Especial","style":"Mexican Lager","abv":4.2,"pop":2,"aka":["Dos XX","XX Lager"]},
+      {"name":"Ambar Especial","style":"Vienna Lager","abv":4.7,"pop":1,"aka":["Dos XX Amber","XX Amber"]}
+    ]},
+    {"id": "tecate", "name": "Cervecería Cuauhtémoc Moctezuma", "brand": "Tecate", "city": "Tecate", "country": "MX", "type": "Beer", "items": [
+      ["Original","Mexican Lager",4.5,2]
+    ]},
+    {"id": "sol", "name": "Cervecería Cuauhtémoc Moctezuma", "brand": "Sol", "city": "Monterrey", "country": "MX", "type": "Beer", "items": [
+      ["Sol","Mexican Lager",4.5,1]
+    ]},
+    {"id": "estrella-jalisco", "name": "Grupo Modelo", "brand": "Estrella Jalisco", "city": "Guadalajara", "country": "MX", "type": "Beer", "items": [
+      ["Estrella Jalisco","Mexican Lager",null,1]
+    ]},
+    {"id": "heineken", "name": "Heineken N.V.", "brand": "Heineken", "city": "Amsterdam", "country": "NL", "type": "Beer", "items": [
+      ["Heineken","International Lager",5,3],
+      ["Heineken 0.0","Non-Alcoholic Lager",0,2],
+      ["Heineken Light","International Lager",3.3,1]
+    ]},
+    {"id": "amstel", "name": "Heineken N.V.", "brand": "Amstel", "city": "Amsterdam", "country": "NL", "type": "Beer", "items": [
+      ["Amstel Light","International Lager",3.5,1]
+    ]},
+    {"id": "stella-artois", "name": "AB InBev", "brand": "Stella Artois", "city": "Leuven", "country": "BE", "type": "Beer", "items": [
+      ["Stella Artois","Pilsner",5,3]
+    ]},
+    {"id": "hoegaarden", "name": "Brouwerij Hoegaarden", "brand": "Hoegaarden", "city": "Hoegaarden", "country": "BE", "type": "Beer", "items": [
+      {"name":"Hoegaarden","style":"Witbier","abv":4.9,"pop":2,"aka":["Hoegaarden White"]}
+    ]},
+    {"id": "leffe", "name": "Abbaye de Leffe", "brand": "Leffe", "city": "Dinant", "country": "BE", "type": "Beer", "items": [
+      ["Blonde","Belgian Blonde",6.6,1]
+    ]},
+    {"id": "duvel", "name": "Duvel Moortgat", "brand": "Duvel", "city": "Breendonk", "country": "BE", "type": "Beer", "items": [
+      ["Duvel","Belgian Strong Golden",8.5,1]
+    ]},
+    {"id": "delirium", "name": "Brouwerij Huyghe", "brand": "Delirium", "city": "Melle", "country": "BE", "type": "Beer", "items": [
+      {"name":"Tremens","style":"Belgian Strong Golden","abv":8.5,"pop":1,"aka":["Delirium Tremens"]}
+    ]},
+    {"id": "chimay", "name": "Bières de Chimay", "brand": "Chimay", "city": "Chimay", "country": "BE", "type": "Beer", "items": [
+      {"name":"Red","style":"Dubbel","abv":7,"pop":1,"aka":["Chimay Première","Chimay Red Label"]},
+      {"name":"Blue","style":"Belgian Strong Dark","abv":9,"pop":1,"aka":["Chimay Grande Réserve","Chimay Blue Label"]}
+    ]},
+    {"id": "westmalle", "name": "Brouwerij der Trappisten van Westmalle", "brand": "Westmalle", "city": "Westmalle", "country": "BE", "type": "Beer", "items": [
+      ["Tripel","Tripel",9.5,1]
+    ]},
+    {"id": "orval", "name": "Brasserie d'Orval", "brand": "Orval", "city": "Villers-devant-Orval", "country": "BE", "type": "Beer", "items": [
+      ["Orval","Belgian Pale Ale",6.2,1]
+    ]},
+    {"id": "rochefort", "name": "Brasserie de Rochefort", "brand": "Rochefort", "city": "Rochefort", "country": "BE", "type": "Beer", "items": [
+      {"name":"Rochefort 10","style":"Quadrupel","abv":11.3,"pop":1,"aka":["Trappistes Rochefort 10"]}
+    ]},
+    {"id": "st-bernardus", "name": "Brouwerij St. Bernardus", "brand": "St. Bernardus", "city": "Watou", "country": "BE", "type": "Beer", "items": [
+      ["Abt 12","Quadrupel",10,1]
+    ]},
+    {"id": "lindemans", "name": "Brouwerij Lindemans", "brand": "Lindemans", "city": "Vlezenbeek", "country": "BE", "type": "Beer", "items": [
+      ["Framboise","Lambic",2.5,1]
+    ]},
+    {"id": "la-chouffe", "name": "Brasserie d'Achouffe", "brand": "La Chouffe", "city": "Achouffe", "country": "BE", "type": "Beer", "items": [
+      ["La Chouffe","Belgian Strong Golden",8,1]
+    ]},
+    {"id": "paulaner", "name": "Paulaner Brauerei", "brand": "Paulaner", "city": "Munich", "country": "DE", "type": "Beer", "items": [
+      ["Hefe-Weizen","Hefeweizen",5.5,1],
+      ["Oktoberfest Märzen","Märzen",5.8,1,"fall"]
+    ]},
+    {"id": "weihenstephaner", "name": "Bayerische Staatsbrauerei Weihenstephan", "brand": "Weihenstephaner", "city": "Freising", "country": "DE", "type": "Beer", "items": [
+      ["Hefeweissbier","Hefeweizen",5.4,1]
+    ]},
+    {"id": "spaten", "name": "Spaten-Franziskaner-Bräu", "brand": "Spaten", "city": "Munich", "country": "DE", "type": "Beer", "items": [
+      ["Oktoberfest Ur-Märzen","Märzen",5.9,1,"fall"]
+    ]},
+    {"id": "hofbrau", "name": "Staatliches Hofbräuhaus München", "brand": "Hofbräu", "city": "Munich", "country": "DE", "type": "Beer", "items": [
+      {"name":"Original","style":"Helles","abv":5.1,"pop":1,"aka":["HB Original"]},
+      ["Oktoberfestbier","Festbier",6.3,1,"fall"]
+    ]},
+    {"id": "becks", "name": "Brauerei Beck & Co.", "brand": "Beck's", "city": "Bremen", "country": "DE", "type": "Beer", "items": [
+      ["Beck's","Pilsner",5,2]
+    ]},
+    {"id": "reissdorf", "name": "Privatbrauerei Heinrich Reissdorf", "brand": "Reissdorf", "city": "Cologne", "country": "DE", "type": "Beer", "items": [
+      ["Kölsch","Kölsch",4.8,1]
+    ]},
+    {"id": "ayinger", "name": "Brauerei Aying", "brand": "Ayinger", "city": "Aying", "country": "DE", "type": "Beer", "items": [
+      ["Celebrator","Doppelbock",6.7,1]
+    ]},
+    {"id": "erdinger", "name": "Erdinger Weissbräu", "brand": "Erdinger", "city": "Erding", "country": "DE", "type": "Beer", "items": [
+      ["Weissbier","Hefeweizen",5.3,1],
+      ["Alkoholfrei","Non-Alcoholic Wheat",0.5,1]
+    ]},
+    {"id": "pilsner-urquell", "name": "Plzeňský Prazdroj", "brand": "Pilsner Urquell", "city": "Plzeň", "country": "CZ", "type": "Beer", "items": [
+      ["Pilsner Urquell","Pilsner",4.4,2]
+    ]},
+    {"id": "czechvar", "name": "Budějovický Budvar", "brand": "Czechvar", "city": "České Budějovice", "country": "CZ", "type": "Beer", "items": [
+      {"name":"Czechvar","style":"Pilsner","abv":5,"pop":1,"aka":["Budweiser Budvar","Budvar"]}
+    ]},
+    {"id": "guinness", "name": "Guinness (St. James's Gate)", "brand": "Guinness", "city": "Dublin", "country": "IE", "type": "Beer", "items": [
+      {"name":"Draught","style":"Irish Stout","abv":4.2,"pop":2,"aka":["Guinness Draught","Guinness Stout"]},
+      ["Extra Stout","Stout",5.6,1],
+      {"name":"Guinness 0.0","style":"Non-Alcoholic Stout","abv":0,"pop":1,"aka":["Guinness Zero","Guinness 0"]}
+    ]},
+    {"id": "smithwicks", "name": "Smithwick's Brewery", "brand": "Smithwick's", "city": "Kilkenny", "country": "IE", "type": "Beer", "items": [
+      {"name":"Red Ale","style":"Irish Red","abv":4.5,"pop":1,"aka":["Smithwick's Irish Red"]}
+    ]},
+    {"id": "harp", "name": "Harp Brewery", "brand": "Harp", "city": "Dundalk", "country": "IE", "type": "Beer", "items": [
+      {"name":"Lager","style":"International Lager","abv":null,"pop":1,"aka":["Harp Lager"]}
+    ]},
+    {"id": "murphys", "name": "Murphy's Brewery", "brand": "Murphy's", "city": "Cork", "country": "IE", "type": "Beer", "items": [
+      ["Irish Stout","Irish Stout",4,1]
+    ]},
+    {"id": "newcastle", "name": "Newcastle Breweries", "brand": "Newcastle", "city": "Newcastle upon Tyne", "country": "GB", "type": "Beer", "items": [
+      {"name":"Brown Ale","style":"Brown Ale","abv":4.7,"pop":1,"aka":["Newcastle Brown Ale","Newky Brown"]}
+    ]},
+    {"id": "fullers", "name": "Fuller's Brewery", "brand": "Fuller's", "city": "London", "country": "GB", "type": "Beer", "items": [
+      ["London Pride","English Pale Ale",4.7,1]
+    ]},
+    {"id": "bass", "name": "Bass Brewery", "brand": "Bass", "city": "Burton upon Trent", "country": "GB", "type": "Beer", "items": [
+      {"name":"Pale Ale","style":"English Pale Ale","abv":5.1,"pop":1,"aka":["Bass Ale"]}
+    ]},
+    {"id": "samuel-smiths", "name": "Samuel Smith Old Brewery", "brand": "Samuel Smith's", "city": "Tadcaster", "country": "GB", "type": "Beer", "items": [
+      ["Nut Brown Ale","Brown Ale",5,1]
+    ]},
+    {"id": "brewdog", "name": "BrewDog", "brand": "BrewDog", "city": "Ellon", "country": "GB", "type": "Beer", "items": [
+      ["Punk IPA","IPA",5.4,1]
+    ]},
+    {"id": "peroni", "name": "Birra Peroni", "brand": "Peroni", "city": "Rome", "country": "IT", "type": "Beer", "items": [
+      {"name":"Nastro Azzurro","style":"International Lager","abv":5,"pop":2,"aka":["Peroni"]}
+    ]},
+    {"id": "moretti", "name": "Birra Moretti", "brand": "Moretti", "city": "Udine", "country": "IT", "type": "Beer", "items": [
+      {"name":"Birra Moretti","style":"International Lager","abv":4.6,"pop":1,"aka":["L'Autentica"]}
+    ]},
+    {"id": "asahi", "name": "Asahi Breweries", "brand": "Asahi", "city": "Tokyo", "country": "JP", "type": "Beer", "items": [
+      ["Super Dry","Japanese Rice Lager",5,2]
+    ]},
+    {"id": "sapporo", "name": "Sapporo Breweries", "brand": "Sapporo", "city": "Tokyo", "country": "JP", "type": "Beer", "items": [
+      {"name":"Premium","style":"Japanese Rice Lager","abv":4.9,"pop":2,"aka":["Sapporo Premium Beer"]}
+    ]},
+    {"id": "kirin", "name": "Kirin Brewery Co.", "brand": "Kirin", "city": "Tokyo", "country": "JP", "type": "Beer", "items": [
+      ["Ichiban","International Lager",5,1]
+    ]},
+    {"id": "tsingtao", "name": "Tsingtao Brewery", "brand": "Tsingtao", "city": "Qingdao", "country": "CN", "type": "Beer", "items": [
+      ["Tsingtao","International Lager",4.7,1]
+    ]},
+    {"id": "singha", "name": "Boon Rawd Brewery", "brand": "Singha", "city": "Bangkok", "country": "TH", "type": "Beer", "items": [
+      ["Singha","International Lager",5,1]
+    ]},
+    {"id": "red-stripe", "name": "Desnoes & Geddes", "brand": "Red Stripe", "city": "Kingston", "country": "JM", "type": "Beer", "items": [
+      ["Red Stripe","International Lager",4.7,1]
+    ]},
+    {"id": "labatt", "name": "Labatt Brewing Co.", "brand": "Labatt", "city": "London", "state": "ON", "country": "CA", "type": "Beer", "items": [
+      ["Labatt Blue","International Lager",5,2],
+      ["Labatt Blue Light","American Light Lager",4,2]
+    ]},
+    {"id": "molson", "name": "Molson Coors Canada", "brand": "Molson", "city": "Montreal", "state": "QC", "country": "CA", "type": "Beer", "items": [
+      ["Molson Canadian","International Lager",5,1]
+    ]},
+    {"id": "moosehead", "name": "Moosehead Breweries", "brand": "Moosehead", "city": "Saint John", "state": "NB", "country": "CA", "type": "Beer", "items": [
+      {"name":"Lager","style":"International Lager","abv":5,"pop":1,"aka":["Moosehead Lager"]}
+    ]},
+    {"id": "unibroue", "name": "Unibroue", "brand": "Unibroue", "city": "Chambly", "state": "QC", "country": "CA", "type": "Beer", "items": [
+      ["La Fin du Monde","Tripel",9,1],
+      ["Blanche de Chambly","Witbier",5,1]
+    ]},
+    {"id": "coopers", "name": "Coopers Brewery", "brand": "Coopers", "city": "Adelaide", "country": "AU", "type": "Beer", "items": [
+      ["Sparkling Ale","Pale Ale",5.8,1]
+    ]},
+    {"id": "san-miguel", "name": "San Miguel Brewery", "brand": "San Miguel", "city": "Mandaluyong", "country": "PH", "type": "Beer", "items": [
+      ["Pale Pilsen","Pilsner",5,1]
+    ]},
+    {"id": "presidente", "name": "Cervecería Nacional Dominicana", "brand": "Presidente", "city": "Santo Domingo", "country": "DO", "type": "Beer", "items": [
+      ["Presidente","International Lager",5,1]
+    ]},
+    {"id": "athletic-brewing", "name": "Athletic Brewing Co.", "brand": "Athletic Brewing", "city": "Milford", "state": "CT", "country": "US", "type": "Beer", "lat": 41.2457, "lng": -73.0045, "kind": "large", "items": [
+      ["Run Wild IPA","Non-Alcoholic IPA",0.5,2],
+      ["Upside Dawn Golden","Non-Alcoholic Golden",0.5,2],
+      ["Free Wave Hazy IPA","Non-Alcoholic IPA",0.5,1],
+      ["Athletic Lite","Non-Alcoholic Lager",0.5,1],
+      ["Cerveza Atlética","Non-Alcoholic Lager",0.5,1],
+      ["All Out Stout","Non-Alcoholic Stout",0.5,1]
+    ]},
+    {"id": "odouls", "name": "Anheuser-Busch", "brand": "O'Doul's", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.5955, "lng": -90.2119, "kind": "large", "items": [
+      ["O'Doul's","Non-Alcoholic Lager",0.5,1]
+    ]},
+    {"id": "clausthaler", "name": "Binding-Brauerei", "brand": "Clausthaler", "city": "Frankfurt", "country": "DE", "type": "Beer", "items": [
+      ["Original","Non-Alcoholic Lager",0.5,1]
+    ]},
+    {"id": "angry-orchard", "name": "Angry Orchard Cider Co.", "brand": "Angry Orchard", "city": "Walden", "state": "NY", "country": "US", "type": "Cider", "lat": 41.5612, "lng": -74.1885, "approx": true, "items": [
+      ["Crisp Apple","Cider",5,2],
+      ["Rosé","Rosé Cider",5.5,2],
+      ["Green Apple","Cider",5,1]
+    ]},
+    {"id": "downeast", "name": "Downeast Cider House", "brand": "Downeast", "city": "Boston", "state": "MA", "country": "US", "type": "Cider", "lat": 42.3584, "lng": -71.0598, "approx": true, "items": [
+      ["Original Blend","Cider",5.1,1],
+      ["Cranberry Blend","Fruit Cider",null,1]
+    ]},
+    {"id": "bold-rock", "name": "Bold Rock Hard Cider", "brand": "Bold Rock", "city": "Nellysford", "state": "VA", "country": "US", "type": "Cider", "lat": 37.8904, "lng": -78.8722, "approx": true, "items": [
+      ["Virginia Apple","Cider",null,1]
+    ]},
+    {"id": "austin-eastciders", "name": "Austin Eastciders", "brand": "Austin Eastciders", "city": "Austin", "state": "TX", "country": "US", "type": "Cider", "lat": 30.2672, "lng": -97.7431, "approx": true, "items": [
+      ["Original Dry","Cider",5,1],
+      ["Blood Orange","Fruit Cider",5,1]
+    ]},
+    {"id": "woodchuck", "name": "Woodchuck Hard Cider", "brand": "Woodchuck", "city": "Middlebury", "state": "VT", "country": "US", "type": "Cider", "lat": 44.0155, "lng": -73.1694, "approx": true, "items": [
+      ["Amber","Cider",5,1]
+    ]},
+    {"id": "blakes", "name": "Blake's Hard Cider Co.", "brand": "Blake's", "city": "Armada", "state": "MI", "country": "US", "type": "Cider", "lat": 42.8442, "lng": -82.8844, "approx": true, "items": [
+      ["El Chavo","Fruit Cider",6.5,1],
+      ["Triple Jam","Fruit Cider",6.5,1]
+    ]},
+    {"id": "ace", "name": "ACE Cider", "brand": "ACE", "city": "Sebastopol", "state": "CA", "country": "US", "type": "Cider", "lat": 38.4021, "lng": -122.8239, "approx": true, "items": [
+      ["Pineapple","Fruit Cider",5,1],
+      ["Perry","Perry",5,1]
+    ]},
+    {"id": "two-towns", "name": "2 Towns Ciderhouse", "brand": "2 Towns", "city": "Corvallis", "state": "OR", "country": "US", "type": "Cider", "lat": 44.5646, "lng": -123.262, "approx": true, "items": [
+      ["Bright Cider","Cider",null,1]
+    ]},
+    {"id": "strongbow", "name": "H.P. Bulmer", "brand": "Strongbow", "city": "Hereford", "country": "GB", "type": "Cider", "items": [
+      {"name":"Original","style":"Cider","abv":null,"pop":1,"aka":["Strongbow Original"]}
+    ]},
+    {"id": "magners", "name": "Magners Irish Cider", "brand": "Magners", "city": "Clonmel", "country": "IE", "type": "Cider", "items": [
+      {"name":"Original","style":"Cider","abv":4.5,"pop":1,"aka":["Bulmers"]}
+    ]},
+    {"id": "white-claw", "name": "Mark Anthony Brands", "brand": "White Claw", "city": "Chicago", "state": "IL", "country": "US", "type": "Ready-to-Drink", "lat": 41.85, "lng": -87.65, "approx": true, "items": [
+      ["Black Cherry","Hard Seltzer",5,3],
+      ["Mango","Hard Seltzer",5,2],
+      ["Natural Lime","Hard Seltzer",5,2],
+      ["Ruby Grapefruit","Hard Seltzer",5,2],
+      ["Raspberry","Hard Seltzer",5,2],
+      ["Watermelon","Hard Seltzer",5,1],
+      ["Lemon","Hard Seltzer",5,1],
+      ["Pineapple","Hard Seltzer",5,1]
+    ]},
+    {"id": "truly", "name": "The Boston Beer Co.", "brand": "Truly", "city": "Boston", "state": "MA", "country": "US", "type": "Ready-to-Drink", "lat": 42.3584, "lng": -71.0598, "approx": true, "items": [
+      ["Wild Berry","Hard Seltzer",5,2],
+      ["Black Cherry","Hard Seltzer",5,2],
+      ["Lime","Hard Seltzer",5,1],
+      ["Pineapple","Hard Seltzer",5,1],
+      ["Strawberry Lemonade","Hard Seltzer",5,1]
+    ]},
+    {"id": "high-noon", "name": "High Noon Spirits Co.", "brand": "High Noon", "city": "Modesto", "state": "CA", "country": "US", "type": "Ready-to-Drink", "lat": 37.6391, "lng": -120.9969, "approx": true, "items": [
+      ["Peach","Hard Seltzer",4.5,2],
+      ["Pineapple","Hard Seltzer",4.5,2],
+      ["Watermelon","Hard Seltzer",4.5,2],
+      ["Black Cherry","Hard Seltzer",4.5,2],
+      ["Grapefruit","Hard Seltzer",4.5,1],
+      ["Lime","Hard Seltzer",4.5,1],
+      ["Tequila Lime","Hard Seltzer",4.5,1]
+    ]},
+    {"id": "topo-chico-hard-seltzer", "name": "Molson Coors Beverage Co.", "brand": "Topo Chico Hard Seltzer", "city": "Golden", "state": "CO", "country": "US", "type": "Ready-to-Drink", "lat": 39.7555, "lng": -105.2211, "approx": true, "items": [
+      ["Tangy Lemon Lime","Hard Seltzer",4.7,1],
+      ["Strawberry Guava","Hard Seltzer",4.7,1]
+    ]},
+    {"id": "twisted-tea", "name": "The Boston Beer Co.", "brand": "Twisted Tea", "city": "Boston", "state": "MA", "country": "US", "type": "Ready-to-Drink", "lat": 42.3584, "lng": -71.0598, "approx": true, "items": [
+      ["Original","Hard Tea",5,3],
+      ["Half & Half","Hard Tea",5,2],
+      ["Light","Hard Tea",4,1],
+      ["Peach","Hard Tea",5,1],
+      ["Raspberry","Hard Tea",5,1]
+    ]},
+    {"id": "mikes", "name": "Mike's Hard Lemonade Co.", "brand": "Mike's", "city": "Chicago", "state": "IL", "country": "US", "type": "Ready-to-Drink", "lat": 41.85, "lng": -87.65, "approx": true, "items": [
+      ["Hard Lemonade","Hard Lemonade",5,2],
+      ["Black Cherry Lemonade","Hard Lemonade",5,1],
+      ["Harder Lemonade","Hard Lemonade",8,1]
+    ]},
+    {"id": "simply-spiked", "name": "Molson Coors Beverage Co.", "brand": "Simply Spiked", "city": "Golden", "state": "CO", "country": "US", "type": "Ready-to-Drink", "lat": 39.7555, "lng": -105.2211, "approx": true, "items": [
+      ["Lemonade","Hard Lemonade",5,2],
+      ["Strawberry Lemonade","Hard Lemonade",5,1]
+    ]},
+    {"id": "sun-cruiser", "name": "The Boston Beer Co.", "brand": "Sun Cruiser", "city": "Boston", "state": "MA", "country": "US", "type": "Ready-to-Drink", "lat": 42.3584, "lng": -71.0598, "approx": true, "items": [
+      ["Iced Tea & Vodka","Hard Tea",4.5,1]
+    ]},
+    {"id": "surfside", "name": "Stateside Vodka", "brand": "Surfside", "city": "Philadelphia", "state": "PA", "country": "US", "type": "Ready-to-Drink", "lat": 39.9524, "lng": -75.1636, "approx": true, "items": [
+      ["Iced Tea + Vodka","Hard Tea",4.5,2],
+      ["Lemonade + Vodka","Hard Lemonade",4.5,1],
+      ["Half & Half","Hard Tea",4.5,1]
+    ]},
+    {"id": "smirnoff-ice", "name": "Diageo", "brand": "Smirnoff Ice", "city": "London", "country": "GB", "type": "Ready-to-Drink", "items": [
+      ["Original","Malt Beverage",4.5,2],
+      ["Red, White & Berry","Malt Beverage",4.5,1]
+    ]},
+    {"id": "jack-daniels-rtd", "name": "Jack Daniel Distillery", "brand": "Jack Daniel's", "city": "Lynchburg", "state": "TN", "country": "US", "type": "Ready-to-Drink", "lat": 35.2831, "lng": -86.3742, "approx": true, "items": [
+      ["Jack Daniel's & Coca-Cola","Canned Cocktail",7,2],
+      ["Jack Daniel's & Coca-Cola Zero Sugar","Canned Cocktail",7,1]
+    ]},
+    {"id": "buzzballz", "name": "BuzzBallz", "brand": "BuzzBallz", "city": "Carrollton", "state": "TX", "country": "US", "type": "Ready-to-Drink", "lat": 32.9537, "lng": -96.8903, "approx": true, "items": [
+      {"name":"Strawberry 'Rita","style":"Canned Cocktail","abv":null,"pop":1,"size":"200 ml"},
+      {"name":"Lotta Lime","style":"Canned Cocktail","abv":null,"pop":1,"size":"200 ml"}
+    ]},
+    {"id": "four-loko", "name": "Phusion Projects", "brand": "Four Loko", "city": "Chicago", "state": "IL", "country": "US", "type": "Ready-to-Drink", "lat": 41.85, "lng": -87.65, "approx": true, "items": [
+      {"name":"Gold","style":"Malt Beverage","abv":null,"pop":1,"size":"23.5 fl oz"},
+      {"name":"Watermelon","style":"Malt Beverage","abv":null,"pop":1,"size":"23.5 fl oz"}
+    ]},
+    {"id": "seagrams-escapes", "name": "FIFCO USA", "brand": "Seagram's Escapes", "city": "Rochester", "state": "NY", "country": "US", "type": "Ready-to-Drink", "lat": 43.1548, "lng": -77.6156, "approx": true, "items": [
+      ["Jamaican Me Happy","Malt Beverage",3.2,2],
+      ["Calypso Colada","Malt Beverage",3.2,1],
+      ["Strawberry Daiquiri","Malt Beverage",3.2,1]
+    ]},
+    {"id": "ritas", "name": "Anheuser-Busch", "brand": "Ritas", "city": "St. Louis", "state": "MO", "country": "US", "type": "Ready-to-Drink", "lat": 38.6273, "lng": -90.1979, "approx": true, "items": [
+      {"name":"Lime-A-Rita","style":"Malt Beverage","abv":8,"pop":2,"aka":["Bud Light Lime-A-Rita"]},
+      ["Straw-Ber-Rita","Malt Beverage",8,1]
+    ]},
+    {"id": "cutwater", "name": "Cutwater Spirits", "brand": "Cutwater", "city": "San Diego", "state": "CA", "country": "US", "type": "Ready-to-Drink", "lat": 32.7157, "lng": -117.1647, "approx": true, "items": [
+      ["Lime Margarita","Canned Cocktail",12.5,1],
+      ["Tiki Rum Mai Tai","Canned Cocktail",12.5,1],
+      ["Vodka Mule","Canned Cocktail",null,1]
+    ]},
+    {"id": "arnold-palmer-spiked", "name": "Molson Coors Beverage Co.", "brand": "Arnold Palmer Spiked", "city": "Golden", "state": "CO", "country": "US", "type": "Ready-to-Drink", "lat": 39.7555, "lng": -105.2211, "approx": true, "items": [
+      ["Half & Half","Hard Tea",5,1]
+    ]},
+    {"id": "beatbox", "name": "BeatBox Beverages", "brand": "BeatBox", "city": "Austin", "state": "TX", "country": "US", "type": "Ready-to-Drink", "lat": 30.2672, "lng": -97.7431, "approx": true, "items": [
+      {"name":"Blue Razzberry","style":"Canned Cocktail","abv":null,"pop":1,"size":"500 ml"}
+    ]},
+    {"id": "kendall-jackson", "name": "Kendall-Jackson Wine Estates", "brand": "Kendall-Jackson", "city": "Santa Rosa", "state": "CA", "country": "US", "type": "Wine", "lat": 38.4405, "lng": -122.7144, "approx": true, "items": [
+      ["Vintner's Reserve Chardonnay","Chardonnay",null,2],
+      ["Vintner's Reserve Cabernet Sauvignon","Cabernet Sauvignon",null,1]
+    ]},
+    {"id": "la-crema", "name": "La Crema Winery", "brand": "La Crema", "city": "Windsor", "state": "CA", "country": "US", "type": "Wine", "lat": 38.5471, "lng": -122.8164, "approx": true, "items": [
+      ["Sonoma Coast Pinot Noir","Pinot Noir",null,1],
+      ["Sonoma Coast Chardonnay","Chardonnay",null,1]
+    ]},
+    {"id": "josh-cellars", "name": "Josh Cellars", "brand": "Josh Cellars", "city": "Napa", "state": "CA", "country": "US", "type": "Wine", "lat": 38.2971, "lng": -122.2855, "approx": true, "items": [
+      ["Cabernet Sauvignon","Cabernet Sauvignon",null,2],
+      ["Chardonnay","Chardonnay",null,1]
+    ]},
+    {"id": "bogle", "name": "Bogle Family Vineyards", "brand": "Bogle", "city": "Clarksburg", "state": "CA", "country": "US", "type": "Wine", "lat": 38.4205, "lng": -121.5272, "approx": true, "items": [
+      ["Old Vine Zinfandel","Zinfandel",null,1],
+      ["Essential Red","Red Blend",null,1],
+      ["Chardonnay","Chardonnay",null,1]
+    ]},
+    {"id": "barefoot", "name": "E. & J. Gallo Winery", "brand": "Barefoot", "city": "Modesto", "state": "CA", "country": "US", "type": "Wine", "lat": 37.6391, "lng": -120.9969, "approx": true, "items": [
+      ["Moscato","Moscato",null,2],
+      ["Pinot Grigio","Pinot Grigio",null,2],
+      ["Cabernet Sauvignon","Cabernet Sauvignon",null,1]
+    ]},
+    {"id": "apothic", "name": "E. & J. Gallo Winery", "brand": "Apothic", "city": "Modesto", "state": "CA", "country": "US", "type": "Wine", "lat": 37.6391, "lng": -120.9969, "approx": true, "items": [
+      ["Red","Red Blend",null,2]
+    ]},
+    {"id": "woodbridge", "name": "Woodbridge Winery", "brand": "Woodbridge", "city": "Acampo", "state": "CA", "country": "US", "type": "Wine", "lat": 38.1746, "lng": -121.2786, "approx": true, "items": [
+      ["Chardonnay","Chardonnay",null,1]
+    ]},
+    {"id": "sutter-home", "name": "Sutter Home Family Vineyards", "brand": "Sutter Home", "city": "St. Helena", "state": "CA", "country": "US", "type": "Wine", "lat": 38.5052, "lng": -122.4703, "approx": true, "items": [
+      {"name":"White Zinfandel","style":"Rosé","abv":null,"pop":2,"aka":["White Zin"]},
+      ["Moscato","Moscato",null,1]
+    ]},
+    {"id": "bota-box", "name": "Delicato Family Wines", "brand": "Bota Box", "city": "Manteca", "state": "CA", "country": "US", "type": "Wine", "lat": 37.7974, "lng": -121.216, "approx": true, "items": [
+      {"name":"Cabernet Sauvignon","style":"Cabernet Sauvignon","abv":null,"pop":1,"size":"3 L"},
+      {"name":"Pinot Grigio","style":"Pinot Grigio","abv":null,"pop":1,"size":"3 L"}
+    ]},
+    {"id": "austin-hope", "name": "Hope Family Wines", "brand": "Austin Hope", "city": "Paso Robles", "state": "CA", "country": "US", "type": "Wine", "lat": 35.6266, "lng": -120.691, "approx": true, "items": [
+      ["Cabernet Sauvignon","Cabernet Sauvignon",null,1]
+    ]},
+    {"id": "caymus", "name": "Caymus Vineyards", "brand": "Caymus", "city": "Rutherford", "state": "CA", "country": "US", "type": "Wine", "lat": 38.4597, "lng": -122.4246, "approx": true, "items": [
+      ["Cabernet Sauvignon","Cabernet Sauvignon",null,1]
+    ]},
+    {"id": "the-prisoner", "name": "The Prisoner Wine Co.", "brand": "The Prisoner", "city": "St. Helena", "state": "CA", "country": "US", "type": "Wine", "lat": 38.5052, "lng": -122.4703, "approx": true, "items": [
+      ["The Prisoner Red Blend","Red Blend",null,1]
+    ]},
+    {"id": "korbel", "name": "Korbel Champagne Cellars", "brand": "Korbel", "city": "Guerneville", "state": "CA", "country": "US", "type": "Wine", "lat": 38.5019, "lng": -122.9961, "approx": true, "items": [
+      ["Brut","Sparkling Wine",null,1]
+    ]},
+    {"id": "chandon", "name": "Domaine Chandon", "brand": "Chandon", "city": "Yountville", "state": "CA", "country": "US", "type": "Wine", "lat": 38.4016, "lng": -122.3608, "approx": true, "items": [
+      ["Brut","Sparkling Wine",null,1]
+    ]},
+    {"id": "stella-rosa", "name": "San Antonio Winery", "brand": "Stella Rosa", "city": "Los Angeles", "state": "CA", "country": "US", "type": "Wine", "lat": 34.0522, "lng": -118.2437, "approx": true, "items": [
+      ["Black","Red Blend",null,1]
+    ]},
+    {"id": "chateau-ste-michelle", "name": "Chateau Ste. Michelle", "brand": "Chateau Ste. Michelle", "city": "Woodinville", "state": "WA", "country": "US", "type": "Wine", "lat": 47.7543, "lng": -122.1635, "approx": true, "items": [
+      ["Riesling","Riesling",null,1],
+      ["Chardonnay","Chardonnay",null,1]
+    ]},
+    {"id": "kim-crawford", "name": "Kim Crawford Wines", "brand": "Kim Crawford", "city": "Blenheim", "country": "NZ", "type": "Wine", "items": [
+      ["Sauvignon Blanc","Sauvignon Blanc",null,2]
+    ]},
+    {"id": "oyster-bay", "name": "Oyster Bay Wines", "brand": "Oyster Bay", "city": "Blenheim", "country": "NZ", "type": "Wine", "items": [
+      ["Sauvignon Blanc","Sauvignon Blanc",null,1]
+    ]},
+    {"id": "santa-margherita", "name": "Santa Margherita", "brand": "Santa Margherita", "city": "Fossalta di Portogruaro", "country": "IT", "type": "Wine", "items": [
+      ["Pinot Grigio","Pinot Grigio",null,2]
+    ]},
+    {"id": "la-marca", "name": "La Marca Vini e Spumanti", "brand": "La Marca", "city": "Oderzo", "country": "IT", "type": "Wine", "items": [
+      ["Prosecco","Prosecco",null,2]
+    ]},
+    {"id": "mionetto", "name": "Mionetto", "brand": "Mionetto", "city": "Valdobbiadene", "country": "IT", "type": "Wine", "items": [
+      ["Prosecco Brut","Prosecco",null,1]
+    ]},
+    {"id": "whispering-angel", "name": "Château d'Esclans", "brand": "Whispering Angel", "city": "La Motte", "country": "FR", "type": "Wine", "items": [
+      ["Rosé","Rosé",null,2]
+    ]},
+    {"id": "veuve-clicquot", "name": "Veuve Clicquot Ponsardin", "brand": "Veuve Clicquot", "city": "Reims", "country": "FR", "type": "Wine", "items": [
+      {"name":"Yellow Label Brut","style":"Champagne","abv":null,"pop":1,"aka":["Veuve"]}
+    ]},
+    {"id": "moet-chandon", "name": "Moët & Chandon", "brand": "Moët & Chandon", "city": "Épernay", "country": "FR", "type": "Wine", "items": [
+      {"name":"Impérial Brut","style":"Champagne","abv":null,"pop":1,"aka":["Moët"]}
+    ]},
+    {"id": "yellow-tail", "name": "Casella Family Brands", "brand": "Yellow Tail", "city": "Yenda", "country": "AU", "type": "Wine", "items": [
+      ["Chardonnay","Chardonnay",null,1],
+      ["Moscato","Moscato",null,1]
+    ]},
+    {"id": "19-crimes", "name": "Treasury Wine Estates", "brand": "19 Crimes", "city": "Melbourne", "country": "AU", "type": "Wine", "items": [
+      ["Red Blend","Red Blend",null,1],
+      ["Snoop Cali Red","Red Blend",null,1]
+    ]},
+    {"id": "coca-cola", "name": "The Coca-Cola Company", "brand": "Coca-Cola", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      {"name":"Coca-Cola","style":"Cola","abv":null,"pop":3,"aka":["Coke","Coca-Cola Classic"]},
+      ["Diet Coke","Diet Cola",null,3],
+      {"name":"Coca-Cola Zero Sugar","style":"Diet Cola","abv":null,"pop":3,"aka":["Coke Zero"]},
+      {"name":"Cherry Coke","style":"Cola","abv":null,"pop":2,"aka":["Coca-Cola Cherry"]}
+    ]},
+    {"id": "sprite", "name": "The Coca-Cola Company", "brand": "Sprite", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Sprite","Lemon-Lime",null,3],
+      ["Sprite Zero Sugar","Lemon-Lime",null,2]
+    ]},
+    {"id": "fanta", "name": "The Coca-Cola Company", "brand": "Fanta", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Orange","Orange Soda",null,2]
+    ]},
+    {"id": "barqs", "name": "The Coca-Cola Company", "brand": "Barq's", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Root Beer","Root Beer",null,2]
+    ]},
+    {"id": "minute-maid", "name": "The Coca-Cola Company", "brand": "Minute Maid", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Lemonade","Lemonade",null,2]
+    ]},
+    {"id": "simply", "name": "The Coca-Cola Company", "brand": "Simply", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      {"name":"Lemonade","style":"Lemonade","abv":null,"pop":2,"aka":["Simply Lemonade"]},
+      {"name":"Orange","style":"Juice","abv":null,"pop":2,"aka":["Simply Orange"]}
+    ]},
+    {"id": "gold-peak", "name": "The Coca-Cola Company", "brand": "Gold Peak", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Sweet Tea","Iced Tea",null,2]
+    ]},
+    {"id": "powerade", "name": "The Coca-Cola Company", "brand": "Powerade", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Mountain Berry Blast","Sports Drink",null,2]
+    ]},
+    {"id": "bodyarmor", "name": "The Coca-Cola Company", "brand": "BodyArmor", "city": "Atlanta", "state": "GA", "country": "US", "type": "Soft Drink", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Strawberry Banana","Sports Drink",null,2]
+    ]},
+    {"id": "pepsi", "name": "PepsiCo", "brand": "Pepsi", "city": "Purchase", "state": "NY", "country": "US", "type": "Soft Drink", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      ["Pepsi","Cola",null,3],
+      ["Diet Pepsi","Diet Cola",null,2],
+      ["Pepsi Zero Sugar","Diet Cola",null,2]
+    ]},
+    {"id": "mountain-dew", "name": "PepsiCo", "brand": "Mountain Dew", "city": "Purchase", "state": "NY", "country": "US", "type": "Soft Drink", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      {"name":"Mountain Dew","style":"Citrus Soda","abv":null,"pop":3,"aka":["Mtn Dew"]},
+      ["Diet Mountain Dew","Citrus Soda",null,2],
+      ["Baja Blast","Citrus Soda",null,1]
+    ]},
+    {"id": "starry", "name": "PepsiCo", "brand": "Starry", "city": "Purchase", "state": "NY", "country": "US", "type": "Soft Drink", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      ["Starry","Lemon-Lime",null,2]
+    ]},
+    {"id": "brisk", "name": "Pepsi Lipton Tea Partnership", "brand": "Brisk", "city": "Purchase", "state": "NY", "country": "US", "type": "Soft Drink", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      ["Lemon Iced Tea","Iced Tea",null,2]
+    ]},
+    {"id": "pure-leaf", "name": "Pepsi Lipton Tea Partnership", "brand": "Pure Leaf", "city": "Purchase", "state": "NY", "country": "US", "type": "Soft Drink", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      ["Sweet Tea","Iced Tea",null,2]
+    ]},
+    {"id": "gatorade", "name": "The Gatorade Company (PepsiCo)", "brand": "Gatorade", "city": "Chicago", "state": "IL", "country": "US", "type": "Soft Drink", "lat": 41.85, "lng": -87.65, "approx": true, "items": [
+      ["Fruit Punch","Sports Drink",null,3],
+      ["Cool Blue","Sports Drink",null,2],
+      ["Lemon-Lime","Sports Drink",null,2]
+    ]},
+    {"id": "tropicana", "name": "Tropicana Brands Group", "brand": "Tropicana", "city": "Chicago", "state": "IL", "country": "US", "type": "Soft Drink", "lat": 41.85, "lng": -87.65, "approx": true, "items": [
+      ["Pure Premium Orange Juice","Juice",null,2]
+    ]},
+    {"id": "dr-pepper", "name": "Keurig Dr Pepper", "brand": "Dr Pepper", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["Dr Pepper","Pepper Soda",null,3],
+      ["Diet Dr Pepper","Pepper Soda",null,2],
+      ["Dr Pepper Zero Sugar","Pepper Soda",null,2]
+    ]},
+    {"id": "canada-dry", "name": "Keurig Dr Pepper", "brand": "Canada Dry", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["Ginger Ale","Ginger Ale",null,3],
+      ["Tonic Water","Tonic Water",null,1],
+      {"name":"Club Soda","style":"Club Soda","abv":null,"pop":1,"type":"Carbonated"}
+    ]},
+    {"id": "schweppes", "name": "Keurig Dr Pepper", "brand": "Schweppes", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["Tonic Water","Tonic Water",null,1]
+    ]},
+    {"id": "a-and-w", "name": "Keurig Dr Pepper", "brand": "A&W", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["Root Beer","Root Beer",null,2],
+      ["Cream Soda","Cream Soda",null,1]
+    ]},
+    {"id": "sunkist", "name": "Keurig Dr Pepper", "brand": "Sunkist", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["Orange","Orange Soda",null,2]
+    ]},
+    {"id": "7up", "name": "Keurig Dr Pepper", "brand": "7UP", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["7UP","Lemon-Lime",null,2]
+    ]},
+    {"id": "snapple", "name": "Keurig Dr Pepper", "brand": "Snapple", "city": "Frisco", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 33.1507, "lng": -96.8236, "approx": true, "items": [
+      ["Peach Tea","Iced Tea",null,2],
+      ["Mango Madness","Juice",null,1]
+    ]},
+    {"id": "vernors", "name": "Keurig Dr Pepper", "brand": "Vernors", "city": "Detroit", "state": "MI", "country": "US", "type": "Soft Drink", "lat": 42.3314, "lng": -83.0457, "approx": true, "items": [
+      ["Ginger Ale","Ginger Ale",null,1]
+    ]},
+    {"id": "red-bull", "name": "Red Bull GmbH", "brand": "Red Bull", "city": "Fuschl am See", "country": "AT", "type": "Soft Drink", "items": [
+      {"name":"Energy Drink","style":"Energy Drink","abv":null,"pop":3,"aka":["Red Bull Original"]},
+      ["Sugarfree","Energy Drink",null,2]
+    ]},
+    {"id": "monster", "name": "Monster Beverage Corp.", "brand": "Monster", "city": "Corona", "state": "CA", "country": "US", "type": "Soft Drink", "lat": 33.8753, "lng": -117.5664, "approx": true, "items": [
+      {"name":"Original","style":"Energy Drink","abv":null,"pop":3,"aka":["Monster Energy","Green Monster"]},
+      {"name":"Zero Ultra","style":"Energy Drink","abv":null,"pop":2,"aka":["White Monster"]}
+    ]},
+    {"id": "celsius", "name": "Celsius Holdings", "brand": "Celsius", "city": "Boca Raton", "state": "FL", "country": "US", "type": "Soft Drink", "lat": 26.3587, "lng": -80.0831, "approx": true, "items": [
+      ["Sparkling Orange","Energy Drink",null,2]
+    ]},
+    {"id": "olipop", "name": "Olipop", "brand": "Olipop", "city": "Oakland", "state": "CA", "country": "US", "type": "Soft Drink", "lat": 37.8044, "lng": -122.2708, "approx": true, "items": [
+      ["Vintage Cola","Prebiotic Soda",null,2],
+      ["Strawberry Vanilla","Prebiotic Soda",null,2]
+    ]},
+    {"id": "poppi", "name": "Poppi", "brand": "Poppi", "city": "Austin", "state": "TX", "country": "US", "type": "Soft Drink", "lat": 30.2672, "lng": -97.7431, "approx": true, "items": [
+      ["Strawberry Lemon","Prebiotic Soda",null,2]
+    ]},
+    {"id": "fever-tree", "name": "Fever-Tree", "brand": "Fever-Tree", "city": "London", "country": "GB", "type": "Soft Drink", "items": [
+      ["Indian Tonic Water","Tonic Water",null,1],
+      ["Ginger Beer","Ginger Beer",null,1]
+    ]},
+    {"id": "ocean-spray", "name": "Ocean Spray Cranberries", "brand": "Ocean Spray", "city": "Lakeville", "state": "MA", "country": "US", "type": "Soft Drink", "lat": 41.8459, "lng": -70.9495, "approx": true, "items": [
+      ["Cranberry Juice Cocktail","Juice",null,2]
+    ]},
+    {"id": "arizona", "name": "AriZona Beverages", "brand": "AriZona", "city": "Woodbury", "state": "NY", "country": "US", "type": "Soft Drink", "lat": 40.8257, "lng": -73.4676, "approx": true, "items": [
+      {"name":"Green Tea","style":"Iced Tea","abv":null,"pop":2,"aka":["Green Tea with Ginseng and Honey"]},
+      {"name":"Arnold Palmer Half & Half","style":"Iced Tea","abv":null,"pop":2,"aka":["Arnold Palmer"]}
+    ]},
+    {"id": "gts", "name": "GT's Living Foods", "brand": "GT's", "city": "Los Angeles", "state": "CA", "country": "US", "type": "Soft Drink", "lat": 34.0522, "lng": -118.2437, "approx": true, "items": [
+      ["Synergy Trilogy","Kombucha",null,2],
+      ["Synergy Gingerade","Kombucha",null,1]
+    ]},
+    {"id": "starbucks", "name": "North American Coffee Partnership", "brand": "Starbucks", "city": "Seattle", "state": "WA", "country": "US", "type": "Soft Drink", "lat": 47.6062, "lng": -122.3321, "approx": true, "items": [
+      ["Frappuccino Mocha","Cold Brew Coffee",null,2]
+    ]},
+    {"id": "la-colombe", "name": "La Colombe Coffee Roasters", "brand": "La Colombe", "city": "Philadelphia", "state": "PA", "country": "US", "type": "Soft Drink", "lat": 39.9524, "lng": -75.1636, "approx": true, "items": [
+      ["Draft Latte","Cold Brew Coffee",null,1]
+    ]},
+    {"id": "sprecher", "name": "Sprecher Brewing Co.", "brand": "Sprecher", "city": "Glendale", "state": "WI", "country": "US", "type": "Soft Drink", "lat": 43.1353, "lng": -87.9356, "approx": true, "items": [
+      ["Root Beer","Root Beer",null,1]
+    ]},
+    {"id": "jarritos", "name": "Jarritos", "brand": "Jarritos", "city": "Mexico City", "country": "MX", "type": "Soft Drink", "items": [
+      ["Mandarin","Orange Soda",null,1]
+    ]},
+    {"id": "lacroix", "name": "National Beverage Corp.", "brand": "LaCroix", "city": "Fort Lauderdale", "state": "FL", "country": "US", "type": "Carbonated", "lat": 26.1223, "lng": -80.1434, "approx": true, "items": [
+      ["Pure","Sparkling Water",null,2],
+      ["Pamplemousse","Flavored Seltzer",null,2],
+      ["Lime","Flavored Seltzer",null,2],
+      ["Lemon","Flavored Seltzer",null,1],
+      ["Passionfruit","Flavored Seltzer",null,1],
+      ["Coconut","Flavored Seltzer",null,1]
+    ]},
+    {"id": "bubly", "name": "PepsiCo", "brand": "bubly", "city": "Purchase", "state": "NY", "country": "US", "type": "Carbonated", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      ["Lime","Flavored Seltzer",null,2],
+      ["Blackberry","Flavored Seltzer",null,1]
+    ]},
+    {"id": "spindrift", "name": "Spindrift Beverage Co.", "brand": "Spindrift", "city": "Newton", "state": "MA", "country": "US", "type": "Carbonated", "lat": 42.337, "lng": -71.2092, "approx": true, "items": [
+      ["Grapefruit","Flavored Seltzer",null,2],
+      ["Raspberry Lime","Flavored Seltzer",null,1],
+      ["Lemon","Flavored Seltzer",null,1]
+    ]},
+    {"id": "polar", "name": "Polar Beverages", "brand": "Polar", "city": "Worcester", "state": "MA", "country": "US", "type": "Carbonated", "lat": 42.2626, "lng": -71.8023, "approx": true, "items": [
+      ["Original Seltzer","Sparkling Water",null,1],
+      ["Orange Vanilla","Flavored Seltzer",null,1]
+    ]},
+    {"id": "topo-chico", "name": "Topo Chico (The Coca-Cola Company)", "brand": "Topo Chico", "city": "Monterrey", "country": "MX", "type": "Carbonated", "items": [
+      {"name":"Mineral Water","style":"Mineral Water","abv":null,"pop":2,"aka":["Topo Chico"]},
+      ["Twist of Lime","Mineral Water",null,1]
+    ]},
+    {"id": "perrier", "name": "Perrier (Nestlé Waters)", "brand": "Perrier", "city": "Vergèze", "country": "FR", "type": "Carbonated", "items": [
+      ["Original","Mineral Water",null,2]
+    ]},
+    {"id": "san-pellegrino", "name": "Sanpellegrino S.p.A.", "brand": "San Pellegrino", "city": "San Pellegrino Terme", "country": "IT", "type": "Carbonated", "items": [
+      {"name":"Sparkling Mineral Water","style":"Mineral Water","abv":null,"pop":2,"aka":["S.Pellegrino"]},
+      {"name":"Aranciata","style":"Orange Soda","abv":null,"pop":1,"type":"Soft Drink"},
+      {"name":"Limonata","style":"Citrus Soda","abv":null,"pop":1,"type":"Soft Drink"}
+    ]},
+    {"id": "waterloo", "name": "Waterloo Sparkling Water", "brand": "Waterloo", "city": "Austin", "state": "TX", "country": "US", "type": "Carbonated", "lat": 30.2672, "lng": -97.7431, "approx": true, "items": [
+      ["Grape","Flavored Seltzer",null,1]
+    ]},
+    {"id": "aha", "name": "The Coca-Cola Company", "brand": "AHA", "city": "Atlanta", "state": "GA", "country": "US", "type": "Carbonated", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Lime + Watermelon","Flavored Seltzer",null,1]
+    ]},
+    {"id": "sparkling-ice", "name": "Talking Rain Beverage Co.", "brand": "Sparkling Ice", "city": "Preston", "state": "WA", "country": "US", "type": "Carbonated", "lat": 47.5237, "lng": -121.9271, "approx": true, "items": [
+      ["Black Raspberry","Flavored Seltzer",null,2],
+      ["Kiwi Strawberry","Flavored Seltzer",null,1]
+    ]},
+    {"id": "liquid-death", "name": "Liquid Death", "brand": "Liquid Death", "city": "Santa Monica", "state": "CA", "country": "US", "type": "Water", "lat": 34.0195, "lng": -118.4914, "approx": true, "items": [
+      ["Mountain Water","Spring Water",null,1],
+      {"name":"Sparkling Water","style":"Sparkling Water","abv":null,"pop":1,"type":"Carbonated"}
+    ]},
+    {"id": "poland-spring", "name": "Primo Brands", "brand": "Poland Spring", "city": "Poland", "state": "ME", "country": "US", "type": "Water", "lat": 44.0606, "lng": -70.3937, "approx": true, "items": [
+      ["Spring Water","Spring Water",null,2]
+    ]},
+    {"id": "deer-park", "name": "Primo Brands", "brand": "Deer Park", "city": "Deer Park", "state": "MD", "country": "US", "type": "Water", "lat": 39.4237, "lng": -79.325, "approx": true, "items": [
+      ["Spring Water","Spring Water",null,2]
+    ]},
+    {"id": "fiji", "name": "FIJI Water", "brand": "FIJI", "city": "Yaqara", "country": "FJ", "type": "Water", "items": [
+      {"name":"Natural Artesian Water","style":"Spring Water","abv":null,"pop":2,"aka":["Fiji Water"]}
+    ]},
+    {"id": "smartwater", "name": "The Coca-Cola Company", "brand": "Smartwater", "city": "Atlanta", "state": "GA", "country": "US", "type": "Water", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Smartwater","Purified Water",null,2]
+    ]},
+    {"id": "dasani", "name": "The Coca-Cola Company", "brand": "Dasani", "city": "Atlanta", "state": "GA", "country": "US", "type": "Water", "lat": 33.749, "lng": -84.388, "approx": true, "items": [
+      ["Dasani","Purified Water",null,2]
+    ]},
+    {"id": "aquafina", "name": "PepsiCo", "brand": "Aquafina", "city": "Purchase", "state": "NY", "country": "US", "type": "Water", "lat": 41.0409, "lng": -73.7146, "approx": true, "items": [
+      ["Aquafina","Purified Water",null,2]
+    ]},
+    {"id": "essentia", "name": "Essentia Water", "brand": "Essentia", "city": "Bothell", "state": "WA", "country": "US", "type": "Water", "lat": 47.7623, "lng": -122.2054, "approx": true, "items": [
+      ["Ionized Alkaline Water","Alkaline Water",null,1]
+    ]},
+    {"id": "titos", "name": "Fifth Generation Inc.", "brand": "Tito's", "city": "Austin", "state": "TX", "country": "US", "type": "Spirits", "lat": 30.2672, "lng": -97.7431, "approx": true, "items": [
+      ["Handmade Vodka","Vodka",40,2]
+    ]},
+    {"id": "patron", "name": "Patrón Spirits", "brand": "Patrón", "city": "Atotonilco el Alto", "country": "MX", "type": "Spirits", "items": [
+      ["Silver","Tequila",40,1]
+    ]},
+    {"id": "fireball", "name": "Sazerac Company", "brand": "Fireball", "city": "New Orleans", "state": "LA", "country": "US", "type": "Spirits", "lat": 29.9547, "lng": -90.0751, "approx": true, "items": [
+      ["Cinnamon Whisky","Whiskey",33,2]
+    ]},
+    {"id": "jagermeister", "name": "Mast-Jägermeister", "brand": "Jägermeister", "city": "Wolfenbüttel", "country": "DE", "type": "Spirits", "items": [
+      ["Jägermeister","Liqueur",35,1]
+    ]},
+    {"id": "pallini", "name": "Pallini", "brand": "Pallini", "city": "Rome", "country": "IT", "type": "Spirits", "items": [
+      ["Limoncello","Liqueur",26,1]
+    ]}
+  ]
+}
