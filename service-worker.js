@@ -2,7 +2,7 @@
 // - App files: network-first (so a refresh always picks up new versions), cache fallback offline.
 // - Pinned CDN libraries (barcode reader, QR code): cache-first; their URLs are versioned.
 // - Third-party APIs (Open Food Facts, Open Brewery DB, geocoding): not intercepted.
-const VERSION = 'fridge-v9-2026-11-23';
+const VERSION = 'fridge-v10-2026-11-23';
 const CORE = [
   './',
   './index.html',
@@ -24,6 +24,7 @@ const CORE = [
   './js/suggest.js',
   './js/taxonomy.js',
   './js/util.js',
+  './js/wheel.js',
 ];
 const CDN = /^https:\/\/(cdn|fastly)\.jsdelivr\.net\/npm\/(barcode-detector|zxing-wasm|qrcode-generator)@/;
 

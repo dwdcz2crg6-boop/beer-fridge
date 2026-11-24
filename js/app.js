@@ -1,12 +1,13 @@
 // Uncle Mike's Beer Fridge: UI controller.
-import { $, $$, debounce, dayLabel, esc, fold, plural, relativeTime, formatTime } from './util.js';
-import { FAMILY_ORDER, SEASON_LABEL, SIZES, STYLES, TYPES, TYPE_META, currentSeason, familyOf, inferStyle, inferType, stylesForType, stateCode } from './taxonomy.js';
+import { $, $$, debounce, dayLabel, esc, fold, hash, plural, relativeTime, formatTime } from './util.js';
+import { FAMILY_ORDER, SEASON_LABEL, SIZES, STATE_NAMES, STYLES, TYPES, TYPE_META, currentSeason, familyOf, inferStyle, inferType, isNonAlcoholic, stylesForType, stateCode } from './taxonomy.js';
 import { artSVG } from './art.js';
 import { catalogItems, catalogReady, catalogSize, catalogVersion, fullName, getCatalogItem, itemsForMaker, loadCatalog, makersList, matchCandidates, searchCatalog } from './catalog.js';
 import { canonicalCode, digitsOnly, displayCode, isValidGtin, lookupBarcode } from './lookup.js';
 import { Scanner, cameraErrorMessage, decodeImageFile, primeAudio, scanFeedback } from './scanner.js';
 import { breweriesStale, buildContext, cachedBreweries, fetchBreweries, locateDevice, locateQuery, lowStock, searchBoost, suggest } from './suggest.js';
 import { createCoverflow } from './coverflow.js';
+import { createWheel } from './wheel.js';
 import { decodeSnapshot, qrSvg, snapshotUrl } from './share.js';
 import {
   addToBeerRun, adjustCount, brandHintFor, checkout, deleteItem, dismissSuggestion, eraseAll, exportData, findByBarcode, findItem, findSame,
@@ -18,12 +19,6 @@ import {
 
 const ui = {
   screen: 'screen-home',
-  invType: 'all',
-  invQuery: '',
-  invSort: 'count',
-  menuType: 'all',
-  menuFamily: 'all',
-  flowId: null,
   cart: {},
   guest: null,
   browseType: 'all',
@@ -40,8 +35,12 @@ const ui = {
   version: 0,
 };
 
+// The two browsable lineups (the owner's fridge and the order menu) share the
+// type chips, grouping, Cover Flow and group map.
+const newLineup = (id, sort) => ({ id, type: 'all', group: 'all', query: '', sort, grouping: 'style', flowId: null, signature: '', mapKey: '', types: [], groups: [], groupOf: new Map(), shown: [], filterable: false, flow: null });
+const lineups = { inv: newLineup('inv', 'count'), menu: newLineup('menu', 'name') };
+
 let scanner = null;
-let coverflow = null;
 let suggestionCache = null;
 let suggestionKey = '';
 
@@ -86,6 +85,292 @@ function shortBrewery(name = '') {
 }
 
 // ---------------------------------------------------------------------------
+// Grouping, filtering and sorting (shared by the fridge lineup and the menu)
+
+const GROUPINGS = [['style', 'By style'], ['brewery', 'By brewery'], ['type', 'By type'], ['strength', 'By strength'], ['rating', 'By rating'], ['origin', 'By origin'], ['none', 'No groups']];
+const GROUP_COLORS = ['#8fb7a5', '#d9b86a', '#c98f7a', '#8aa9d6', '#b79ad6', '#d6a3b8', '#9fc27a', '#e0a35c'];
+const OTHER_LABEL = { Beer: 'Other beer', Wine: 'Other wine', 'Ready-to-Drink': 'Other RTDs', 'Soft Drink': 'Other soft drinks', Carbonated: 'Other sparkling' };
+const NO_ALCOHOL_TYPES = ['Soft Drink', 'Carbonated', 'Water'];
+const groupingSetting = key => (GROUPINGS.some(([value]) => value === store.settings[key]) ? store.settings[key] : 'style');
+const parOf = item => item.par ?? store.settings.defaultPar;
+
+const SORTERS = {
+  count: (a, b) => b.count - a.count || a.name.localeCompare(b.name),
+  low: (a, b) => (a.count - parOf(a)) - (b.count - parOf(b)) || a.count - b.count,
+  name: (a, b) => fullName(a).localeCompare(fullName(b)),
+  recent: (a, b) => String(b.addedAt).localeCompare(String(a.addedAt)),
+  rating: (a, b) => average(b) - average(a) || b.ratingCount - a.ratingCount,
+};
+
+let regionNames;
+function countryName(code = '') {
+  if (!/^[A-Za-z]{2}$/.test(code)) return code;
+  try {
+    regionNames ||= new Intl.DisplayNames(['en'], { type: 'region' });
+    return regionNames.of(code.toUpperCase()) || code;
+  } catch {
+    return code;
+  }
+}
+
+/** Which group a drink belongs to under a grouping: { key, label, rank, dot? }. */
+function groupInfo(item, grouping) {
+  if (grouping === 'style') {
+    const family = familyOf(item);
+    const families = FAMILY_ORDER[item.type] || [];
+    return {
+      key: `${item.type}|${family}`,
+      label: family !== 'Other' ? family : OTHER_LABEL[item.type] || typeChip(item.type),
+      rank: TYPES.indexOf(item.type) * 100 + (families.indexOf(family) + 1 || 99),
+      dot: familyColor(item.type, family),
+    };
+  }
+  if (grouping === 'brewery') {
+    return item.brand ? { key: `b:${fold(item.brand)}`, label: shortBrewery(item.brand), rank: 0 } : { key: 'b:', label: 'No brand listed', rank: 1 };
+  }
+  if (grouping === 'type') return { key: item.type, label: typeChip(item.type), rank: TYPES.indexOf(item.type), dot: TYPE_META[item.type]?.color };
+  if (grouping === 'strength') {
+    const known = item.abv != null && item.abv !== '';
+    const abv = Number(item.abv);
+    if (NO_ALCOHOL_TYPES.includes(item.type) || isNonAlcoholic(item) || (known && abv <= 0.5)) return { key: 'zero', label: 'No alcohol', rank: 0, dot: '#8fc3e6' };
+    if (!known) return { key: 'unknown', label: 'ABV not listed', rank: 5, dot: '#9aa59f' };
+    if (abv < 5) return { key: 'light', label: 'Under 5%', rank: 1, dot: '#f1d58a' };
+    if (abv < 7) return { key: 'mid', label: '5 to 6.9%', rank: 2, dot: '#e0a83a' };
+    if (abv < 10) return { key: 'strong', label: '7 to 9.9%', rank: 3, dot: '#c0782a' };
+    return { key: 'big', label: '10% and up', rank: 4, dot: '#8a4a1c' };
+  }
+  if (grouping === 'rating') {
+    if (!item.ratingCount) return { key: 'unrated', label: 'Not rated yet', rank: 3, dot: '#9aa59f' };
+    const avg = average(item);
+    if (avg >= 4) return { key: 'top', label: '4 stars and up', rank: 0, dot: '#eaa53d' };
+    if (avg >= 3) return { key: 'good', label: '3 to 4 stars', rank: 1, dot: '#d9c07a' };
+    return { key: 'low', label: 'Under 3 stars', rank: 2, dot: '#b7a59a' };
+  }
+  if (grouping === 'origin') {
+    if (item.country && item.country !== 'US') return { key: `c:${item.country}`, label: countryName(item.country), rank: 1 };
+    if (item.state) return { key: `s:${item.state}`, label: STATE_NAMES[item.state] || item.state, rank: item.state === store.settings.location?.state ? -1 : 0 };
+    return { key: 'o:', label: 'Origin not listed', rank: 2 };
+  }
+  return { key: 'all', label: '', rank: 0 };
+}
+
+/** Filter, group and sort a lineup's drinks. The result is kept on the lineup. */
+function organize(lineup, list, grouping) {
+  const types = TYPES.filter(type => list.some(item => item.type === type));
+  if (lineup.type !== 'all' && !types.includes(lineup.type)) lineup.type = 'all';
+  const query = fold(lineup.query);
+  const pool = list.filter(item => (lineup.type === 'all' || item.type === lineup.type)
+    && (!query || fold(`${item.brand} ${item.name} ${item.style} ${item.type}`).includes(query)));
+  const groupOf = new Map();
+  const byKey = new Map();
+  if (grouping !== 'none') {
+    pool.forEach(item => {
+      const info = groupInfo(item, grouping);
+      const group = byKey.get(info.key) || { ...info, dot: info.dot || GROUP_COLORS[hash(info.key) % GROUP_COLORS.length], count: 0 };
+      group.count += 1;
+      byKey.set(info.key, group);
+      groupOf.set(item.id, group);
+    });
+  }
+  const groups = [...byKey.values()].sort((a, b) => a.rank - b.rank || a.label.localeCompare(b.label));
+  groups.forEach((group, index) => { group.order = index; });
+  // Grouping by type would only repeat the type chips, so it gets no second row.
+  const filterable = grouping !== 'type' && groups.length > 1;
+  if (!filterable || !byKey.has(lineup.group)) lineup.group = 'all';
+  const sorter = SORTERS[lineup.sort] || SORTERS.name;
+  const shown = pool
+    .filter(item => lineup.group === 'all' || groupOf.get(item.id)?.key === lineup.group)
+    .sort((a, b) => (groupOf.get(a.id)?.order ?? 0) - (groupOf.get(b.id)?.order ?? 0) || sorter(a, b));
+  return Object.assign(lineup, { grouping, types, groups, groupOf, shown, filterable });
+}
+
+const showsGroups = lineup => lineup.grouping !== 'none' && lineup.group === 'all' && lineup.groups.length > 1;
+
+function renderLineupControls(lineup, list) {
+  const { id } = lineup;
+  const fill = (el, html) => {
+    const left = el.scrollLeft; // keep a scrolled chip row where the person left it
+    el.innerHTML = html;
+    el.scrollLeft = left;
+  };
+  fill($(`#${id}-type-chips`), chipsHtml([{ value: 'all', label: 'All', count: list.length }, ...lineup.types.map(type => ({ value: type, label: typeChip(type), count: list.filter(item => item.type === type).length }))], lineup.type, `${id}-type`));
+  $(`#${id}-type-chips`).hidden = !list.length;
+  $(`#${id}-group-row`).hidden = !list.length;
+  const select = $(`#${id}-group-by`);
+  if (select.value !== lineup.grouping) select.value = lineup.grouping;
+  const chips = $(`#${id}-group-chips`);
+  chips.hidden = !lineup.filterable;
+  fill(chips, lineup.filterable
+    ? chipsHtml([{ value: 'all', label: 'All' }, ...lineup.groups.map(group => ({ value: group.key, label: group.label, dot: group.dot, count: group.count }))], lineup.group, `${id}-group`)
+    : '');
+}
+
+/** Items rendered in order, with a heading wherever a new group starts. */
+function groupedHtml(lineup, renderItem) {
+  const headings = showsGroups(lineup);
+  let last = null;
+  return lineup.shown.map(item => {
+    const group = lineup.groupOf.get(item.id);
+    const heading = headings && group !== last ? `<h3 class="group-head"><i class="dot" style="background:${group.dot}"></i>${esc(group.label)}<span>${group.count}</span></h3>` : '';
+    last = group;
+    return heading + renderItem(item);
+  }).join('');
+}
+
+// ---------------------------------------------------------------------------
+// Cover Flow (one per lineup)
+
+const cardKey = item => [item.id, item.count > 0 ? 1 : 0, item.name, item.brand, item.style, item.abv, item.size, item.type].join('~');
+
+function flowCard(item) {
+  const out = item.count <= 0;
+  return `<button class="cf-card${out ? ' is-out' : ''}" type="button" role="option" data-id="${item.id}" aria-label="${esc(fullName(item))}${out ? ', out of stock' : ''}"><span class="cf-art">${art(item)}</span>${out ? '<span class="cf-flag">Out</span>' : ''}</button>`;
+}
+
+function renderFlow(lineup) {
+  lineup.flow ||= createCoverflow($(`#${lineup.id}-coverflow`), {
+    onChange: index => {
+      lineup.flowId = lineup.shown[index]?.id || null;
+      renderFlowCaption(lineup);
+      markMap(lineup);
+    },
+    onActivate: index => {
+      const item = lineup.shown[index];
+      if (item) openItem(item.id, lineup.id === 'inv' ? 'owner' : 'guest');
+    },
+  });
+  const signature = lineup.shown.map(cardKey).join('|');
+  if (signature !== lineup.signature) {
+    lineup.signature = signature;
+    const index = Math.max(0, lineup.shown.findIndex(item => item.id === lineup.flowId));
+    lineup.flow.setCards(lineup.shown.map(flowCard).join(''), { index });
+  } else {
+    // Hidden screens lose their scroll position; put the active drink back in the middle.
+    const index = lineup.shown.findIndex(item => item.id === lineup.flowId);
+    if (index >= 0 && lineup.flow.index !== index) lineup.flow.goTo(index, false);
+    lineup.flow.refresh();
+  }
+  renderMap(lineup);
+  renderFlowCaption(lineup);
+}
+
+/** A strip under the shelf: one segment per group, sized by how many drinks it holds. Tap to jump. */
+function renderMap(lineup) {
+  const el = $(`#${lineup.id}-map`);
+  const show = showsGroups(lineup);
+  el.hidden = !show;
+  const key = show ? lineup.shown.map(item => lineup.groupOf.get(item.id).key).join('|') : '';
+  if (key !== lineup.mapKey) {
+    lineup.mapKey = key;
+    const segments = [];
+    if (show) {
+      lineup.shown.forEach((item, index) => {
+        const group = lineup.groupOf.get(item.id);
+        const last = segments.at(-1);
+        if (last && last.group.key === group.key) last.count += 1;
+        else segments.push({ group, index, count: 1 });
+      });
+    }
+    el.innerHTML = segments.map(({ group, index, count }) => `<button type="button" class="cf-seg" style="flex:${count};--seg:${group.dot}" data-jump="${lineup.id}" data-index="${index}" data-group="${esc(group.key)}" aria-label="Jump to ${esc(group.label)}, ${plural(count, 'drink')}"><i></i></button>`).join('');
+  }
+  markMap(lineup);
+}
+
+function markMap(lineup) {
+  const current = lineup.groupOf.get(lineup.flowId)?.key;
+  $$(`#${lineup.id}-map .cf-seg`).forEach(segment => segment.classList.toggle('is-current', segment.dataset.group === current));
+}
+
+function flowItem(lineup) {
+  return lineup.shown.find(entry => entry.id === lineup.flowId) || lineup.shown[0] || null;
+}
+
+function capPosition(lineup, item) {
+  const group = lineup.grouping !== 'none' && lineup.groupOf.get(item.id);
+  return `<p class="cap-pos">${group ? `<span class="cap-group"><i class="dot" style="background:${group.dot}"></i>${esc(group.label)}</span>` : ''}<span class="cap-count">${lineup.shown.indexOf(item) + 1} of ${lineup.shown.length}</span></p>`;
+}
+
+function renderFlowCaption(lineup) {
+  if (lineup.id === 'inv') renderInvCaption();
+  else renderCaption();
+}
+
+// ---------------------------------------------------------------------------
+// Count wheel: slide to correct what's on hand. It saves itself a moment after
+// the wheel stops, then confirms with a message that offers Undo.
+
+const countCtls = {};
+const countEdit = { itemId: null, value: 0, timer: 0 };
+const COUNT_HINT = 'Slide the wheel or tap ± to change';
+const COUNT_SAVE_DELAY = 800;
+
+function setupCountCtl(name, rootId) {
+  const root = $(`#${rootId}`);
+  const ctl = { name, root, itemId: null, note: $('.count-note', root) };
+  root.dataset.ctl = name;
+  ctl.wheel = createWheel($('.wheel', root), {
+    onInput: value => { if (ctl.itemId) previewCount(ctl.itemId, value); },
+    onSettle: value => { if (ctl.itemId) queueCount(ctl.itemId, value); },
+  });
+  countCtls[name] = ctl;
+}
+
+/** The wheel is moving: remember where it is, hold off saving. */
+function previewCount(itemId, value) {
+  if (countEdit.itemId && countEdit.itemId !== itemId) flushCount();
+  clearTimeout(countEdit.timer);
+  countEdit.itemId = itemId;
+  countEdit.value = value;
+  renderCountNotes();
+}
+
+/** The wheel stopped: save shortly unless it starts moving again. */
+function queueCount(itemId, value) {
+  previewCount(itemId, value);
+  const item = findItem(itemId);
+  if (!item || item.count === value) {
+    countEdit.itemId = null;
+    renderCountNotes();
+    return;
+  }
+  countEdit.timer = setTimeout(flushCount, COUNT_SAVE_DELAY);
+}
+
+/** Save a pending wheel change now and confirm it. */
+function flushCount() {
+  clearTimeout(countEdit.timer);
+  const { itemId, value } = countEdit;
+  countEdit.itemId = null;
+  const item = itemId && findItem(itemId);
+  if (!item || item.count === value) {
+    renderCountNotes();
+    return;
+  }
+  const before = item.count;
+  const result = adjustCount(item.id, value);
+  if (result) toast(`${fullName(item)}: now ${value} on hand (was ${before})`, { undo: result.undo, tone: 'ok' });
+}
+
+function renderCountNotes() {
+  Object.values(countCtls).forEach(ctl => {
+    const item = ctl.itemId && findItem(ctl.itemId);
+    const pending = Boolean(item) && countEdit.itemId === item.id && countEdit.value !== item.count;
+    ctl.root.classList.toggle('is-pending', pending);
+    ctl.note.textContent = pending ? `Changing ${item.count} to ${countEdit.value}…` : COUNT_HINT;
+  });
+}
+
+/** Point a count control at a drink and show its current count. */
+function syncCount(ctl, item) {
+  const switched = ctl.itemId !== item.id;
+  // A change still in flight for the drink we're leaving gets saved, not dropped.
+  if (switched && ctl.itemId && countEdit.itemId === ctl.itemId) setTimeout(flushCount, 0);
+  ctl.itemId = item.id;
+  if (switched || countEdit.itemId !== item.id) ctl.wheel.setValue(item.count, { force: switched });
+  renderCountNotes();
+}
+
+// ---------------------------------------------------------------------------
 // Sheets (native <dialog>) and toast
 
 function openSheet(id) {
@@ -114,6 +399,7 @@ function closeSheet(id) {
 }
 
 function sheetClosed(id) {
+  if (id === 'sheet-item') flushCount();
   if (id === 'sheet-add') {
     scanner?.stop();
     ui.add = { ...ui.add, pending: null, candidate: null, unknown: null, alts: [], qty: 1 };
@@ -127,11 +413,12 @@ function sheetClosed(id) {
 }
 
 let toastTimer;
-function toast(message, { undo = null, duration = 3600 } = {}) {
+function toast(message, { undo = null, duration = 3600, tone = '' } = {}) {
   const el = $('#toast');
   const host = [...document.querySelectorAll('dialog[open]')].at(-1) || document.body;
   if (el.parentElement !== host) host.append(el);
   $('#toast-text').textContent = message;
+  el.classList.toggle('is-ok', tone === 'ok');
   const action = $('#toast-action');
   action.hidden = !undo;
   action.onclick = undo ? () => { undo(); hideToast(); setTimeout(() => toast('Undone'), 120); } : null;
@@ -177,6 +464,7 @@ function parseHash() {
 }
 
 function showScreen(id, { updateUrl = true } = {}) {
+  flushCount();
   ui.screen = id;
   $$('.screen').forEach(screen => screen.classList.toggle('is-active', screen.id === id));
   $$('.tab[data-screen]').forEach(tab => {
@@ -266,35 +554,49 @@ function renderHome() {
   $('#picks-section').hidden = !picks.length;
   $('#home-picks').innerHTML = picks.map(entry => pickCard(entry, { compact: true })).join('');
 
-  // Inventory
-  const types = TYPES.filter(type => items.some(item => item.type === type));
-  if (ui.invType !== 'all' && !types.includes(ui.invType)) ui.invType = 'all';
-  $('#inv-chips').innerHTML = chipsHtml([{ value: 'all', label: 'All', count: items.length }, ...types.map(type => ({ value: type, label: typeChip(type), count: items.filter(item => item.type === type).length }))], ui.invType, 'inv-type');
-  const query = fold(ui.invQuery);
-  const shown = items
-    .filter(item => ui.invType === 'all' || item.type === ui.invType)
-    .filter(item => !query || fold(`${item.brand} ${item.name} ${item.style} ${item.type}`).includes(query));
-  const par = item => item.par ?? store.settings.defaultPar;
-  const sorters = {
-    count: (a, b) => b.count - a.count || a.name.localeCompare(b.name),
-    low: (a, b) => (a.count - par(a)) - (b.count - par(b)) || a.count - b.count,
-    name: (a, b) => fullName(a).localeCompare(fullName(b)),
-    recent: (a, b) => String(b.addedAt).localeCompare(String(a.addedAt)),
-    rating: (a, b) => average(b) - average(a) || b.ratingCount - a.ratingCount,
-  };
-  shown.sort(sorters[ui.invSort] || sorters.count);
-  $('#inventory-list').innerHTML = shown.length
-    ? shown.map(item => {
-      const isLow = item.count <= par(item);
+  // The lineup: Cover Flow or list, grouped the way the owner chose.
+  const view = store.settings.invView === 'list' ? 'list' : 'flow';
+  lineups.inv.query = view === 'list' ? $('#inv-search').value : ''; // search and sort belong to the list
+  const lineup = organize(lineups.inv, items, groupingSetting('invGroup'));
+  renderLineupControls(lineup, items);
+  $$('#inv-view [data-inv-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.invView === view)));
+  const empty = !lineup.shown.length;
+  $('.lineup-tools').hidden = !items.length || view !== 'list';
+  $('#inv-flow').hidden = empty || view !== 'flow';
+  $('#inventory-list').hidden = empty || view !== 'list';
+  $('#inv-empty').hidden = !empty;
+  if (empty) {
+    $('#inv-empty').innerHTML = items.length
+      ? emptyHtml('No matches', 'Try a different search or filter.')
+      : emptyHtml('The fridge is empty', 'Scan a can or add a drink by name to get started.', '<button class="btn btn-small" type="button" data-open-add="scan">Scan the first drink</button>');
+  } else if (view === 'flow') {
+    renderFlow(lineup);
+  } else {
+    $('#inventory-list').innerHTML = groupedHtml(lineup, item => {
+      const isLow = item.count <= parOf(item);
       return `<button class="inv-row${item.count === 0 ? ' is-out' : ''}" type="button" data-item="${item.id}">
         <span class="thumb">${art(item)}</span>
         <span class="inv-text"><span class="brand-line">${esc(item.brand || typeChip(item.type))}</span><b>${esc(item.name)}</b><span class="inv-meta">${esc(metaLine(item, { size: false }))}</span></span>
         <span class="inv-count${isLow ? ' is-low' : ''}"><strong>${item.count}</strong><small>${item.count === 0 ? 'out' : isLow ? 'low' : 'on hand'}</small></span>
       </button>`;
-    }).join('')
-    : items.length
-      ? emptyHtml('No matches', 'Try a different search or filter.')
-      : emptyHtml('The fridge is empty', 'Scan a can or add a drink by name to get started.', '<button class="btn btn-small" type="button" data-open-add="scan">Scan the first drink</button>');
+    });
+  }
+}
+
+/** Caption under the fridge Cover Flow: the drink in the middle and its count wheel. */
+function renderInvCaption() {
+  const lineup = lineups.inv;
+  const item = flowItem(lineup);
+  if (!item) return;
+  const low = item.count <= parOf(item);
+  $('#inv-cap-info').innerHTML = `${capPosition(lineup, item)}
+    <p class="brand-line">${esc(item.brand || typeChip(item.type))}</p>
+    <h3 class="cap-name">${esc(item.name)}</h3>
+    <p class="cap-meta">${esc(metaLine(item))}</p>
+    <div class="cap-row">${starsHtml(item)}${item.count === 0 ? '<span class="cap-avail is-out">Out</span>' : low ? '<span class="cap-avail is-low">Running low</span>' : ''}</div>`;
+  $('#inv-cap-actions').innerHTML = `<button class="btn btn-amber btn-small" type="button" data-restock="${item.id}"><svg aria-hidden="true"><use href="#i-in"/></svg>Stock in</button>
+    <button class="btn btn-ghost btn-small" type="button" data-item="${item.id}">Details</button>`;
+  syncCount(countCtls.inv, item);
 }
 
 // ---------------------------------------------------------------------------
@@ -302,16 +604,6 @@ function renderHome() {
 
 function menuItems() {
   return ui.guest ? ui.guest.items.filter(item => item.count > 0) : store.items.filter(item => item.count > 0);
-}
-
-function menuSorted(list) {
-  return [...list].sort((a, b) => {
-    const typeDelta = TYPES.indexOf(a.type) - TYPES.indexOf(b.type);
-    if (typeDelta) return typeDelta;
-    const families = FAMILY_ORDER[a.type] || [];
-    const familyDelta = families.indexOf(familyOf(a)) - families.indexOf(familyOf(b));
-    return familyDelta || fullName(a).localeCompare(fullName(b));
-  });
 }
 
 function renderMenu() {
@@ -329,17 +621,9 @@ function renderMenu() {
     $('#menu-subtitle').textContent = 'Swipe through what’s cold. Tap a drink to add it to an order.';
   }
 
-  const types = TYPES.filter(type => available.some(item => item.type === type));
-  if (ui.menuType !== 'all' && !types.includes(ui.menuType)) { ui.menuType = 'all'; ui.menuFamily = 'all'; }
-  $('#menu-type-chips').innerHTML = chipsHtml([{ value: 'all', label: 'All', count: available.length }, ...types.map(type => ({ value: type, label: typeChip(type), count: available.filter(item => item.type === type).length }))], ui.menuType, 'menu-type');
-
-  const families = ui.menuType === 'all' ? [] : (FAMILY_ORDER[ui.menuType] || []).filter(family => available.some(item => item.type === ui.menuType && familyOf(item) === family));
-  if (!families.includes(ui.menuFamily)) ui.menuFamily = 'all';
-  $('#menu-style-chips').hidden = families.length < 2;
-  $('#menu-style-chips').innerHTML = chipsHtml([{ value: 'all', label: ui.menuType === 'Beer' ? 'All styles' : 'All' }, ...families.map(family => ({ value: family, label: family, dot: familyColor(ui.menuType, family), count: available.filter(item => item.type === ui.menuType && familyOf(item) === family).length }))], ui.menuFamily, 'menu-family');
-
-  const shown = menuSorted(available.filter(item => (ui.menuType === 'all' || item.type === ui.menuType) && (ui.menuFamily === 'all' || familyOf(item) === ui.menuFamily)));
-  ui.menuShown = shown;
+  const lineup = organize(lineups.menu, available, groupingSetting('menuGroup'));
+  renderLineupControls(lineup, available);
+  const shown = lineup.shown;
   const view = store.settings.menuView === 'grid' ? 'grid' : 'flow';
   $$('#menu-view [data-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.view === view)));
   const empty = !shown.length;
@@ -351,37 +635,12 @@ function renderMenu() {
       ? emptyHtml('Nothing in this category', 'Try another filter.')
       : emptyHtml('Nothing cold yet', guest ? 'The host hasn’t stocked anything in this snapshot.' : 'Stock the fridge and the menu fills itself.', guest ? '' : '<button class="btn btn-small" type="button" data-open-add="scan">Scan drinks in</button>');
   } else if (view === 'flow') {
-    renderFlow(shown);
+    renderFlow(lineup);
   } else {
-    renderGrid(shown);
+    renderGrid();
   }
   $('#share-card').hidden = guest;
   if (!guest) updateShare();
-}
-
-function renderFlow(shown) {
-  coverflow ||= createCoverflow($('#coverflow'), {
-    onChange: index => {
-      ui.flowId = ui.menuShown?.[index]?.id || null;
-      renderCaption();
-    },
-    onActivate: index => {
-      const item = ui.menuShown?.[index];
-      if (item) openItem(item.id, 'guest');
-    },
-  });
-  const signature = shown.map(item => `${item.id}:${item.count}:${item.ratingCount}`).join('|');
-  if (signature !== ui.flowSignature) {
-    ui.flowSignature = signature;
-    const index = Math.max(0, shown.findIndex(item => item.id === ui.flowId));
-    coverflow.setCards(shown.map(item => `<button class="cf-card" type="button" role="option" data-id="${item.id}" aria-label="${esc(fullName(item))}"><span class="cf-art">${art(item)}</span></button>`).join(''), { index });
-  } else {
-    // Hidden screens lose their scroll position; put the active drink back in the middle.
-    const index = shown.findIndex(item => item.id === ui.flowId);
-    if (index >= 0 && coverflow.index !== index) coverflow.goTo(index, false);
-    coverflow.refresh();
-  }
-  renderCaption();
 }
 
 function orderControls(item, { large = false } = {}) {
@@ -392,11 +651,11 @@ function orderControls(item, { large = false } = {}) {
 }
 
 function renderCaption() {
-  const item = ui.menuShown?.find(entry => entry.id === ui.flowId) || ui.menuShown?.[0];
-  if (!item) { $('#cf-caption').innerHTML = ''; return; }
-  const index = ui.menuShown.indexOf(item);
-  $('#cf-caption').innerHTML = `
-    <p class="cap-count">${index + 1} of ${ui.menuShown.length}</p>
+  const lineup = lineups.menu;
+  const item = flowItem(lineup);
+  if (!item) { $('#menu-caption').innerHTML = ''; return; }
+  $('#menu-caption').innerHTML = `
+    ${capPosition(lineup, item)}
     <p class="brand-line">${esc(item.brand || typeChip(item.type))}</p>
     <h2 class="cap-name">${esc(item.name)}</h2>
     <p class="cap-meta">${esc(metaLine(item))}</p>
@@ -407,15 +666,15 @@ function renderCaption() {
     </div>`;
 }
 
-function renderGrid(shown) {
-  $('#menu-grid').innerHTML = shown.map(item => `<article class="menu-card${ui.cart[item.id] ? ' is-selected' : ''}">
+function renderGrid() {
+  $('#menu-grid').innerHTML = groupedHtml(lineups.menu, item => `<article class="menu-card${ui.cart[item.id] ? ' is-selected' : ''}">
       <button class="menu-card-art" type="button" data-menu-item="${item.id}" aria-label="Details for ${esc(fullName(item))}">${art(item)}</button>
       <p class="brand-line">${esc(item.brand || typeChip(item.type))}</p>
       <h3>${esc(item.name)}</h3>
       <p class="menu-card-meta">${esc(metaLine(item, { size: false }))}</p>
       <div class="menu-card-row">${starsHtml(item, { count: false })}<span class="cap-avail">${item.count}</span></div>
       ${orderControls(item)}
-    </article>`).join('');
+    </article>`);
 }
 
 const updateShare = debounce(async () => {
@@ -450,7 +709,7 @@ function changeCart(id, delta) {
 function refreshCartViews() {
   renderOrderBar();
   if (ui.screen === 'screen-menu') {
-    if (store.settings.menuView === 'grid') renderGrid(ui.menuShown || []);
+    if (store.settings.menuView === 'grid') renderGrid();
     else renderCaption();
   }
   if ($('#sheet-item').open) renderItemSheet();
@@ -946,6 +1205,9 @@ function openItem(id, context = 'owner') {
   ui.itemContext = context;
   renderItemSheet();
   openSheet('sheet-item');
+  // The wheel can only be positioned once the sheet is on screen.
+  const item = currentItem();
+  if (item && context === 'owner' && !ui.guest) syncCount(countCtls.item, item);
 }
 
 function renderItemSheet() {
@@ -966,13 +1228,13 @@ function renderItemSheet() {
   $('#item-guest .stepper').hidden = Boolean(ui.guest);
   $('#item-owner').hidden = !owner;
   if (!owner) return;
-  $('#item-count').textContent = item.count;
+  syncCount(countCtls.item, item);
   $('#item-par').textContent = item.par ?? store.settings.defaultPar;
   $('#item-par').classList.toggle('is-default', item.par == null);
   $('#item-codes').textContent = item.barcodes.length ? `Barcode${item.barcodes.length > 1 ? 's' : ''}: ${item.barcodes.map(displayCode).join(', ')}` : 'No barcode linked yet. Scan it once and it will be remembered.';
   const history = store.activity.filter(entry => entry.itemId === item.id).slice(0, 6);
   $('#item-history').innerHTML = history.length
-    ? `<p class="results-title">History</p>${history.map(entry => `<div class="hist-row"><span class="hist-${entry.kind}">${entry.kind === 'in' ? '+' : entry.kind === 'out' ? '−' : '±'}${Math.abs(entry.qty)}</span><span>${entry.kind === 'in' ? 'Stocked' : entry.kind === 'out' ? `Taken${entry.by ? ` by ${esc(entry.by)}` : ''}` : 'Count corrected'}</span><time>${esc(entry.at ? relativeTime(entry.at) : entry.whenLabel || '')}</time></div>`).join('')}`
+    ? `<p class="results-title">History</p>${history.map(entry => `<div class="hist-row"><span class="hist-${entry.kind}">${entry.kind === 'in' || (entry.kind === 'adjust' && entry.qty > 0) ? '+' : '−'}${Math.abs(entry.qty)}</span><span>${entry.kind === 'in' ? 'Stocked' : entry.kind === 'out' ? `Taken${entry.by ? ` by ${esc(entry.by)}` : ''}` : 'Count corrected'}</span><time>${esc(entry.at ? relativeTime(entry.at) : entry.whenLabel || '')}</time></div>`).join('')}`
     : '';
 }
 
@@ -1191,6 +1453,12 @@ function onClick(event) {
   }
   if (data.catDismiss) { dismissSuggestion(data.catDismiss); toast('Got it. We’ll suggest something else.'); return; }
   if (data.cart) { changeCart(data.cart, Number(data.delta)); return; }
+  if (data.jump) { lineups[data.jump]?.flow?.goTo(Number(data.index)); return; }
+  if (data.wheelStep) {
+    const ctl = countCtls[target.closest('.count-ctl')?.dataset.ctl];
+    if (ctl?.itemId) ctl.wheel.step(Number(data.wheelStep));
+    return;
+  }
   if (data.rateItem) { openRate([data.rateItem]); return; }
   if (data.rate) {
     const stars = Number(data.stars);
@@ -1281,24 +1549,19 @@ function onClick(event) {
   if (target.matches('[data-qty]')) setQty(Number(target.dataset.qty));
   if (target.matches('[data-step]')) setQty(ui.add.qty + Number(target.dataset.step));
   if (target.matches('[data-order-step]')) changeCart(ui.itemId, Number(target.dataset.orderStep));
-  if (target.matches('[data-count-step]')) {
-    const item = findItem(ui.itemId);
-    if (item) {
-      const result = adjustCount(item.id, item.count + Number(target.dataset.countStep));
-      if (result) toast(`${fullName(item)}: ${item.count} on hand`, { undo: result.undo });
-    }
-  }
   if (target.matches('[data-par-step]')) {
     const item = findItem(ui.itemId);
     if (item) {
       saveItem({ id: item.id, par: Math.max(0, (item.par ?? store.settings.defaultPar) + Number(target.dataset.parStep)) });
     }
   }
-  if (target.matches('[data-inv-type]')) { ui.invType = target.dataset.invType; renderHome(); }
-  if (target.matches('[data-menu-type]')) { ui.menuType = target.dataset.menuType; ui.menuFamily = 'all'; ui.flowSignature = ''; renderMenu(); }
-  if (target.matches('[data-menu-family]')) { ui.menuFamily = target.dataset.menuFamily; ui.flowSignature = ''; renderMenu(); }
+  if (target.matches('[data-inv-type]')) { lineups.inv.type = target.dataset.invType; lineups.inv.group = 'all'; renderHome(); }
+  if (target.matches('[data-inv-group]')) { lineups.inv.group = target.dataset.invGroup; renderHome(); }
+  if (target.matches('[data-inv-view]')) updateSettings({ invView: target.dataset.invView });
+  if (target.matches('[data-menu-type]')) { lineups.menu.type = target.dataset.menuType; lineups.menu.group = 'all'; renderMenu(); }
+  if (target.matches('[data-menu-group]')) { lineups.menu.group = target.dataset.menuGroup; renderMenu(); }
   if (target.matches('[data-browse-type]')) { ui.browseType = target.dataset.browseType; renderBrowse(); }
-  if (target.matches('[data-view]')) { updateSettings({ menuView: target.dataset.view }); ui.flowSignature = ''; }
+  if (target.matches('[data-view]')) updateSettings({ menuView: target.dataset.view });
   if (target.matches('[data-mode]')) setAddMode(target.dataset.mode);
 }
 
@@ -1366,8 +1629,19 @@ function bindEvents() {
     dialog.addEventListener('click', event => { if (event.target === dialog) closeSheet(dialog.id); });
   });
 
-  $('#inv-search').addEventListener('input', debounce(event => { ui.invQuery = event.target.value; renderHome(); }, 120));
-  $('#inv-sort').addEventListener('change', event => { ui.invSort = event.target.value; renderHome(); });
+  $('#inv-search').addEventListener('input', debounce(() => renderHome(), 120));
+  $('#inv-sort').addEventListener('change', event => { lineups.inv.sort = event.target.value; renderHome(); });
+  $$('[data-group-by]').forEach(select => {
+    select.innerHTML = GROUPINGS.map(([value, label]) => `<option value="${value}">${label}</option>`).join('');
+    select.addEventListener('change', () => {
+      const lineup = lineups[select.dataset.groupBy];
+      lineup.group = 'all';
+      updateSettings({ [`${lineup.id}Group`]: select.value });
+    });
+  });
+  setupCountCtl('inv', 'inv-count-ctl');
+  setupCountCtl('item', 'item-count-ctl');
+  window.addEventListener('pagehide', flushCount);
   $('#browse-input').addEventListener('input', debounce(() => renderBrowse(), 140));
   $('#add-query').addEventListener('input', debounce(() => renderAddResults(), 90));
   $('#add-query').addEventListener('keydown', event => {
@@ -1426,7 +1700,7 @@ function bindEvents() {
   });
 
   document.addEventListener('visibilitychange', () => {
-    if (document.hidden) scanner?.stop();
+    if (document.hidden) { scanner?.stop(); flushCount(); }
     else if ($('#sheet-add').open && ui.add.mode === 'scan') startScanner();
   });
 

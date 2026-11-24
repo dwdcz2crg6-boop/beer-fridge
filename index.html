@@ -78,6 +78,61 @@
           <ul class="hero-legend" id="hero-legend"></ul>
         </section>
 
+        <section class="section" id="lineup" aria-labelledby="lineup-title">
+          <div class="section-head">
+            <div><p class="eyebrow">The lineup</p><h2 id="lineup-title">What's in the fridge</h2></div>
+            <div class="seg" id="inv-view" role="group" aria-label="Lineup layout">
+              <button type="button" data-inv-view="flow" aria-pressed="true">Flow</button>
+              <button type="button" data-inv-view="list" aria-pressed="false">List</button>
+            </div>
+          </div>
+          <div class="lineup-tools">
+            <label class="search-field"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="inv-search" type="search" placeholder="Search the fridge" autocomplete="off" enterkeyhint="search" /></label>
+            <label class="select-pill"><span class="visually-hidden">Sort</span>
+              <select id="inv-sort">
+                <option value="count">Most stocked</option>
+                <option value="low">Running low first</option>
+                <option value="name">A–Z</option>
+                <option value="recent">Recently added</option>
+                <option value="rating">Top rated</option>
+              </select>
+            </label>
+          </div>
+          <div class="chips" id="inv-type-chips" role="group" aria-label="Filter by type"></div>
+          <div class="group-row" id="inv-group-row">
+            <label class="select-pill group-pill"><span class="visually-hidden">Group by</span>
+              <select id="inv-group-by" data-group-by="inv"></select>
+            </label>
+            <div class="chips" id="inv-group-chips" role="group" aria-label="Show one group"></div>
+          </div>
+
+          <section class="stage" id="inv-flow" aria-label="Cover flow of the fridge" hidden>
+            <div class="coverflow" id="inv-coverflow" tabindex="0" role="listbox" aria-label="Drinks in the fridge">
+              <button class="cf-nav cf-prev" type="button" aria-label="Previous drink"><svg><use href="#i-left"/></svg></button>
+              <div class="cf-track"></div>
+              <button class="cf-nav cf-next" type="button" aria-label="Next drink"><svg><use href="#i-right"/></svg></button>
+            </div>
+            <div class="cf-map" id="inv-map" hidden></div>
+            <div class="cf-caption cf-caption-owner">
+              <div id="inv-cap-info" aria-live="polite"></div>
+              <div class="count-ctl" id="inv-count-ctl">
+                <p class="count-label">On hand</p>
+                <div class="count-row">
+                  <button class="count-step" type="button" data-wheel-step="-1" aria-label="One fewer"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+                  <div class="wheel" role="spinbutton" tabindex="0" aria-label="Number on hand">
+                    <div class="wheel-track"></div>
+                  </div>
+                  <button class="count-step" type="button" data-wheel-step="1" aria-label="One more"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+                </div>
+                <p class="count-note"></p>
+              </div>
+              <div class="cap-actions" id="inv-cap-actions"></div>
+            </div>
+          </section>
+          <div class="inventory-list" id="inventory-list"></div>
+          <div class="empty" id="inv-empty" hidden></div>
+        </section>
+
         <div class="quick-actions">
           <button class="qa qa-primary" type="button" data-open-add="scan"><svg aria-hidden="true"><use href="#i-scan"/></svg><span><b>Scan in</b><small>Camera or photo</small></span></button>
           <button class="qa" type="button" data-go="menu"><svg aria-hidden="true"><use href="#i-bag"/></svg><span><b>Order</b><small>Check drinks out</small></span></button>
@@ -99,24 +154,6 @@
           </div>
           <div class="pick-grid" id="home-picks"></div>
         </section>
-
-        <section class="section" aria-labelledby="lineup-title">
-          <div class="section-head">
-            <div><p class="eyebrow">The lineup</p><h2 id="lineup-title">What's in the fridge</h2></div>
-            <label class="select-pill"><span class="visually-hidden">Sort</span>
-              <select id="inv-sort">
-                <option value="count">Most stocked</option>
-                <option value="low">Running low first</option>
-                <option value="name">A–Z</option>
-                <option value="recent">Recently added</option>
-                <option value="rating">Top rated</option>
-              </select>
-            </label>
-          </div>
-          <label class="search-field"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="inv-search" type="search" placeholder="Search the fridge" autocomplete="off" enterkeyhint="search" /></label>
-          <div class="chips" id="inv-chips" role="group" aria-label="Filter by type"></div>
-          <div class="inventory-list" id="inventory-list" aria-live="polite"></div>
-        </section>
       </section>
 
       <!-- ============================== MENU ============================== -->
@@ -137,16 +174,21 @@
           </div>
         </header>
         <div class="chips" id="menu-type-chips" role="group" aria-label="Filter menu by type"></div>
-        <div class="chips chips-sub" id="menu-style-chips" role="group" aria-label="Filter by style" hidden></div>
+        <div class="group-row" id="menu-group-row">
+          <label class="select-pill group-pill"><span class="visually-hidden">Group by</span>
+            <select id="menu-group-by" data-group-by="menu"></select>
+          </label>
+          <div class="chips" id="menu-group-chips" role="group" aria-label="Show one group"></div>
+        </div>
 
         <section class="stage" id="menu-flow" aria-label="Cover flow of drinks">
-          <div class="coverflow" id="coverflow" tabindex="0" role="listbox" aria-label="Drinks in the fridge" aria-describedby="cf-caption">
+          <div class="coverflow" id="menu-coverflow" tabindex="0" role="listbox" aria-label="Drinks in the fridge" aria-describedby="menu-caption">
             <button class="cf-nav cf-prev" type="button" aria-label="Previous drink"><svg><use href="#i-left"/></svg></button>
-            <div class="cf-track" id="cf-track"></div>
+            <div class="cf-track"></div>
             <button class="cf-nav cf-next" type="button" aria-label="Next drink"><svg><use href="#i-right"/></svg></button>
           </div>
-          <div class="shelf" aria-hidden="true"></div>
-          <div class="cf-caption" id="cf-caption" aria-live="polite"></div>
+          <div class="cf-map" id="menu-map" hidden></div>
+          <div class="cf-caption" id="menu-caption" aria-live="polite"></div>
         </section>
         <div class="menu-grid" id="menu-grid" hidden></div>
         <div class="empty" id="menu-empty" hidden></div>
@@ -363,22 +405,23 @@
         </div>
 
         <div class="item-owner owner-only" id="item-owner">
-          <div class="owner-grid">
-            <div class="owner-cell">
-              <span>On hand</span>
-              <div class="stepper" role="group" aria-label="Correct the count">
-                <button type="button" data-count-step="-1" aria-label="One fewer"><svg><use href="#i-minus"/></svg></button>
-                <output id="item-count">0</output>
-                <button type="button" data-count-step="1" aria-label="One more"><svg><use href="#i-plus"/></svg></button>
+          <div class="count-ctl" id="item-count-ctl">
+            <p class="count-label">On hand</p>
+            <div class="count-row">
+              <button class="count-step" type="button" data-wheel-step="-1" aria-label="One fewer"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+              <div class="wheel" role="spinbutton" tabindex="0" aria-label="Number on hand">
+                <div class="wheel-track"></div>
               </div>
+              <button class="count-step" type="button" data-wheel-step="1" aria-label="One more"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
             </div>
-            <div class="owner-cell">
-              <span>Low-stock alert at</span>
-              <div class="stepper" role="group" aria-label="Low-stock alert level">
-                <button type="button" data-par-step="-1" aria-label="Lower"><svg><use href="#i-minus"/></svg></button>
-                <output id="item-par">3</output>
-                <button type="button" data-par-step="1" aria-label="Higher"><svg><use href="#i-plus"/></svg></button>
-              </div>
+            <p class="count-note"></p>
+          </div>
+          <div class="owner-cell owner-cell-row">
+            <span>Low-stock alert at</span>
+            <div class="stepper" role="group" aria-label="Low-stock alert level">
+              <button type="button" data-par-step="-1" aria-label="Lower"><svg><use href="#i-minus"/></svg></button>
+              <output id="item-par">3</output>
+              <button type="button" data-par-step="1" aria-label="Higher"><svg><use href="#i-plus"/></svg></button>
             </div>
           </div>
           <div class="item-actions">

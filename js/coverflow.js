@@ -115,10 +115,15 @@ export function createCoverflow(root, { onChange, onActivate } = {}) {
       track.innerHTML = html;
       cards = [...track.querySelectorAll('.cf-card')];
       active = -1;
-      requestAnimationFrame(() => {
+      // Place the cards right away (no one-frame jump back to the first card), then
+      // once more after layout in case the stage was hidden or just resized.
+      const place = () => {
         goTo(index, false);
+        if (frame) cancelAnimationFrame(frame);
         layout();
-      });
+      };
+      if (track.clientWidth) place();
+      requestAnimationFrame(place);
     },
     goTo,
     refresh: schedule,
