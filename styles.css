@@ -304,9 +304,16 @@ label.btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor:
 .coverflow:focus-visible { box-shadow: inset 0 0 0 2px var(--amber); }
 .cf-track { display: flex; overflow-x: auto; overflow-y: hidden; padding: 34px calc(50% - var(--card-w) / 2) calc(var(--card-w) * .34); scroll-snap-type: x mandatory; overscroll-behavior-x: contain; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
 .cf-track::-webkit-scrollbar { display: none; }
-.cf-card { position: relative; flex: none; width: var(--card-w); padding: 0; border: 0; background: none; scroll-snap-align: center; transform-origin: 50% 62%; will-change: transform; -webkit-tap-highlight-color: transparent; }
+/* The card stays flat so scroll-snap centers it exactly; .cf-inner carries the 3D tilt.
+   Taps land on the tilted picture, not on the flat box behind a neighbour. */
+.cf-card { position: relative; flex: none; width: var(--card-w); padding: 0; border: 0; background: none; scroll-snap-align: center; pointer-events: none; -webkit-tap-highlight-color: transparent; }
+.cf-inner { display: block; transform-origin: 50% 62%; pointer-events: auto; }
+.cf-card.is-shown .cf-inner { will-change: transform; }
+.cf-card:not(.is-shown) .cf-inner { visibility: hidden; }
 .cf-art { display: block; }
-.cf-art .art { filter: drop-shadow(0 16px 18px rgb(0 0 0 / 45%)); -webkit-box-reflect: below 3px linear-gradient(transparent 80%, rgb(255 255 255 / 26%)); }
+/* The reflection is only worth its cost on the cans around the middle. No CSS filter here:
+   a filter on every card is what an iPhone drops first when it runs short of memory. */
+.cf-card.is-near .cf-art .art { -webkit-box-reflect: below 3px linear-gradient(transparent 80%, rgb(255 255 255 / 26%)); }
 .cf-card.is-out .cf-art { opacity: .5; filter: grayscale(.75); }
 .cf-flag { position: absolute; top: 13%; left: 50%; padding: 3px 10px; border-radius: 6px; background: #c9473c; color: #fff; font: 800 11px/1.25 var(--font-body); letter-spacing: .12em; text-transform: uppercase; box-shadow: 0 4px 10px rgb(0 0 0 / 35%); transform: translateX(-50%) rotate(-8deg); }
 .cf-card:focus-visible { outline: none; }

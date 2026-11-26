@@ -224,7 +224,23 @@ const cardKey = item => [item.id, item.count > 0 ? 1 : 0, item.name, item.brand,
 
 function flowCard(item) {
   const out = item.count <= 0;
-  return `<button class="cf-card${out ? ' is-out' : ''}" type="button" role="option" data-id="${item.id}" aria-label="${esc(fullName(item))}${out ? ', out of stock' : ''}"><span class="cf-art">${art(item)}</span>${out ? '<span class="cf-flag">Out</span>' : ''}</button>`;
+  // .cf-inner carries the 3D tilt. The card itself must stay flat: scroll-snap measures it,
+  // and a tilted card snaps off center and gets skipped by a swipe.
+  return `<button class="cf-card${out ? ' is-out' : ''}" type="button" role="option" data-id="${item.id}" aria-label="${esc(fullName(item))}${out ? ', out of stock' : ''}"><span class="cf-inner"><span class="cf-art">${art(item)}</span>${out ? '<span class="cf-flag">Out</span>' : ''}</span></button>`;
+}
+
+const preloadedLabels = new Map();
+
+/** Fetch and decode label pictures ahead of the swipe, so no can scrolls in without its label. */
+function preloadLabels(items) {
+  items.forEach(item => {
+    const src = labelFor(item)?.src;
+    if (!src || preloadedLabels.has(src)) return;
+    const image = new Image();
+    image.decoding = 'async';
+    image.src = src;
+    preloadedLabels.set(src, image);
+  });
 }
 
 function renderFlow(lineup) {
@@ -239,6 +255,7 @@ function renderFlow(lineup) {
       if (item) openItem(item.id, lineup.id === 'inv' ? 'owner' : 'guest');
     },
   });
+  preloadLabels(lineup.shown);
   const signature = lineup.shown.map(cardKey).join('|');
   if (signature !== lineup.signature) {
     lineup.signature = signature;

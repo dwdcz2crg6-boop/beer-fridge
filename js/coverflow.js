@@ -18,6 +18,9 @@ export function createCoverflow(root, { onChange, onActivate } = {}) {
     let nearest = 0;
     let nearestDistance = Infinity;
     cards.forEach((card, index) => {
+      // Tilt the inner wrapper, not the card. Scroll-snap lines up on the card's own box, and a
+      // transform on it moves the snap point: cards then rest off center and a swipe skips some.
+      const body = card.firstElementChild || card;
       const width = card.offsetWidth || 1;
       const offset = (card.offsetLeft + width / 2 - center) / width;
       const distance = Math.min(Math.abs(offset), 4);
@@ -27,16 +30,20 @@ export function createCoverflow(root, { onChange, onActivate } = {}) {
       }
       const sign = Math.sign(offset);
       if (reduceMotion.matches) {
-        card.style.transform = `scale(${(1 - Math.min(distance, 1) * 0.12).toFixed(3)})`;
-        card.style.opacity = String(1 - Math.min(distance, 2) * 0.3);
+        body.style.transform = `scale(${(1 - Math.min(distance, 1) * 0.12).toFixed(3)})`;
+        body.style.opacity = String(1 - Math.min(distance, 2) * 0.3);
       } else {
         const rotate = -sign * Math.min(distance * 58, 62);
         const shift = -sign * width * (distance <= 1 ? distance * 0.3 : 0.3 + (distance - 1) * 0.6);
         const depth = -Math.min(distance, 1) * 150 - Math.max(distance - 1, 0) * 34;
-        card.style.transform = `perspective(900px) translate3d(${shift.toFixed(1)}px,0,${depth.toFixed(1)}px) rotateY(${rotate.toFixed(1)}deg)`;
-        card.style.opacity = String(distance > 3 ? Math.max(0, 1 - (distance - 3)) : 1);
+        body.style.transform = `perspective(900px) translate3d(${shift.toFixed(1)}px,0,${depth.toFixed(1)}px) rotateY(${rotate.toFixed(1)}deg)`;
+        body.style.opacity = String(distance > 3 ? Math.max(0, 1 - (distance - 3)) : 1);
       }
       card.style.zIndex = String(100 - Math.round(distance * 10));
+      // Paint only what can be on screen. A phone keeps a separate picture of every card it
+      // has to draw, and with a full fridge it can run out and leave some of them blank.
+      card.classList.toggle('is-shown', distance < 3.6);
+      card.classList.toggle('is-near', distance < 2.6);
       const isActive = distance < 0.5;
       card.classList.toggle('is-active', isActive);
       card.setAttribute('aria-selected', String(isActive));
