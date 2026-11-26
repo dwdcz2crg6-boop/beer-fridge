@@ -77,11 +77,45 @@ export async function snapshotUrl(baseUrl, fridgeName, items) {
   return { url, included: 0, total: items.length };
 }
 
-export async function decodeSnapshot(token) {
+async function decodePayload(token) {
   const kind = token[0];
   const bytes = fromBase64Url(token.slice(1));
   const json = kind === 'z' ? await inflate(bytes) : new TextDecoder().decode(bytes);
-  const payload = JSON.parse(json);
+  return JSON.parse(json);
+}
+
+// ---------------------------------------------------------------------------
+// Fridge lists: a batch of drinks to stock, packed into a link. The list sits after
+// the "#", so it is never sent to the server that hosts the app.
+
+/** `lines` is [{ id: catalogId, count }] or [{ item: { name, brand, type, style, abv, size }, count }]. */
+export async function stockLink(baseUrl, title, lines) {
+  const token = await encodePayload({ v: 1, n: title, t: Math.round(Date.now() / 60000), i: lines.map(line => [line.id || line.item, line.count]) });
+  return `${baseUrl}#stock?l=${token}`;
+}
+
+/** Pull the list token out of a pasted link (or accept a bare token). */
+export function stockToken(text) {
+  const value = String(text || '').trim();
+  const fromLink = value.match(/[#?&]l=([A-Za-z0-9_-]{8,})/);
+  if (fromLink) return fromLink[1];
+  return /^[zj][A-Za-z0-9_-]{8,}$/.test(value) ? value : '';
+}
+
+export async function decodeStock(token) {
+  const payload = await decodePayload(token);
+  if (!Array.isArray(payload.i)) throw new Error('Not a fridge list');
+  return {
+    title: payload.n || 'Fridge list',
+    at: new Date((payload.t || 0) * 60000).toISOString(),
+    lines: payload.i
+      .map(row => ({ id: typeof row[0] === 'string' ? row[0] : '', item: row[0] && typeof row[0] === 'object' ? row[0] : null, count: Math.max(0, Math.round(Number(row[1]) || 0)) }))
+      .filter(line => (line.id || line.item) && line.count > 0),
+  };
+}
+
+export async function decodeSnapshot(token) {
+  const payload = await decodePayload(token);
   return {
     name: payload.n || 'The fridge',
     at: new Date((payload.t || 0) * 60000).toISOString(),

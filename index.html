@@ -392,6 +392,16 @@
             <button class="rating-line" type="button" id="item-rating"></button>
           </div>
         </div>
+        <p class="item-desc" id="item-desc" hidden></p>
+        <details class="brewery" id="item-brewery" hidden>
+          <summary>
+            <svg aria-hidden="true"><use href="#i-pin"/></svg>
+            <span class="brewery-head"><b id="brewery-name"></b><small id="brewery-meta"></small></span>
+            <svg class="brewery-chev" aria-hidden="true"><use href="#i-right"/></svg>
+          </summary>
+          <p id="brewery-about"></p>
+          <a class="text-btn" id="brewery-link" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true"><use href="#i-globe"/></svg><span></span></a>
+        </details>
 
         <div class="item-guest" id="item-guest">
           <div class="order-line">
@@ -496,6 +506,22 @@
       </div>
     </dialog>
 
+    <!-- ============================== FRIDGE LIST (from a link) ============================== -->
+    <dialog class="sheet sheet-tall" id="sheet-stock" aria-labelledby="stock-title">
+      <div class="sheet-panel stock-panel">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <button class="icon-btn sheet-x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+        <p class="eyebrow">Fridge list</p>
+        <h2 id="stock-title">Your fridge list</h2>
+        <p class="form-note" id="stock-summary"></p>
+        <p class="form-note stock-again" id="stock-again" hidden></p>
+        <div class="stock-rows" id="stock-rows"></div>
+        <label class="switch stock-drop" id="stock-drop-row"><input type="checkbox" id="stock-drop" checked /><span class="switch-ui" aria-hidden="true"></span><span id="stock-drop-text">Remove the sample drinks first</span></label>
+        <button class="btn btn-primary btn-block" type="button" id="stock-apply">Add to fridge</button>
+        <button class="text-btn btn-block" type="button" data-close>Not now</button>
+      </div>
+    </dialog>
+
     <!-- ============================== SETTINGS ============================== -->
     <dialog class="sheet sheet-tall" id="sheet-settings" aria-labelledby="settings-title">
       <div class="sheet-panel settings-panel">
@@ -530,6 +556,8 @@
             <button class="btn btn-small btn-ghost" type="button" id="s-reset">Load demo fridge</button>
             <button class="btn btn-small btn-ghost btn-danger" type="button" id="s-erase">Erase everything</button>
           </div>
+          <label class="field">Load a fridge list<input id="s-stock" inputmode="url" placeholder="Paste a list link" autocomplete="off" autocapitalize="off" spellcheck="false" /></label>
+          <button class="btn btn-small btn-ghost" type="button" id="s-stock-go">Load list</button>
         </div>
 
         <div class="settings-group about">

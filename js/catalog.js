@@ -26,6 +26,16 @@ export function loadCatalog() {
   return catalog.promise;
 }
 
+const LABEL_DIR = './data/labels/';
+
+/** Catalog `label`: "file.webp" or { src, ar, w, flat, cap }. See artSVG in art.js. */
+function labelOf(raw) {
+  if (!raw) return null;
+  const label = typeof raw === 'string' ? { src: raw } : { ...raw };
+  if (!/^[\w.-]+\.(webp|png|jpe?g)$/i.test(label.src || '')) return null;
+  return { ...label, src: `${LABEL_DIR}${label.src}` };
+}
+
 function build(data) {
   catalog.items = [];
   catalog.byId.clear();
@@ -57,6 +67,8 @@ function build(data) {
         lng: maker.lng ?? null,
         makerKind: maker.kind || '',
         corporate: CORPORATE.test(fold(maker.name)),
+        label: labelOf(entry.label),
+        desc: entry.desc || '',
       };
       item.family = familyOf(item);
       item.fullName = fullName(item);
@@ -102,6 +114,10 @@ export const catalogVersion = () => catalog.version;
 export const catalogSize = () => catalog.items.length;
 export const getCatalogItem = id => catalog.byId.get(id) || null;
 export const getMaker = id => catalog.makerById.get(id) || null;
+/** The maker of an inventory item (catalog ids look like "maker-id/drink-slug"). */
+export const makerOf = item => (item?.makerId ? getMaker(item.makerId) : item?.catalogId ? getMaker(String(item.catalogId).split('/')[0]) : null);
+/** The real label for a drink, if the catalog has one. */
+export const labelFor = item => item?.label || (item?.catalogId && catalog.byId.get(item.catalogId)?.label) || null;
 
 function withinOneEdit(a, b) {
   if (a === b) return true;

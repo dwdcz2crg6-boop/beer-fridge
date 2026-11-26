@@ -1,17 +1,17 @@
 // Uncle Mike's Beer Fridge: UI controller.
-import { $, $$, debounce, dayLabel, esc, fold, hash, plural, relativeTime, formatTime } from './util.js';
+import { $, $$, debounce, dayLabel, esc, fold, hash, haversineMiles, plural, relativeTime, formatTime } from './util.js';
 import { FAMILY_ORDER, SEASON_LABEL, SIZES, STATE_NAMES, STYLES, TYPES, TYPE_META, currentSeason, familyOf, inferStyle, inferType, isNonAlcoholic, stylesForType, stateCode } from './taxonomy.js';
 import { artSVG } from './art.js';
-import { catalogItems, catalogReady, catalogSize, catalogVersion, fullName, getCatalogItem, itemsForMaker, loadCatalog, makersList, matchCandidates, searchCatalog } from './catalog.js';
+import { catalogItems, catalogReady, catalogSize, catalogVersion, fullName, getCatalogItem, itemsForMaker, labelFor, loadCatalog, makerOf, makersList, matchCandidates, searchCatalog } from './catalog.js';
 import { canonicalCode, digitsOnly, displayCode, isValidGtin, lookupBarcode } from './lookup.js';
 import { Scanner, cameraErrorMessage, decodeImageFile, primeAudio, scanFeedback } from './scanner.js';
 import { breweriesStale, buildContext, cachedBreweries, fetchBreweries, locateDevice, locateQuery, lowStock, searchBoost, suggest } from './suggest.js';
 import { createCoverflow } from './coverflow.js';
 import { createWheel } from './wheel.js';
-import { decodeSnapshot, qrSvg, snapshotUrl } from './share.js';
+import { decodeSnapshot, decodeStock, qrSvg, snapshotUrl, stockToken } from './share.js';
 import {
   addToBeerRun, adjustCount, brandHintFor, checkout, deleteItem, dismissSuggestion, eraseAll, exportData, findByBarcode, findItem, findSame,
-  importData, learnedProduct, linkCatalog, load, persist, rateItem, removeFromBeerRun, resetDemo, saveItem, stockIn, store, subscribe, updateSettings, attachBarcode,
+  importData, learnedProduct, linkCatalog, load, persist, rateItem, removeFromBeerRun, resetDemo, sampleItems, saveItem, stockBatch, stockIn, stockListLoaded, store, subscribe, updateSettings, attachBarcode,
 } from './store.js';
 
 // ---------------------------------------------------------------------------
@@ -53,7 +53,7 @@ const parPlaceholder = () => store.settings.defaultPar;
 const abvText = item => (item.abv != null && item.abv !== '' ? `${Number(item.abv).toFixed(1).replace(/\.0$/, '')}%` : '');
 const metaLine = (item, { size = true } = {}) => [item.style || item.type, abvText(item) && `${abvText(item)} ABV`, size && item.size].filter(Boolean).join(' · ');
 const average = item => (item.ratingCount ? item.ratingTotal / item.ratingCount : 0);
-const art = (item, label = '') => artSVG(item, { label });
+const art = (item, label = '') => artSVG(item, { label, image: labelFor(item) });
 const typeChip = type => TYPE_META[type]?.chip || type;
 
 function originText(item) {
@@ -220,7 +220,7 @@ function groupedHtml(lineup, renderItem) {
 // ---------------------------------------------------------------------------
 // Cover Flow (one per lineup)
 
-const cardKey = item => [item.id, item.count > 0 ? 1 : 0, item.name, item.brand, item.style, item.abv, item.size, item.type].join('~');
+const cardKey = item => [item.id, item.count > 0 ? 1 : 0, item.name, item.brand, item.style, item.abv, item.size, item.type, labelFor(item)?.src || ''].join('~');
 
 function flowCard(item) {
   const out = item.count <= 0;
@@ -1210,6 +1210,37 @@ function openItem(id, context = 'owner') {
   if (item && context === 'owner' && !ui.guest) syncCount(countCtls.item, item);
 }
 
+const MAKER_KIND = { micro: 'Craft brewery', nano: 'Small-batch brewery', brewpub: 'Brewpub', regional: 'Regional brewery', large: 'Large brewery', contract: 'Contract-brewed', taproom: 'Taproom brewery', cidery: 'Cidery', meadery: 'Meadery' };
+
+/** Beer note and the brewery card on the drink sheet; both come from the catalog. */
+function renderBrewery(item) {
+  const catalogItem = item.catalogId ? getCatalogItem(item.catalogId) : null;
+  const desc = $('#item-desc');
+  desc.textContent = catalogItem?.desc || '';
+  desc.hidden = !catalogItem?.desc;
+  const maker = makerOf(item);
+  const card = $('#item-brewery');
+  const hasInfo = Boolean(maker && (maker.about || maker.founded || maker.url));
+  if (card.dataset.maker !== (hasInfo ? maker.id : '')) card.open = false; // a different brewery starts folded
+  card.dataset.maker = hasInfo ? maker.id : '';
+  card.hidden = !hasInfo;
+  if (!hasInfo) return;
+  const place = [maker.city, maker.state || (maker.country && maker.country !== 'US' ? maker.country : '')].filter(Boolean).join(', ');
+  const home = store.settings.location;
+  const miles = home && maker.lat != null && !ui.guest ? haversineMiles(home, maker) : null;
+  $('#brewery-name').textContent = maker.name;
+  $('#brewery-meta').textContent = [MAKER_KIND[maker.kind] || '', place, maker.founded ? `Since ${maker.founded}` : '', miles != null && miles <= 400 ? `${Math.max(1, Math.round(miles))} mi away` : ''].filter(Boolean).join(' · ');
+  $('#brewery-about').textContent = maker.about || '';
+  $('#brewery-about').hidden = !maker.about;
+  const link = $('#brewery-link');
+  const url = /^https:\/\//i.test(maker.url || '') ? maker.url : '';
+  link.hidden = !url;
+  if (url) {
+    link.href = url;
+    link.querySelector('span').textContent = new URL(url).hostname.replace(/^www\./, '');
+  }
+}
+
 function renderItemSheet() {
   const item = currentItem();
   if (!item) { closeSheet('sheet-item'); return; }
@@ -1220,6 +1251,7 @@ function renderItemSheet() {
   const origin = originText(item);
   $('#item-origin').textContent = origin ? `${item.type === 'Beer' ? 'Brewed in' : 'From'} ${origin}` : '';
   $('#item-tags').innerHTML = [item.style, abvText(item) && `${abvText(item)} ABV`, item.size, item.type !== 'Beer' ? typeChip(item.type) : ''].filter(Boolean).map(tag => `<span class="tag-pill">${esc(tag)}</span>`).join('');
+  renderBrewery(item);
   $('#item-rating').innerHTML = `${starsHtml(item, { count: !ui.guest })}${ui.guest ? '' : '<span class="rate-link">Rate</span>'}`;
   $('#item-rating').disabled = Boolean(ui.guest);
   $('#item-guest').hidden = owner;
@@ -1236,6 +1268,62 @@ function renderItemSheet() {
   $('#item-history').innerHTML = history.length
     ? `<p class="results-title">History</p>${history.map(entry => `<div class="hist-row"><span class="hist-${entry.kind}">${entry.kind === 'in' || (entry.kind === 'adjust' && entry.qty > 0) ? '+' : '−'}${Math.abs(entry.qty)}</span><span>${entry.kind === 'in' ? 'Stocked' : entry.kind === 'out' ? `Taken${entry.by ? ` by ${esc(entry.by)}` : ''}` : 'Count corrected'}</span><time>${esc(entry.at ? relativeTime(entry.at) : entry.whenLabel || '')}</time></div>`).join('')}`
     : '';
+}
+
+// ---------------------------------------------------------------------------
+// Fridge lists: a batch of drinks packed into a link (see tools/stock-link.mjs)
+
+async function openStockList(text) {
+  if (ui.guest) return;
+  const token = stockToken(text);
+  if (!token) { toast('That doesn’t look like a fridge list link'); return; }
+  let list;
+  try { list = await decodeStock(token); } catch { toast('That list link looks incomplete. Copy the whole link and try again.'); return; }
+  await loadCatalog();
+  const lines = list.lines.map(line => {
+    const catalogItem = line.id ? getCatalogItem(line.id) : null;
+    const data = catalogItem ? fromCatalog(catalogItem) : line.item?.name ? { ...line.item } : null;
+    return data ? { data, qty: line.count } : null;
+  }).filter(Boolean);
+  if (!lines.length) { toast('This copy of the app doesn’t know the drinks on that list yet. Close it, reopen it and try again.'); return; }
+  ui.stockList = { key: String(hash(token)), title: list.title, lines, missing: list.lines.length - lines.length };
+  renderStockList();
+  closeSheet('sheet-settings');
+  openSheet('sheet-stock');
+}
+
+function renderStockList() {
+  const list = ui.stockList;
+  if (!list) return;
+  const units = list.lines.reduce((sum, line) => sum + line.qty, 0);
+  $('#stock-title').textContent = list.title;
+  $('#stock-summary').textContent = `${plural(list.lines.length, 'drink')}, ${units} cans and bottles in all.${list.missing ? ` ${plural(list.missing, 'drink')} on the list couldn’t be matched and will be skipped.` : ''}`;
+  const loaded = stockListLoaded(list.key);
+  $('#stock-again').hidden = !loaded;
+  if (loaded) $('#stock-again').textContent = `You already added this list ${relativeTime(loaded.at)}. Adding it again puts the same cans in twice.`;
+  $('#stock-apply').textContent = loaded ? 'Add again' : 'Add to fridge';
+  const samples = sampleItems().length;
+  $('#stock-drop-row').hidden = !samples;
+  $('#stock-drop').checked = Boolean(samples);
+  $('#stock-drop-text').textContent = `Remove the ${plural(samples, 'sample drink')} first`;
+  $('#stock-rows').innerHTML = list.lines.map(({ data, qty }) => `
+    <div class="stock-row">
+      <span class="thumb">${art(data)}</span>
+      <span class="stock-row-text"><b>${esc(fullName(data))}</b><small>${esc(metaLine(data))}</small></span>
+      <span class="stock-qty" aria-label="${qty} to add">×${qty}</span>
+    </div>`).join('');
+}
+
+function applyStockList() {
+  const list = ui.stockList;
+  if (!list) return;
+  const dropSamples = !$('#stock-drop-row').hidden && $('#stock-drop').checked;
+  const result = stockBatch(list.lines, { dropSamples, listKey: list.key });
+  ui.stockList = null;
+  ui.cart = {};
+  closeSheet('sheet-stock');
+  showScreen('screen-home');
+  setTimeout(() => toast(`${plural(result.drinks, 'drink')} added: ${result.units} cans and bottles`, { undo: result.undo, tone: 'ok' }), 220);
 }
 
 // ---------------------------------------------------------------------------
@@ -1543,6 +1631,8 @@ function onClick(event) {
     case 's-export': download(`fridge-backup-${new Date().toISOString().slice(0, 10)}.json`, exportData()); toast('Backup downloaded'); break;
     case 's-reset': armed(target, 'Tap again to load the demo', () => { resetDemo(); toast('Demo fridge loaded'); }); break;
     case 's-erase': armed(target, 'Tap again to erase', () => { eraseAll(); ui.cart = {}; toast('Everything erased'); }); break;
+    case 's-stock-go': openStockList($('#s-stock').value).then(() => { if ($('#sheet-stock').open) $('#s-stock').value = ''; }); break;
+    case 'stock-apply': applyStockList(); break;
     default: break;
   }
 
@@ -1696,6 +1786,7 @@ function bindEvents() {
   window.addEventListener('hashchange', () => {
     const { route, params } = parseHash();
     if (route === 'menu' && params.get('s')) { location.reload(); return; }
+    if (route === 'stock' && params.get('l')) { takeStockLink(params.get('l')); return; }
     if (ROUTES[route] && ROUTES[route] !== ui.screen) showScreen(ROUTES[route], { updateUrl: false });
   });
 
@@ -1727,6 +1818,24 @@ function hydrateCatalogLinks() {
   if (changed) persist('link');
 }
 
+/** Open a fridge list that arrived in the link, and take it out of the address bar. */
+function takeStockLink(token) {
+  history.replaceState(null, '', `${location.pathname}${location.search}`);
+  if (ui.screen !== 'screen-home') showScreen('screen-home', { updateUrl: false });
+  openStockList(token);
+}
+
+/** A guest's menu snapshot carries no catalog ids; match by name so real labels show. */
+function hydrateGuestLabels() {
+  if (!ui.guest) return;
+  ui.guest.items.forEach(item => {
+    const best = matchCandidates({ name: item.name, brand: item.brand })[0];
+    if (!best || best.score < (item.brand ? 0.8 : 0.9)) return;
+    item.catalogId = best.item.id;
+    item.size ||= best.item.size;
+  });
+}
+
 async function init() {
   const result = load();
   bindEvents();
@@ -1745,9 +1854,11 @@ async function init() {
   showScreen(ROUTES[route] || 'screen-home', { updateUrl: !ROUTES[route] && route !== '' });
   if (result === 'migrated') toast('Your fridge was upgraded. Everything carried over.');
   if (route === 'scan' && !ui.guest) openAdd('scan'); // home-screen shortcut
+  if (route === 'stock' && params.get('l') && !ui.guest) takeStockLink(params.get('l'));
 
   loadCatalog().then(() => {
     hydrateCatalogLinks();
+    hydrateGuestLabels();
     ui.breweries = cachedBreweries(store.settings.location);
     $('#qa-catalog-count').textContent = catalogSize() ? `${catalogSize()} drinks built in` : 'Search the catalog';
     ui.version += 1;

@@ -25,6 +25,7 @@ export const DEFAULT_SETTINGS = {
   lastBy: '',
   recentNames: [],
   dismissed: [],
+  stockLists: [],
 };
 
 export const store = {
@@ -231,6 +232,62 @@ export function stockIn(data, qty, { code, format } = {}) {
     commit('undo');
   };
   return { item, created, checkedOff, undo };
+}
+
+// Sample drinks from the demo fridge keep their `demo-N` ids.
+const isSample = item => /^demo-\d+$/.test(item.id);
+export const sampleItems = () => store.items.filter(isSample);
+export const stockListLoaded = key => (store.settings.stockLists || []).find(entry => entry.key === key) || null;
+
+/**
+ * Stock several drinks at once (a fridge list opened from a link). One save and one undo.
+ * `lines` is [{ data, qty }]; `dropSamples` clears the demo drinks first.
+ */
+export function stockBatch(lines, { dropSamples = false, listKey = '' } = {}) {
+  const before = JSON.stringify({ items: store.items, activity: store.activity, beerRun: store.beerRun, stockLists: store.settings.stockLists || [] });
+  if (dropSamples) {
+    const gone = new Set(sampleItems().map(item => item.id));
+    store.items = store.items.filter(item => !gone.has(item.id));
+    store.activity = store.activity.filter(entry => !gone.has(entry.itemId));
+  }
+  let drinks = 0;
+  let units = 0;
+  const at = nowIso();
+  lines.forEach(({ data, qty }) => {
+    const count = Math.max(0, Math.round(Number(qty) || 0));
+    if (!data || !count) return;
+    let item = findSame(data);
+    if (!item) {
+      item = normalizeItem({ ...data, id: undefined, count: 0 });
+      // A drink that arrives as a single or a pair isn't "running low" on day one:
+      // alert once it drops below what it came in with.
+      if (item.par == null && count <= store.settings.defaultPar) item.par = Math.max(0, count - 1);
+      store.items.push(item);
+    } else if (data.catalogId && !item.catalogId) {
+      item.catalogId = data.catalogId;
+      ['size', 'city', 'state', 'country', 'lat', 'lng', 'style'].forEach(field => { if (!item[field] && data[field] != null) item[field] = data[field]; });
+    }
+    item.count += count;
+    item.updatedAt = at;
+    store.activity.unshift({ id: uid('a'), kind: 'in', itemId: item.id, name: fullName(item), qty: count, at, by: '' });
+    checkOffBeerRun(item);
+    drinks += 1;
+    units += count;
+  });
+  if (listKey) store.settings.stockLists = [{ key: listKey, at }, ...(store.settings.stockLists || []).filter(entry => entry.key !== listKey)].slice(0, 12);
+  commit('stock');
+  return {
+    drinks,
+    units,
+    undo: () => {
+      const saved = JSON.parse(before);
+      store.items = saved.items.map(normalizeItem);
+      store.activity = saved.activity;
+      store.beerRun = saved.beerRun;
+      store.settings.stockLists = saved.stockLists;
+      commit('undo');
+    },
+  };
 }
 
 export function checkout(lines, { by = '' } = {}) {

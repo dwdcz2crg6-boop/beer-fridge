@@ -1,8 +1,9 @@
 // Offline support.
 // - App files: network-first (so a refresh always picks up new versions), cache fallback offline.
 // - Pinned CDN libraries (barcode reader, QR code): cache-first; their URLs are versioned.
+// - Label images (data/labels): cache-first. A changed label gets a new file name.
 // - Third-party APIs (Open Food Facts, Open Brewery DB, geocoding): not intercepted.
-const VERSION = 'fridge-v10-2026-11-23';
+const VERSION = 'fridge-v11-2026-11-26';
 const CORE = [
   './',
   './index.html',
@@ -74,6 +75,6 @@ self.addEventListener('fetch', event => {
   const { request } = event;
   if (request.method !== 'GET') return;
   const url = new URL(request.url);
-  if (url.origin === self.location.origin) event.respondWith(networkFirst(request));
+  if (url.origin === self.location.origin) event.respondWith(url.pathname.includes('/data/labels/') ? cacheFirst(request) : networkFirst(request));
   else if (CDN.test(request.url)) event.respondWith(cacheFirst(request));
 });

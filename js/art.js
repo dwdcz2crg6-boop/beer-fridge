@@ -1,6 +1,7 @@
-// Generated can / bottle artwork. Colors come from a hash of the brand and the
-// style's liquid color, so every drink gets a stable, distinct "label" without
-// copying anyone's real label design.
+// Can / bottle artwork. A drink with a label image (data/labels, set in the catalog)
+// wears its real label on the drawn can or bottle. Every other drink gets a generated
+// label: colors come from a hash of the brand and the style's liquid color, so each
+// one is stable and distinct.
 import { esc, hash } from './util.js';
 import { liquidColor } from './taxonomy.js';
 
@@ -68,11 +69,11 @@ const CONDENSED = "'Avenir Next Condensed','Roboto Condensed','Arial Narrow',ui-
 const SERIF = "ui-serif,'New York','Iowan Old Style',Georgia,serif";
 
 const SHAPES = {
-  can: { body: 'M22,36 L78,36 Q80,36 80.6,38 L82,46 L82,164 L79,172 Q78.4,174 76,174 L24,174 Q21.6,174 21,172 L18,164 L18,46 L19.4,38 Q20,36 22,36 Z', lid: [50, 36, 28], label: { x: 18, y: 46, w: 64, h: 118 }, rims: [[36, 46], [164, 174]] },
+  can: { body: 'M22,49 L78,49 Q80,49 80.6,51 L82,59 L82,164 L79,172 Q78.4,174 76,174 L24,174 Q21.6,174 21,172 L18,164 L18,59 L19.4,51 Q20,49 22,49 Z', lid: [50, 49, 28], label: { x: 18, y: 59, w: 64, h: 105 }, rims: [[49, 59], [164, 174]] },
   tall: { body: 'M22,14 L78,14 Q80,14 80.6,16 L82,24 L82,164 L79,172 Q78.4,174 76,174 L24,174 Q21.6,174 21,172 L18,164 L18,24 L19.4,16 Q20,14 22,14 Z', lid: [50, 14, 28], label: { x: 18, y: 24, w: 64, h: 140 }, rims: [[14, 24], [164, 174]] },
   slim: { body: 'M31,20 L69,20 Q71,20 71.4,22 L72,30 L72,166 L70,172 Q69.4,174 67,174 L33,174 Q30.6,174 30,172 L28,166 L28,30 L28.6,22 Q29,20 31,20 Z', lid: [50, 20, 19], label: { x: 28, y: 30, w: 44, h: 136 }, rims: [[20, 30], [166, 174]] },
-  bottle: { body: 'M43,12 L57,12 L57,56 Q57,66 64,74 Q74,84 74,100 L74,166 Q74,174 66,174 L34,174 Q26,174 26,166 L26,100 Q26,84 36,74 Q43,66 43,56 Z', cap: { x: 41.5, y: 6, w: 17, h: 10 }, label: { x: 26, y: 104, w: 48, h: 50 }, glass: true },
-  wine: { body: 'M44,8 L56,8 L56,52 Q56,64 66,72 Q73,78 73,92 L73,168 Q73,174 67,174 L33,174 Q27,174 27,168 L27,92 Q27,78 34,72 Q44,64 44,52 Z', capsule: { x: 43.5, y: 6, w: 13, h: 34 }, label: { x: 30, y: 108, w: 40, h: 50 }, glass: true },
+  bottle: { body: 'M41,12 L59,12 L60,56 Q61,67 67,74 Q74,81 74,92 L74,166 Q74,174 66,174 L34,174 Q26,174 26,166 L26,92 Q26,81 33,74 Q39,67 40,56 Z', cap: { x: 39.5, y: 6, w: 21, h: 9 }, label: { x: 26, y: 100, w: 48, h: 56 }, zone: [93, 169], glass: true },
+  wine: { body: 'M44,8 L56,8 L56,52 Q56,64 66,72 Q73,78 73,92 L73,168 Q73,174 67,174 L33,174 Q27,174 27,168 L27,92 Q27,78 34,72 Q44,64 44,52 Z', capsule: { x: 43.5, y: 6, w: 13, h: 34 }, label: { x: 30, y: 108, w: 40, h: 50 }, zone: [94, 168], glass: true },
   water: { body: 'M44,18 L56,18 L56,28 Q56,34 64,40 Q72,46 72,58 L72,166 Q72,174 64,174 L36,174 Q28,174 28,166 L28,58 Q28,46 36,40 Q44,34 44,28 Z', cap: { x: 42, y: 8, w: 16, h: 11 }, label: { x: 28, y: 92, w: 44, h: 44 }, glass: true },
   spirit: { body: 'M45,10 L55,10 L55,40 Q55,50 66,56 Q76,62 76,74 L76,164 Q76,174 66,174 L34,174 Q24,174 24,164 L24,74 Q24,62 34,56 Q45,50 45,40 Z', cap: { x: 43, y: 4, w: 14, h: 12 }, label: { x: 27, y: 92, w: 46, h: 66 }, glass: true },
 };
@@ -88,7 +89,19 @@ function glassColor(item) {
   return /Pilsner|Lager|Light/.test(item.style || '') ? '#2f5a33' : '#5b3411';
 }
 
-export function artSVG(item, { label: ariaLabel } = {}) {
+/** Size of each can's printed area, so label crops can be cut to fit exactly. */
+export const LABEL_BOX = Object.fromEntries(Object.entries(SHAPES).map(([name, shape]) => [name, { w: shape.label.w, h: shape.label.h }]));
+
+/**
+ * `image` is a real label: { src, ar?, w?, flat?, cap?, band? }.
+ *   ar   width / height of the picture (bottles; cans are cropped to the printed area)
+ *   w    share of the bottle's width the label covers (default 1, a wrap-around label)
+ *   flat true for flat artwork, false for a crop of a product photo (already lit)
+ *   cap  bottle cap color
+ *   band true (or an ink color) to set the beer's name under a logo-only picture
+ */
+export function artSVG(item, { label: ariaLabel, image = null } = {}) {
+  const photo = image?.src ? image : null;
   const id = `a${(counter += 1)}`;
   const brand = item.brand || '';
   const seed = hash(`${brand}|${brand ? '' : item.name}`);
@@ -104,9 +117,12 @@ export function artSVG(item, { label: ariaLabel } = {}) {
   const labelFill = isGlass ? (item.type === 'Wine' ? '#f3ecdc' : labelColor) : labelColor;
   const labelInk = isGlass && item.type === 'Wine' ? '#2a211a' : ink;
 
+  // A photographed label already carries the studio lighting, so it gets a lighter touch.
+  const shade = !photo ? { left: 0.28, shine: 0.38, right: 0.34 } : photo.flat ? { left: 0.3, shine: 0.3, right: 0.36 } : { left: 0.2, shine: 0.1, right: 0.26 };
+
   const defs = `<defs>
     <linearGradient id="${id}m" x1="0" x2="1"><stop offset="0" stop-color="#7d838a"/><stop offset=".22" stop-color="#eef1f3"/><stop offset=".5" stop-color="#b9bfc5"/><stop offset=".78" stop-color="#e6e9ec"/><stop offset="1" stop-color="#6b7178"/></linearGradient>
-    <linearGradient id="${id}s" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity=".28"/><stop offset=".14" stop-color="#fff" stop-opacity=".0"/><stop offset=".26" stop-color="#fff" stop-opacity=".38"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".34"/></linearGradient>
+    <linearGradient id="${id}s" x1="0" x2="1"><stop offset="0" stop-color="#000" stop-opacity="${shade.left}"/><stop offset=".14" stop-color="#fff" stop-opacity=".0"/><stop offset=".26" stop-color="#fff" stop-opacity="${shade.shine}"/><stop offset=".4" stop-color="#fff" stop-opacity="0"/><stop offset=".72" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity="${shade.right}"/></linearGradient>
     <clipPath id="${id}c"><path d="${shape.body}"/></clipPath>
   </defs>`;
 
@@ -122,7 +138,32 @@ export function artSVG(item, { label: ariaLabel } = {}) {
   const padding = container === 'slim' ? 4 : 6;
   const textWidth = w - padding * 2;
   let content = '';
-  if (isGlass) {
+  let extraDefs = '';
+  if (photo && isGlass) {
+    // Bottle: the label sits on the straight part of the body, as wide as the picture allows.
+    const [zoneTop, zoneBottom] = shape.zone || [y - 4, y + h + 8];
+    const share = Math.min(1, Math.max(0.4, Number(photo.w) || 1));
+    const labelW = w * share;
+    const labelH = Math.min(zoneBottom - zoneTop, labelW / (Number(photo.ar) || 1));
+    const labelX = 50 - labelW / 2;
+    const labelY = (zoneTop + zoneBottom) / 2 - labelH / 2;
+    extraDefs = `<clipPath id="${id}l"><rect x="${labelX.toFixed(2)}" y="${labelY.toFixed(2)}" width="${labelW.toFixed(2)}" height="${labelH.toFixed(2)}" rx="${share < 1 ? 2.2 : 0}"/></clipPath>`;
+    content = `<image href="${esc(photo.src)}" x="${labelX.toFixed(2)}" y="${labelY.toFixed(2)}" width="${labelW.toFixed(2)}" height="${labelH.toFixed(2)}" preserveAspectRatio="xMidYMid slice" clip-path="url(#${id}l)"/>`;
+  } else if (photo) {
+    // Can: the label covers the whole printed area between the rims.
+    content = `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="#d5d9dd"/>
+      <image href="${esc(photo.src)}" x="${x}" y="${y}" width="${w}" height="${h}" preserveAspectRatio="xMidYMid slice"/>
+      <rect x="${x}" y="${y}" width="${w}" height="1" fill="#000" opacity=".22"/><rect x="${x}" y="${y + h - 1}" width="${w}" height="1" fill="#000" opacity=".26"/>`;
+    if (photo.band) {
+      // The picture is only the brewery's mark (a plain can with a logo): set the beer's name under it.
+      const bandInk = typeof photo.band === 'string' ? photo.band : '#f4efe6';
+      const nameFit = fitText(name.toUpperCase(), w - 10, h * 0.17, 10.5);
+      const nameY = y + h * 0.69;
+      content += `<rect x="${x + w * 0.3}" y="${(nameY - (nameFit.lines.length * nameFit.size) / 2 - 5).toFixed(1)}" width="${w * 0.4}" height=".7" fill="${bandInk}" opacity=".55"/>
+        ${textBlock(nameFit, nameY, bandInk, CONDENSED, 800, 0.5)}
+        ${textBlock(fitText(styleText, w - 14, 5.4, 5.4, 0.56), nameY + (nameFit.lines.length * nameFit.size) / 2 + 6.5, bandInk, CONDENSED, 600, 0.4)}`;
+    }
+  } else if (isGlass) {
     // Bottle label: brand, name, style — compact.
     const nameFit = fitText(name, textWidth, h * 0.46, 13);
     content = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${labelFill}"/>
@@ -149,7 +190,7 @@ export function artSVG(item, { label: ariaLabel } = {}) {
   }
   if (shape.cap) {
     const { x: cx, y: cy, w: cw, h: ch } = shape.cap;
-    const capColor = item.type === 'Water' ? '#2f7fc1' : accent;
+    const capColor = photo?.cap || (item.type === 'Water' ? '#2f7fc1' : accent);
     hardware += `<rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="2" fill="${capColor}"/><rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="2" fill="url(#${id}s)"/>`;
   }
   if (shape.capsule) {
@@ -158,10 +199,10 @@ export function artSVG(item, { label: ariaLabel } = {}) {
     hardware += `<rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="2.5" fill="${foil}"/><rect x="${cx}" y="${cy}" width="${cw}" height="${ch}" rx="2.5" fill="url(#${id}s)"/>`;
   }
 
-  const bodyFill = isGlass ? glassColor(item) : labelColor;
+  const bodyFill = isGlass ? glassColor(item) : photo ? '#c9ced3' : labelColor;
   const glassOpacity = item.type === 'Water' ? 0.75 : 1;
   const aria = ariaLabel ? `role="img" aria-label="${esc(ariaLabel)}"` : 'aria-hidden="true"';
-  return `<svg class="art art-${container}" viewBox="0 0 100 180" ${aria} focusable="false">${defs}
+  return `<svg class="art art-${container}${photo ? ' art-real' : ''}" viewBox="0 0 100 180" ${aria} focusable="false">${defs}${extraDefs ? `<defs>${extraDefs}</defs>` : ''}
     <ellipse cx="50" cy="175" rx="${container === 'slim' ? 22 : 30}" ry="3.2" fill="#000" opacity=".18"/>
     <g clip-path="url(#${id}c)"><path d="${shape.body}" fill="${bodyFill}" opacity="${glassOpacity}"/>${content}<rect x="0" y="0" width="100" height="180" fill="url(#${id}s)"/></g>
     ${hardware}

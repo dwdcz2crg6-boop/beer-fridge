@@ -1,8 +1,8 @@
 {
   "version": 1,
-  "updated": "2026-11-22",
+  "updated": "2026-11-26",
   "notes": "Curated catalog. Facts (names, styles, ABV, brewery location) authored from general knowledge; ABV null when unsure. No barcodes.",
-  "geo": {"source":"Open Brewery DB (openbrewerydb.org)","updated":"2026-11-23","located":276},
+  "geo": {"source":"Open Brewery DB (openbrewerydb.org)","updated":"2026-11-26","located":284},
   "makers": [
     {"id": "budweiser", "name": "Anheuser-Busch", "brand": "Budweiser", "city": "St. Louis", "state": "MO", "country": "US", "type": "Beer", "lat": 38.5955, "lng": -90.2119, "kind": "large", "items": [
       {"name":"Budweiser","style":"American Lager","abv":5,"pop":3,"aka":["Bud"]},
@@ -172,8 +172,8 @@
     {"id": "lost-coast", "name": "Lost Coast Brewery", "brand": "Lost Coast", "city": "Eureka", "state": "CA", "country": "US", "type": "Beer", "lat": 40.803, "lng": -124.1648, "kind": "regional", "items": [
       ["Great White","Witbier",4.8,1]
     ]},
-    {"id": "north-coast", "name": "North Coast Brewing Co.", "brand": "North Coast", "city": "Fort Bragg", "state": "CA", "country": "US", "type": "Beer", "lat": 39.4462, "lng": -123.8058, "kind": "regional", "items": [
-      ["Old Rasputin","Imperial Stout",9,1],
+    {"id": "north-coast", "name": "North Coast Brewing Co.", "brand": "North Coast", "city": "Fort Bragg", "state": "CA", "country": "US", "type": "Beer", "lat": 39.4462, "lng": -123.8058, "kind": "regional", "founded": 1988, "url": "https://northcoastbrewing.com/", "about": "Independent brewery on California’s Mendocino coast, brewing since 1988. Old Rasputin and Scrimshaw pilsner are its best-known beers.", "items": [
+      {"name":"Old Rasputin","style":"Imperial Stout","abv":9,"pop":1,"aka":["Old Rasputin Russian Imperial Stout"],"size":"12 fl oz bottle","desc":"A jet-black, intensely roasty and bitter imperial stout with a big warming finish.","label":{"src":"north-coast--old-rasputin.webp","ar":1,"flat":true,"cap":"#1c1a17"}},
       ["PranQster","Belgian Strong Golden",7.6,1]
     ]},
     {"id": "bear-republic", "name": "Bear Republic Brewing Co.", "brand": "Bear Republic", "city": "Healdsburg", "state": "CA", "country": "US", "type": "Beer", "lat": 38.611, "lng": -122.8713, "kind": "regional", "items": [
@@ -194,8 +194,9 @@
       ["Obsidian Stout","Stout",6.4,1],
       ["Jubelale","Winter Warmer",6.7,1,"winter"]
     ]},
-    {"id": "rogue", "name": "Rogue Ales", "brand": "Rogue", "city": "Newport", "state": "OR", "country": "US", "type": "Beer", "lat": 44.6287, "lng": -124.0565, "kind": "regional", "items": [
-      ["Dead Guy Ale","Bock",6.8,1]
+    {"id": "rogue", "name": "Rogue Ales", "brand": "Rogue", "city": "Newport", "state": "OR", "country": "US", "type": "Beer", "lat": 44.6287, "lng": -124.0565, "kind": "regional", "founded": 1988, "url": "https://www.rogue.com/", "about": "Oregon craft pioneer founded in 1988 and best known for Dead Guy Ale. It closed in November 2025 and filed for bankruptcy, so what is in the fridge may be the last of it.", "items": [
+      ["Dead Guy Ale","Bock",6.8,1],
+      {"name":"Santa’s Private Reserve","style":"Stout","abv":5.7,"pop":1,"season":"winter","aka":["Santa's Private Reserve","Santas Private Reserve","Santa’s Private Reserve Stout"],"size":"12 fl oz bottle","desc":"Rogue’s yearly holiday beer, with a new recipe and label almost every year. The 2025 edition, its last, was a smooth stout with cocoa and coffee notes.","label":{"src":"rogue--santas-private-reserve.webp","ar":0.907,"flat":true,"cap":"#1d5fa8"}}
     ]},
     {"id": "full-sail", "name": "Full Sail Brewing Co.", "brand": "Full Sail", "city": "Hood River", "state": "OR", "country": "US", "type": "Beer", "lat": 45.7104, "lng": -121.5165, "kind": "regional", "items": [
       ["Session Lager","American Lager",5.1,1]
@@ -596,14 +597,15 @@
       ["Storm King Stout","Imperial Stout",9.1,1],
       ["Festbier","Festbier",5.6,1,"fall"]
     ]},
-    {"id": "troegs", "name": "Tröegs Independent Brewing", "brand": "Tröegs", "city": "Hershey", "state": "PA", "country": "US", "type": "Beer", "lat": 40.2859, "lng": -76.6502, "approx": true, "items": [
+    {"id": "troegs", "name": "Tröegs Independent Brewing", "brand": "Tröegs", "city": "Hershey", "state": "PA", "country": "US", "type": "Beer", "lat": 40.2859, "lng": -76.6502, "approx": true, "founded": 1996, "url": "https://troegs.com/", "about": "Family-owned Pennsylvania brewery started in 1996 by brothers John and Chris Trogner and based in Hershey. Mad Elf is its signature holiday release.", "items": [
       ["Perpetual IPA","IPA",7.5,1],
-      ["Mad Elf","Belgian Strong Dark",11,2,"winter"],
+      {"name":"Mad Elf","style":"Belgian Strong Dark","abv":11,"pop":2,"season":"winter","aka":["The Mad Elf"],"size":"12 fl oz bottle","desc":"A ruby-red Belgian-style holiday ale made with sweet and tart cherries, honey and chocolate malt.","label":{"src":"troegs--mad-elf.webp","ar":1,"flat":true,"cap":"#b3202a"}},
       ["DreamWeaver Wheat","Hefeweizen",4.8,1],
       ["Troegenator","Doppelbock",8.2,1],
       ["Sunshine Pils","Pilsner",4.5,1,"summer"],
       ["JavaHead Stout","Stout",7.5,1],
-      ["Hopback Amber Ale","Amber Ale",6,1]
+      ["Hopback Amber Ale","Amber Ale",6,1],
+      {"name":"Mad Elf Grand Cru","style":"Belgian Strong Dark","abv":11,"pop":1,"season":"winter","aka":["The Mad Elf Grand Cru","Grand Cru"],"size":"12.7 fl oz bottle","desc":"A limited, bottle-conditioned Mad Elf that uses only tart Balaton cherries with wildflower honey.","label":{"src":"troegs--mad-elf-grand-cru.webp","ar":1,"flat":true,"cap":"#b8963e"}}
     ]},
     {"id": "yards", "name": "Yards Brewing Co.", "brand": "Yards", "city": "Philadelphia", "state": "PA", "country": "US", "type": "Beer", "lat": 39.9655, "lng": -75.1324, "kind": "regional", "items": [
       {"name":"Philadelphia Pale Ale","style":"Pale Ale","abv":4.6,"pop":1,"aka":["PPA"]},
@@ -616,9 +618,9 @@
       ["Helles Golden Lager","Helles",4.9,1],
       {"name":"Route 113 IPA","style":"IPA","abv":7,"pop":1,"aka":["Rt. 113 IPA"]}
     ]},
-    {"id": "weyerbacher", "name": "Weyerbacher Brewing Co.", "brand": "Weyerbacher", "city": "Easton", "state": "PA", "country": "US", "type": "Beer", "lat": 40.6884, "lng": -75.2207, "approx": true, "items": [
+    {"id": "weyerbacher", "name": "Weyerbacher Brewing Co.", "brand": "Weyerbacher", "city": "Easton", "state": "PA", "country": "US", "type": "Beer", "lat": 40.6884, "lng": -75.2207, "approx": true, "founded": 1995, "url": "https://weyerbacher.com/", "about": "Easton brewery founded in 1995, with a reputation for strong, boldly flavored ales.", "items": [
       ["Merry Monks","Tripel",9.3,1],
-      ["Imperial Pumpkin Ale","Pumpkin Ale",8,1,"fall"]
+      {"name":"Imperial Pumpkin Ale","style":"Pumpkin Ale","abv":8,"pop":1,"season":"fall","size":"12 fl oz bottle","desc":"A strong, malty pumpkin ale spiced with cinnamon, nutmeg, cardamom and clove.","label":{"src":"weyerbacher--imperial-pumpkin-ale.webp","ar":0.93,"flat":true,"cap":"#c8641c"}}
     ]},
     {"id": "lancaster", "name": "Lancaster Brewing Co.", "brand": "Lancaster", "city": "Lancaster", "state": "PA", "country": "US", "type": "Beer", "lat": 40.0439, "lng": -76.2985, "kind": "micro", "items": [
       ["Milk Stout","Milk Stout",5.3,1],
@@ -637,9 +639,11 @@
     {"id": "lionshead", "name": "The Lion Brewery", "brand": "Lionshead", "city": "Wilkes-Barre", "state": "PA", "country": "US", "type": "Beer", "lat": 41.2549, "lng": -75.8594, "kind": "regional", "items": [
       {"name":"Lionshead","style":"American Lager","abv":null,"pop":1,"aka":["Lionshead Deluxe Pilsner"]}
     ]},
-    {"id": "cape-may", "name": "Cape May Brewing Co.", "brand": "Cape May", "city": "Cape May", "state": "NJ", "country": "US", "type": "Beer", "lat": 39.0007, "lng": -74.9129, "kind": "micro", "items": [
+    {"id": "cape-may", "name": "Cape May Brewing Co.", "brand": "Cape May", "city": "Cape May", "state": "NJ", "country": "US", "type": "Beer", "lat": 39.0007, "lng": -74.9129, "kind": "micro", "founded": 2011, "url": "https://capemaybrewery.com/", "about": "Started in 2011 in a hangar at Cape May Airport, it has grown from a tiny homemade system into one of New Jersey’s biggest craft brewers.", "items": [
       ["Cape May IPA","IPA",null,1],
-      ["Coastal Evacuation","Double IPA",null,1]
+      ["Coastal Evacuation","Double IPA",null,1],
+      {"name":"Mexican Coffee Stout","style":"Stout","abv":7.5,"pop":1,"season":"winter","aka":["Mexican Stout"],"size":"12 fl oz can","desc":"A full-bodied stout with Mexican coffee, cinnamon, vanilla and a mild guajillo chile warmth.","label":{"src":"cape-may--mexican-coffee-stout.webp"}},
+      {"name":"The Grove","style":"Shandy","abv":4.5,"pop":1,"season":"summer","aka":["Grove","Citrus Shandy"],"size":"12 fl oz can","desc":"A light, sweet-tart citrus shandy that drinks like sparkling fresh-squeezed juice.","label":{"src":"cape-may--the-grove.webp"}}
     ]},
     {"id": "flying-fish", "name": "Flying Fish Brewing Co.", "brand": "Flying Fish", "city": "Somerdale", "state": "NJ", "country": "US", "type": "Beer", "lat": 39.8539, "lng": -75.0209, "kind": "regional", "items": [
       ["XPA","Pale Ale",null,1]
@@ -672,10 +676,11 @@
       ["Three Philosophers","Quadrupel",9.7,1],
       ["Abbey Ale","Dubbel",8.2,1]
     ]},
-    {"id": "southern-tier", "name": "Southern Tier Brewing Co.", "brand": "Southern Tier", "city": "Lakewood", "state": "NY", "country": "US", "type": "Beer", "lat": 42.1042, "lng": -79.3331, "approx": true, "items": [
+    {"id": "southern-tier", "name": "Southern Tier Brewing Co.", "brand": "Southern Tier", "city": "Lakewood", "state": "NY", "country": "US", "type": "Beer", "lat": 42.1042, "lng": -79.3331, "approx": true, "founded": 2002, "url": "https://stbcbeer.com/", "about": "Western New York brewery that began in Lakewood in 2002 and grew into one of the bigger regional brewers in the Northeast, known for strong, flavor-forward ales.", "items": [
       ["IPA","IPA",null,1],
       ["2X IPA","Double IPA",8.2,1],
-      ["Pumking","Pumpkin Ale",8.6,1,"fall"]
+      ["Pumking","Pumpkin Ale",8.6,1,"fall"],
+      {"name":"2XMAS","style":"Winter Warmer","abv":8,"pop":1,"season":"winter","aka":["2X MAS","2 Xmas","Xmas"],"size":"12 fl oz can","desc":"A strong spiced holiday ale modeled on Swedish glögg, brewed with figs, orange peel, ginger, cardamom, cinnamon and clove.","label":{"src":"southern-tier--2xmas.webp"}}
     ]},
     {"id": "sixpoint", "name": "Sixpoint Brewery", "brand": "Sixpoint", "city": "Brooklyn", "state": "NY", "country": "US", "type": "Beer", "lat": 40.674, "lng": -74.0119, "kind": "regional", "items": [
       ["Bengali","IPA",6.6,1],
@@ -704,8 +709,8 @@
     {"id": "saranac", "name": "Matt Brewing Co.", "brand": "Saranac", "city": "Utica", "state": "NY", "country": "US", "type": "Beer", "lat": 43.1036, "lng": -75.2441, "kind": "regional", "items": [
       ["Pale Ale","Pale Ale",null,1]
     ]},
-    {"id": "dogfish-head", "name": "Dogfish Head Craft Brewery", "brand": "Dogfish Head", "city": "Milton", "state": "DE", "country": "US", "type": "Beer", "lat": 38.7669, "lng": -75.3116, "kind": "regional", "items": [
-      ["60 Minute IPA","IPA",6,2],
+    {"id": "dogfish-head", "name": "Dogfish Head Craft Brewery", "brand": "Dogfish Head", "city": "Milton", "state": "DE", "country": "US", "type": "Beer", "lat": 38.7669, "lng": -75.3116, "kind": "regional", "founded": 1995, "url": "https://www.dogfish.com/", "about": "Delaware brewery opened in 1995 by Sam and Mariah Calagione, known for unusual ingredients and continually hopped IPAs. Part of Boston Beer Company since 2019.", "items": [
+      {"name":"60 Minute IPA","style":"IPA","abv":6,"pop":2,"aka":["60 Minute","Sixty Minute IPA"],"size":"12 fl oz bottle","desc":"A balanced IPA hopped continuously through a 60-minute boil: lots of citrusy hop flavor without harsh bitterness.","label":{"src":"dogfish-head--60-minute-ipa.webp","ar":0.708,"cap":"#c8452a"}},
       ["90 Minute IPA","Double IPA",9,2],
       ["SeaQuench Ale","Sour",4.9,1],
       ["Slightly Mighty","Session IPA",4,1],
@@ -724,8 +729,10 @@
       ["Loose Cannon","IPA",null,1],
       ["TropiCannon","IPA",null,1]
     ]},
-    {"id": "duclaw", "name": "DuClaw Brewing Co.", "brand": "DuClaw", "city": "Rosedale", "state": "MD", "country": "US", "type": "Beer", "lat": 39.3201, "lng": -76.5155, "approx": true, "items": [
-      ["Sweet Baby Jesus!","Porter",6.5,1]
+    {"id": "duclaw", "name": "DuClaw Brewing Co.", "brand": "DuClaw", "city": "Ewing", "state": "NJ", "country": "US", "type": "Beer", "kind": "regional", "founded": 1996, "url": "https://duclaw.com/", "about": "A Maryland brand since 1996, known for dessert-style beers like Sweet Baby Jesus!. River Horse Brewing bought it in 2023 and now brews it in Ewing, New Jersey.", "lat": 40.2698, "lng": -74.7999, "approx": true, "items": [
+      ["Sweet Baby Jesus!","Porter",6.5,1],
+      {"name":"Sweet Baby Banana!","style":"Porter","abv":6.2,"pop":1,"aka":["Sweet Baby Banana"],"size":"12 fl oz can","desc":"DuClaw’s chocolate peanut butter porter with banana added.","label":{"src":"duclaw--sweet-baby-banana.webp","flat":true}},
+      {"name":"The PastryArchy Candy Cane","style":"Imperial Stout","abv":7.5,"pop":1,"season":"winter","aka":["PastryArchy Candy Cane","Candy Cane Imperial Stout","Pastry Archy Candy Cane"],"size":"16 fl oz can","desc":"A holiday imperial stout made with mint, vanilla and lactose: peppermint and chocolate in a glass.","label":{"src":"duclaw--pastryarchy-candy-cane.webp","flat":true}}
     ]},
     {"id": "union-craft", "name": "Union Craft Brewing", "brand": "Union Craft", "city": "Baltimore", "state": "MD", "country": "US", "type": "Beer", "lat": 39.3363, "lng": -76.6442, "kind": "micro", "items": [
       ["Duckpin Pale Ale","Pale Ale",null,1]
@@ -1366,6 +1373,31 @@
     ]},
     {"id": "pallini", "name": "Pallini", "brand": "Pallini", "city": "Rome", "country": "IT", "type": "Spirits", "items": [
       ["Limoncello","Liqueur",26,1]
+    ]},
+    {"id": "stoneyard", "name": "Stoneyard Brewing Company", "brand": "Stoneyard", "city": "Brockport", "state": "NY", "country": "US", "type": "Beer", "kind": "micro", "founded": 2008, "about": "Western New York brewery on the Erie Canal in Brockport. It started in 2008 as a tap room and grill and has brewed its own beer since 2014.", "lat": 43.2137, "lng": -77.9392, "approx": true, "items": [
+      {"name":"Peach Kolsch","style":"Kölsch","abv":5,"pop":1,"aka":["Peach Kölsch"],"size":"16 fl oz can","desc":"A light, clean Kölsch-style ale with a juicy peach note.","label":{"src":"stoneyard--peach-kolsch.webp"}}
+    ]},
+    {"id": "ship-bottom", "name": "Ship Bottom Brewery", "brand": "Ship Bottom", "city": "Beach Haven", "state": "NJ", "country": "US", "type": "Beer", "kind": "micro", "founded": 2011, "url": "https://shipbottombrewery.com/", "about": "Named for the Long Beach Island town. It began in the founder’s garage in Pennsylvania and opened its brewery and tasting room in Beach Haven in 2016.", "lat": 39.5593, "lng": -74.2432, "approx": true, "items": [
+      {"name":"Abominable Snow Monster Ale","style":"Belgian Strong Dark","abv":10,"pop":1,"season":"winter","aka":["Abominable Snow Monster","Snow Monster Ale"],"size":"16 fl oz can","desc":"A strong, spicy Belgian-style holiday ale brewed with honey, sugar plums, figs and cherries. The can art changes every year.","label":{"src":"ship-bottom--abominable-snow-monster-ale.webp"}},
+      {"name":"Imperial Pumpkin Ale","style":"Pumpkin Ale","abv":9.4,"pop":1,"season":"fall","size":"16 fl oz can","desc":"A strong fall ale brewed with pumpkin, cinnamon, nutmeg, ginger and vanilla beans.","label":{"src":"ship-bottom--imperial-pumpkin-ale.webp"}}
+    ]},
+    {"id": "buena-connection", "name": "Buena Connection Brewing Company", "brand": "Buena Connection", "city": "Buena", "state": "NJ", "country": "US", "type": "Beer", "kind": "micro", "founded": 2025, "url": "https://buenaconnectionbrewing.com/", "about": "Family-owned taproom brewery in Buena, South Jersey, opened in April 2025 in a converted racquetball building. It pours a wide house lineup and sells four-packs to go.", "lat": 39.5137, "lng": -74.9246, "approx": true, "items": [
+      {"name":"The Buena Backroads","style":"IPA","abv":6.5,"pop":1,"aka":["Buena Backroads","The Backroads","Backroads"],"size":"16 fl oz can","desc":"The brewery’s house IPA: pale and lightly hazy, with orange and tropical hop character and a soft finish.","label":{"src":"buena-connection--buena-backroads.webp","flat":true,"band":true}}
+    ]},
+    {"id": "ludlam-island", "name": "Ludlam Island Brewery", "brand": "Ludlam Island", "city": "Woodbine", "state": "NJ", "country": "US", "type": "Beer", "kind": "micro", "founded": 2016, "url": "https://www.ludlamisland.com/", "about": "Cape May County brewery that started in Ocean View in 2016 and moved into a former bowling alley in Woodbine in 2024. Known locally for big stouts and for coffee beers made with a neighboring roaster.", "lat": 39.2418, "lng": -74.8152, "approx": true, "items": [
+      {"name":"Harry’s Darker Side","style":"Imperial Stout","abv":14.5,"pop":1,"aka":["Harrys Darker Side","Harry's Darker Side"],"size":"16 fl oz can","desc":"A very strong imperial stout conditioned on organic Sumatra coffee from Harry & Beans, the roaster in its name.","label":{"src":"ludlam-island--harrys-darker-side.webp","flat":true}}
+    ]},
+    {"id": "equilibrium", "name": "Equilibrium Brewery", "brand": "Equilibrium", "city": "Middletown", "state": "NY", "country": "US", "type": "Beer", "founded": 2016, "url": "https://eqbrew.com/", "about": "Hudson Valley brewery started by two MIT-trained environmental engineers who take a lab-style approach to brewing. Best known for soft, hazy, heavily hopped IPAs.", "lat": 41.4465, "lng": -74.4214, "kind": "micro", "items": [
+      {"name":"MC²","style":"Double IPA","abv":8,"pop":1,"aka":["MC2","MC Squared","MC 2"],"size":"16 fl oz can","desc":"The flagship hazy double IPA: juicy mango, pineapple and apricot hop character.","label":{"src":"equilibrium--mc2.webp"}}
+    ]},
+    {"id": "icarus", "name": "Icarus Brewing", "brand": "Icarus", "city": "Brick", "state": "NJ", "country": "US", "type": "Beer", "kind": "micro", "founded": 2017, "url": "https://icarusbrewing.com/", "about": "Ocean County brewery that opened in Lakewood in 2017 and moved to a much larger brewery and beer garden in Brick in 2024. Best known for hazy IPAs and a huge rotating lineup.", "lat": 40.0593, "lng": -74.1371, "approx": true, "items": [
+      {"name":"Yacht Juice","style":"Double IPA","abv":8,"pop":1,"size":"16 fl oz can","desc":"A hazy imperial IPA dry-hopped with Citra, Mosaic and Columbus: juicy citrus with a dank edge.","label":{"src":"icarus--yacht-juice.webp"}}
+    ]},
+    {"id": "little-house", "name": "Little House Brewing Company", "brand": "Little House", "city": "Chester", "state": "CT", "country": "US", "type": "Beer", "founded": 2019, "url": "https://www.littlehousebrewing.com/", "about": "Small taproom brewery in a roughly 200-year-old building on Main Street in Chester, Connecticut, known for approachable ales and dessert-style seasonal collaborations.", "lat": 41.4025, "lng": -72.4535, "kind": "micro", "items": [
+      {"name":"Apple Cider Donuts","style":"Scotch Ale","abv":7,"pop":1,"season":"fall","aka":["Apple Cider Donut"],"size":"16 fl oz can","desc":"A malty Scotch-style ale brewed with real apple cider donuts, cinnamon and vanilla.","label":{"src":"little-house--apple-cider-donuts.webp","flat":true}}
+    ]},
+    {"id": "fegleys", "name": "Fegley’s Brew Works", "brand": "Fegley’s", "city": "Allentown", "state": "PA", "country": "US", "type": "Beer", "kind": "brewpub", "founded": 1998, "url": "https://thebrewworks.com/", "about": "Family-run Lehigh Valley brewpubs that began with Bethlehem Brew Works in 1998 and later added Allentown. Known for their pumpkin and holiday seasonals.", "lat": 40.606, "lng": -75.4575, "items": [
+      {"name":"Devious Imperial Pumpkin","style":"Pumpkin Ale","abv":9,"pop":1,"season":"fall","aka":["Devious"],"size":"16 fl oz can","desc":"A strong amber pumpkin ale with real pumpkin and a pie-spice blend over a rich caramel malt base.","label":{"src":"fegleys--devious-imperial-pumpkin.webp"}}
     ]}
   ]
 }

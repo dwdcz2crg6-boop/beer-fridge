@@ -268,7 +268,7 @@ label.btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor:
 .pick-x { position: absolute; top: 14px; right: 14px; width: 26px; height: 26px; display: grid; place-items: center; padding: 0; border: 0; border-radius: 50%; background: rgb(0 0 0 / 6%); color: var(--muted); }
 .pick-x svg { width: 14px; height: 14px; }
 
-.inventory-list { display: grid; gap: 8px; margin-top: 10px; }
+.inventory-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; margin-top: 10px; }
 .inv-row { width: 100%; display: flex; align-items: center; gap: 12px; padding: 8px 12px 8px 8px; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); color: var(--ink); text-align: left; box-shadow: var(--shadow-1); transition: transform .12s ease; }
 .inv-row:active { transform: scale(.99); }
 .inv-row.is-out { opacity: .62; }
@@ -670,3 +670,32 @@ body.is-guest .toast { bottom: calc(env(safe-area-inset-bottom) + 20px); }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; scroll-behavior: auto !important; }
 }
+
+/* ---------- Real labels, beer notes and the brewery card ---------- */
+.item-desc { margin: -6px 2px 12px; color: var(--ink-2); font-size: 14px; line-height: 1.45; }
+.brewery { margin: 0 0 14px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface-2); }
+.brewery summary { display: flex; align-items: center; gap: 10px; min-height: 52px; padding: 8px 12px; list-style: none; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.brewery summary::-webkit-details-marker { display: none; }
+.brewery summary > svg { flex: none; width: 18px; height: 18px; color: var(--brand); }
+.brewery-head { flex: 1; min-width: 0; display: grid; gap: 1px; }
+.brewery-head b { font-size: 14px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brewery-head small { color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.brewery summary .brewery-chev { width: 16px; height: 16px; color: var(--muted); transition: transform .18s; }
+.brewery[open] summary .brewery-chev { transform: rotate(90deg); }
+.brewery summary:focus-visible { outline: 2.5px solid var(--brand); outline-offset: 2px; border-radius: 14px; }
+.brewery p { margin: 0; padding: 0 14px 6px 40px; color: var(--ink-2); font-size: 13.5px; line-height: 1.5; }
+.brewery .text-btn { margin: 0 14px 8px 40px; }
+.brewery .text-btn[hidden] { display: none; }
+
+/* ---------- Fridge list (a batch of drinks opened from a link) ---------- */
+.stock-rows { margin: 12px 0 14px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.stock-row { display: flex; align-items: center; gap: 12px; padding: 8px 0; border-top: 1px solid var(--line); }
+.stock-row:first-child { border-top: 0; }
+.stock-row-text { flex: 1; min-width: 0; display: grid; gap: 2px; }
+.stock-row-text b { font-size: 14.5px; line-height: 1.25; }
+.stock-row-text small { color: var(--muted); font-size: 12.5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stock-qty { flex: none; min-width: 40px; text-align: right; font: 800 17px/1 var(--font-num); color: var(--brand); }
+.stock-again { color: var(--amber-text); font-weight: 600; }
+.stock-drop { margin: 0 0 14px; }
+.stock-drop[hidden] { display: none; }
+#s-stock-go { margin-top: 8px; }
