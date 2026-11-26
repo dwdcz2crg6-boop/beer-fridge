@@ -1,0 +1,26 @@
+{
+  "id": "2026-11-26",
+  "title": "Uncle Mike's fridge",
+  "notes": "The house list. The app loads it by itself the first time a device opens it: drinks that are missing are added with these counts, drinks already in the fridge are left alone. Change the id to push a new list. Each line is [catalog id, count].",
+  "lines": [
+    ["stoneyard/peach-kolsch", 1],
+    ["cape-may/mexican-coffee-stout", 3],
+    ["duclaw/sweet-baby-banana", 1],
+    ["ship-bottom/abominable-snow-monster-ale", 7],
+    ["cape-may/the-grove", 1],
+    ["buena-connection/the-buena-backroads", 1],
+    ["ludlam-island/harrys-darker-side", 2],
+    ["equilibrium/mc", 2],
+    ["ship-bottom/imperial-pumpkin-ale", 4],
+    ["icarus/yacht-juice", 2],
+    ["southern-tier/2xmas", 3],
+    ["troegs/mad-elf", 1],
+    ["dogfish-head/60-minute-ipa", 1],
+    ["troegs/mad-elf-grand-cru", 1],
+    ["fegleys/devious-imperial-pumpkin", 1],
+    ["rogue/santas-private-reserve", 1],
+    ["duclaw/the-pastryarchy-candy-cane", 1],
+    ["little-house/apple-cider-donuts", 1],
+    ["north-coast/old-rasputin", 1]
+  ]
+}

@@ -506,7 +506,8 @@ export function eraseAll() {
   store.beerRun = [];
   store.upcMap = {};
   store.prefixMap = {};
-  store.settings = { ...DEFAULT_SETTINGS, fridgeName: store.settings.fridgeName };
+  // Keep the record of lists already loaded, or the house list would refill an erased fridge.
+  store.settings = { ...DEFAULT_SETTINGS, fridgeName: store.settings.fridgeName, stockLists: store.settings.stockLists || [] };
   localStorage.removeItem(LEGACY_INVENTORY);
   localStorage.removeItem(LEGACY_ACTIVITY);
   commit('erase');

@@ -243,7 +243,11 @@ function preloadLabels(items) {
   });
 }
 
-/** Take a drink off the shelf (the flick-up gesture). Confirms with a message that offers Undo. */
+/**
+ * Take a drink off the shelf (the flick-up gesture). The drink is marked out of stock, not
+ * deleted: it leaves the shelf, stays on the beer run, and keeps its ratings and barcode for
+ * the next restock. Confirms with a message that offers Undo.
+ */
 function removeFromFridge(lineup, index) {
   const item = lineup.shown[index];
   if (!item || ui.guest) return;
@@ -251,10 +255,10 @@ function removeFromFridge(lineup, index) {
   // Keep the shelf where it is: the next can slides into the gap.
   lineup.flowId = (lineup.shown[index + 1] || lineup.shown[index - 1])?.id || null;
   const onHand = item.count;
-  const result = deleteItem(item.id);
+  const result = adjustCount(item.id, 0);
   if (!result) return;
   delete ui.cart[item.id];
-  toast(`${fullName(item)} removed from the fridge${onHand ? ` (${onHand} on hand)` : ''}`, {
+  toast(`${fullName(item)} is off the shelf and on the beer run (was ${onHand})`, {
     undo: () => {
       lineup.flowId = item.id;
       result.undo();
@@ -386,8 +390,24 @@ function flushCount() {
     return;
   }
   const before = item.count;
+  if (value === 0) leaveShelf(item.id);
   const result = adjustCount(item.id, value);
-  if (result) toast(`${fullName(item)}: now ${value} on hand (was ${before})`, { undo: result.undo, tone: 'ok' });
+  if (!result) return;
+  toast(value === 0 ? `${fullName(item)} is out: off the shelf, on the beer run (was ${before})` : `${fullName(item)}: now ${value} on hand (was ${before})`, {
+    undo: () => {
+      if (value === 0) lineups.inv.flowId = item.id; // back to where it stood
+      result.undo();
+    },
+    tone: 'ok',
+  });
+}
+
+/** A drink is about to leave the shelf: keep the Cover Flow where it is, on its neighbour. */
+function leaveShelf(itemId) {
+  const lineup = lineups.inv;
+  const index = lineup.shown.findIndex(entry => entry.id === itemId);
+  if (index < 0 || lineup.flowId !== itemId) return;
+  lineup.flowId = (lineup.shown[index + 1] || lineup.shown[index - 1])?.id || null;
 }
 
 function renderCountNotes() {
@@ -568,8 +588,11 @@ function renderHome() {
   document.title = name;
   const items = store.items;
   const total = items.reduce((sum, item) => sum + item.count, 0);
-  const kinds = items.filter(item => item.count > 0).length;
-  const low = lowStock(items, store.activity, store.settings.defaultPar);
+  // Out-of-stock drinks leave the shelf. They stay in the app, on the beer run, until restocked.
+  const shelf = items.filter(item => item.count > 0);
+  const outCount = items.length - shelf.length;
+  const kinds = shelf.length;
+  const low = lowStock(items, store.activity, store.settings.defaultPar).filter(({ item }) => item.count > 0);
   $('#hero-total').textContent = total;
   $('#hero-sub').textContent = `${plural(kinds, 'kind')} · ${low.length ? `${low.length} running low` : 'nothing running low'}`;
   const status = total === 0 ? 'Empty fridge' : low.length >= 3 ? 'Beer run time' : low.length ? 'Mostly stocked' : 'Stocked up';
@@ -596,18 +619,22 @@ function renderHome() {
   // The lineup: Cover Flow or list, grouped the way the owner chose.
   const view = store.settings.invView === 'list' ? 'list' : 'flow';
   lineups.inv.query = view === 'list' ? $('#inv-search').value : ''; // search and sort belong to the list
-  const lineup = organize(lineups.inv, items, groupingSetting('invGroup'));
-  renderLineupControls(lineup, items);
+  const lineup = organize(lineups.inv, shelf, groupingSetting('invGroup'));
+  renderLineupControls(lineup, shelf);
   $$('#inv-view [data-inv-view]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.invView === view)));
   const empty = !lineup.shown.length;
-  $('.lineup-tools').hidden = !items.length || view !== 'list';
+  $('.lineup-tools').hidden = !shelf.length || view !== 'list';
   $('#inv-flow').hidden = empty || view !== 'flow';
   $('#inventory-list').hidden = empty || view !== 'list';
   $('#inv-empty').hidden = !empty;
+  $('#inv-out').hidden = !outCount || !shelf.length;
+  $('#inv-out-text').textContent = `${plural(outCount, 'drink')} out of stock, on the beer run`;
   if (empty) {
-    $('#inv-empty').innerHTML = items.length
+    $('#inv-empty').innerHTML = shelf.length
       ? emptyHtml('No matches', 'Try a different search or filter.')
-      : emptyHtml('The fridge is empty', 'Scan a can or add a drink by name to get started.', '<button class="btn btn-small" type="button" data-open-add="scan">Scan the first drink</button>');
+      : items.length
+        ? emptyHtml('Everything is out', `${outCount === 1 ? 'The one drink you had is' : `All ${outCount} drinks are`} on the beer run, ready to restock.`, '<button class="btn btn-small" type="button" data-go-run="1">See the beer run</button>')
+        : emptyHtml('The fridge is empty', 'Scan a can or add a drink by name to get started.', '<button class="btn btn-small" type="button" data-open-add="scan">Scan the first drink</button>');
   } else if (view === 'flow') {
     renderFlow(lineup);
   } else {
@@ -842,11 +869,27 @@ function renderDiscover() {
   renderBrowse();
 }
 
+/**
+ * What the beer run lists on its own: every drink that is out, then what is running low.
+ * Out-of-stock drinks are hidden from the shelf, so this list is where they live until
+ * they are restocked or forgotten.
+ */
+function restockList() {
+  const saved = new Set(store.beerRun.map(entry => entry.itemId).filter(Boolean));
+  const out = store.items.filter(item => item.count === 0).map(item => ({ item, taken: 0 }));
+  const low = lowStock(store.items, store.activity, store.settings.defaultPar).filter(({ item }) => item.count > 0);
+  return [...out, ...low].filter(({ item }) => !saved.has(item.id));
+}
+
+function goToBeerRun() {
+  showScreen('screen-discover');
+  setTimeout(() => $('#run-section').scrollIntoView({ block: 'start' }), 120);
+}
+
 function renderBeerRun() {
-  const low = lowStock(store.items, store.activity, store.settings.defaultPar);
-  const auto = low.filter(({ item }) => !store.beerRun.some(entry => entry.itemId === item.id));
+  const auto = restockList();
   const rows = [
-    ...auto.map(({ item }) => `<div class="run-row run-auto"><span class="run-dot" aria-hidden="true"></span><div><b>${esc(fullName(item))}</b><small>${item.count === 0 ? 'Out of stock' : `Low: ${item.count} left`}</small></div><button class="mini-btn" type="button" data-restock="${item.id}">Got it</button></div>`),
+    ...auto.map(({ item }) => `<div class="run-row run-auto"><span class="run-dot" aria-hidden="true"></span><div><b>${esc(fullName(item))}</b><small>${item.count === 0 ? 'Out of stock' : `Low: ${item.count} left`}</small></div><button class="mini-btn" type="button" data-restock="${item.id}">Got it</button>${item.count === 0 ? `<button class="icon-btn icon-btn-small" type="button" data-run-forget="${item.id}" aria-label="Forget ${esc(fullName(item))}"><svg><use href="#i-x"/></svg></button>` : ''}</div>`),
     ...store.beerRun.map(entry => `<div class="run-row"><span class="run-dot run-saved" aria-hidden="true"></span><div><b>${esc(entry.brand && !fold(entry.name).includes(fold(entry.brand).split(' ')[0]) ? `${entry.brand} ${entry.name}` : entry.name)}</b><small>${esc(entry.style || 'On the list')}</small></div><button class="mini-btn" type="button" data-run-got="${entry.id}">Got it</button><button class="icon-btn icon-btn-small" type="button" data-run-remove="${entry.id}" aria-label="Remove ${esc(entry.name)}"><svg><use href="#i-x"/></svg></button></div>`),
   ];
   $('#run-list').innerHTML = rows.join('') || '<p class="muted">Nothing on the list. Tap <b>List</b> on any pick, and low stock shows up here on its own.</p>';
@@ -854,7 +897,7 @@ function renderBeerRun() {
 }
 
 function beerRunText() {
-  const low = lowStock(store.items, store.activity, store.settings.defaultPar).filter(({ item }) => !store.beerRun.some(entry => entry.itemId === item.id));
+  const low = restockList();
   const lines = [
     ...low.map(({ item }) => `• ${fullName(item)}${item.count === 0 ? ' (out)' : ` (${item.count} left)`}`),
     ...store.beerRun.map(entry => `• ${entry.brand && !fold(entry.name).includes(fold(entry.brand).split(' ')[0]) ? `${entry.brand} ${entry.name}` : entry.name}`),
@@ -1312,6 +1355,41 @@ function renderItemSheet() {
 // ---------------------------------------------------------------------------
 // Fridge lists: a batch of drinks packed into a link (see tools/stock-link.mjs)
 
+const HOUSE_LIST = './data/fridge.json';
+const houseEnabled = !/[?&]house=0\b/.test(location.search); // the tests switch it off
+let houseReady = Promise.resolve();
+
+/**
+ * The house list: the fridge's own drinks, shipped with the app (data/fridge.json) and loaded
+ * by itself the first time a device opens the app. There is no server database: the fridge
+ * lives on each device, so this is how a phone starts with the real fridge instead of the
+ * sample drinks. It adds only what is missing, never raises a count that is already there,
+ * clears the sample drinks, and runs once per list id.
+ */
+async function autoStock() {
+  if (ui.guest || !houseEnabled || !catalogSize()) return;
+  let list;
+  try {
+    const response = await fetch(HOUSE_LIST, { cache: 'no-cache' });
+    if (!response.ok) return;
+    list = await response.json();
+  } catch {
+    return; // offline on the first visit: try again next time
+  }
+  const key = `house:${list?.id || ''}`;
+  if (!list?.id || !Array.isArray(list.lines) || stockListLoaded(key)) return;
+  const missing = list.lines
+    .map(([id, count]) => {
+      const catalogItem = getCatalogItem(id);
+      return catalogItem ? { data: fromCatalog(catalogItem), qty: count } : null;
+    })
+    .filter(line => line && !line.data.itemId);
+  const samples = sampleItems().length;
+  const result = stockBatch(missing, { dropSamples: true, listKey: key });
+  if (!result.drinks && !samples) return;
+  toast(result.drinks ? `Your fridge is loaded: ${plural(result.drinks, 'drink')}, ${result.units} cans and bottles` : 'Sample drinks cleared. Your beers were already here.', { undo: result.undo, tone: 'ok' });
+}
+
 async function openStockList(text) {
   if (ui.guest) return;
   const token = stockToken(text);
@@ -1319,6 +1397,7 @@ async function openStockList(text) {
   let list;
   try { list = await decodeStock(token); } catch { toast('That list link looks incomplete. Copy the whole link and try again.'); return; }
   await loadCatalog();
+  await houseReady; // the house list loads first, so this sheet knows what is already in
   const lines = list.lines.map(line => {
     const catalogItem = line.id ? getCatalogItem(line.id) : null;
     const data = catalogItem ? fromCatalog(catalogItem) : line.item?.name ? { ...line.item } : null;
@@ -1338,9 +1417,13 @@ function renderStockList() {
   $('#stock-title').textContent = list.title;
   $('#stock-summary').textContent = `${plural(list.lines.length, 'drink')}, ${units} cans and bottles in all.${list.missing ? ` ${plural(list.missing, 'drink')} on the list couldn’t be matched and will be skipped.` : ''}`;
   const loaded = stockListLoaded(list.key);
-  $('#stock-again').hidden = !loaded;
-  if (loaded) $('#stock-again').textContent = `You already added this list ${relativeTime(loaded.at)}. Adding it again puts the same cans in twice.`;
-  $('#stock-apply').textContent = loaded ? 'Add again' : 'Add to fridge';
+  const allHere = list.lines.every(line => findSame(line.data));
+  const again = Boolean(loaded) || allHere;
+  $('#stock-again').hidden = !again;
+  if (again) {
+    $('#stock-again').textContent = `${loaded ? `You already added this list ${relativeTime(loaded.at)}.` : 'Every drink on this list is already in your fridge.'} Adding it again puts the same cans in twice.`;
+  }
+  $('#stock-apply').textContent = again ? 'Add again' : 'Add to fridge';
   const samples = sampleItems().length;
   $('#stock-drop-row').hidden = !samples;
   $('#stock-drop').checked = Boolean(samples);
@@ -1596,6 +1679,13 @@ function onClick(event) {
     return;
   }
   if (data.runRemove) { removeFromBeerRun(data.runRemove); return; }
+  if (data.goRun) { goToBeerRun(); return; }
+  if (data.runForget) {
+    // An out-of-stock drink the owner doesn't want back: drop it for good.
+    const result = deleteItem(data.runForget);
+    if (result) toast(`${fullName(result.item)} forgotten`, { undo: result.undo });
+    return;
+  }
   if (data.runGot) {
     const entry = store.beerRun.find(run => run.id === data.runGot);
     if (!entry) return;
@@ -1895,7 +1985,7 @@ async function init() {
   if (route === 'scan' && !ui.guest) openAdd('scan'); // home-screen shortcut
   if (route === 'stock' && params.get('l') && !ui.guest) takeStockLink(params.get('l'));
 
-  loadCatalog().then(() => {
+  houseReady = loadCatalog().then(() => {
     hydrateCatalogLinks();
     hydrateGuestLabels();
     ui.breweries = cachedBreweries(store.settings.location);
@@ -1903,7 +1993,8 @@ async function init() {
     ui.version += 1;
     renderScreen();
     if (store.settings.location && breweriesStale(store.settings.location)) refreshBreweries();
-  });
+    return autoStock();
+  }).catch(error => console.warn('House list not loaded', error));
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
     navigator.serviceWorker.register('service-worker.js').catch(() => {});

@@ -714,5 +714,7 @@ body.is-guest .toast { bottom: calc(env(safe-area-inset-bottom) + 20px); }
 .cf-hint svg { width: 14px; height: 14px; }
 .coverflow.is-lifting .cf-hint { opacity: 1; transform: translate(-50%, 0); }
 .coverflow.is-letgo .cf-hint { border-color: transparent; background: #c9473c; }
+.out-link { display: flex; width: fit-content; margin: 12px auto 0; color: var(--ink-2); }
+.out-link[hidden] { display: none; }
 .cap-hint { margin: 12px 0 0; color: rgb(255 255 255 / 52%); font-size: 12px; line-height: 1.4; text-align: center; }
 @media (prefers-reduced-motion: reduce) { .cf-card.is-lifted .cf-art, .cf-hint { transition: none; } }
