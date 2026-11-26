@@ -24,6 +24,7 @@
     ["north-coast/old-rasputin", 1]
   ],
   "fixes": [
-    {"id": "sweet-baby-banana-3", "drink": "duclaw/sweet-baby-banana", "count": 3, "why": "The owner counted three on hand (2026-11-26). Applied once per device."}
+    {"id": "sweet-baby-banana-3", "drink": "duclaw/sweet-baby-banana", "count": 3, "why": "The owner counted three on hand (2026-11-26). Applied once per device."},
+    {"id": "santas-2024-can", "drink": "rogue/santas-private-reserve", "set": {"size": "16 fl oz can", "abv": 6.7}, "why": "The owner's is a can, not a bottle (2026-11-27). The 2025 edition came only in bottles, so this is the 2024 can."}
   ]
 }

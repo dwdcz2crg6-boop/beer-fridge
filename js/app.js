@@ -1402,6 +1402,11 @@ async function autoStock(notes = []) {
   (Array.isArray(list?.fixes) ? list.fixes : []).forEach(fix => {
     if (!fix?.id || stockListLoaded(`fix:${fix.id}`)) return;
     const item = store.items.find(entry => entry.catalogId === fix.drink);
+    // A fix can also correct details, such as the package ("16 fl oz can" decides can or bottle art).
+    if (item && fix.set && typeof fix.set === 'object') {
+      const changes = Object.fromEntries(['size', 'abv', 'style'].filter(field => fix.set[field] != null && item[field] !== fix.set[field]).map(field => [field, fix.set[field]]));
+      if (Object.keys(changes).length) saveItem({ id: item.id, ...changes });
+    }
     if (item && Number.isInteger(fix.count) && fix.count >= 0 && item.count !== fix.count) {
       const before = item.count;
       adjustCount(item.id, fix.count);
