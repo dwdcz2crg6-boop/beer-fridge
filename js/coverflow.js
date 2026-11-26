@@ -11,8 +11,10 @@ const UP_ARROW = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" str
 /**
  * onFlickUp(index): optional. Press and hold a card, then flick it upward. The card lifts,
  * follows the finger, and `flickText` ({ idle, armed }) labels the hint above it.
+ * onHoldRelease(index): optional. The card was picked up and put straight back down, without
+ * being dragged anywhere: a long press.
  */
-export function createCoverflow(root, { onChange, onActivate, onFlickUp, flickText = { idle: 'Flick up to remove', armed: 'Let go to remove' } } = {}) {
+export function createCoverflow(root, { onChange, onActivate, onFlickUp, onHoldRelease, flickText = { idle: 'Flick up to remove', armed: 'Let go to remove' } } = {}) {
   const track = root.querySelector('.cf-track');
   const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
   let cards = [];
@@ -110,7 +112,7 @@ export function createCoverflow(root, { onChange, onActivate, onFlickUp, flickTe
   function holdStart(card, x, y) {
     holdCancel();
     if (!onFlickUp || !card) return;
-    hold = { card, art: card.querySelector('.cf-art'), x, y, dy: 0, lifted: false, scroll: track.scrollLeft, samples: [], timer: setTimeout(holdLift, HOLD_MS) };
+    hold = { card, art: card.querySelector('.cf-art'), x, y, dy: 0, travel: 0, lifted: false, scroll: track.scrollLeft, samples: [], timer: setTimeout(holdLift, HOLD_MS) };
   }
 
   function holdLift() {
@@ -133,6 +135,7 @@ export function createCoverflow(root, { onChange, onActivate, onFlickUp, flickTe
       return;
     }
     const raw = y - hold.y;
+    hold.travel = Math.max(hold.travel, Math.hypot(x - hold.x, raw)); // how far it was ever carried
     hold.dy = raw < 0 ? raw : raw * 0.25; // follows the finger up, resists being pulled down
     hold.samples.push([performance.now(), y]);
     if (hold.samples.length > 5) hold.samples.shift();
@@ -165,6 +168,9 @@ export function createCoverflow(root, { onChange, onActivate, onFlickUp, flickTe
       art.style.transform = '';
       art.style.opacity = '';
       setTimeout(() => { if (!hold || hold.art !== art) art.style.transition = ''; }, 260);
+      // Picked up and set straight back down: a long press. A card that was carried off and
+      // brought back was a flick the owner thought better of, so that does nothing.
+      if (onHoldRelease && current.travel < HOLD_SLOP) onHoldRelease(cards.indexOf(card));
       return;
     }
     art.style.transition = 'transform .2s ease-in, opacity .2s ease-in';

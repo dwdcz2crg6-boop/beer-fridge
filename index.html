@@ -127,7 +127,7 @@
                 <p class="count-note"></p>
               </div>
               <div class="cap-actions" id="inv-cap-actions"></div>
-              <p class="cap-hint">Press and hold a can, then flick it up to take it off the shelf.</p>
+              <p class="cap-hint">Press and hold a can: let go to edit it, or flick it up to take it off the shelf.</p>
             </div>
           </section>
           <div class="inventory-list" id="inventory-list"></div>
@@ -473,7 +473,7 @@
           <label class="field">State<input id="f-state" placeholder="ST" maxlength="2" autocomplete="off" /></label>
         </div>
         <div class="field-row" id="f-qty-row">
-          <label class="field">Adding now<input id="f-qty" type="number" inputmode="numeric" min="0" step="1" value="1" /></label>
+          <label class="field"><span id="f-qty-label">Adding now</span><input id="f-qty" type="number" inputmode="numeric" min="0" step="1" value="1" /></label>
           <label class="field">Low-stock alert at<input id="f-par" type="number" inputmode="numeric" min="0" step="1" placeholder="3" /></label>
         </div>
         <button class="btn btn-primary btn-block" type="submit" id="form-submit">Save</button>

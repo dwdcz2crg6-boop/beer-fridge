@@ -730,7 +730,7 @@
       ["TropiCannon","IPA",null,1]
     ]},
     {"id": "duclaw", "name": "DuClaw Brewing Co.", "brand": "DuClaw", "city": "Ewing", "state": "NJ", "country": "US", "type": "Beer", "kind": "regional", "founded": 1996, "url": "https://duclaw.com/", "about": "A Maryland brand since 1996, known for dessert-style beers like Sweet Baby Jesus!. River Horse Brewing bought it in 2023 and now brews it in Ewing, New Jersey.", "lat": 40.2698, "lng": -74.7999, "approx": true, "items": [
-      ["Sweet Baby Jesus!","Porter",6.5,1],
+      {"name":"Sweet Baby Jesus!","style":"Porter","abv":6.2,"pop":2,"aka":["Sweet Baby Jesus","SBJ"],"size":"12 fl oz can","desc":"DuClaw’s best seller: a chocolate peanut butter porter, dark and dessert-like without being heavy.","label":{"src":"duclaw--sweet-baby-jesus.webp"}},
       {"name":"Sweet Baby Banana!","style":"Porter","abv":6.2,"pop":1,"aka":["Sweet Baby Banana"],"size":"12 fl oz can","desc":"DuClaw’s chocolate peanut butter porter with banana added.","label":{"src":"duclaw--sweet-baby-banana.webp","flat":true}},
       {"name":"The PastryArchy Candy Cane","style":"Imperial Stout","abv":7.5,"pop":1,"season":"winter","aka":["PastryArchy Candy Cane","Candy Cane Imperial Stout","Pastry Archy Candy Cane"],"size":"16 fl oz can","desc":"A holiday imperial stout made with mint, vanilla and lactose: peppermint and chocolate in a glass.","label":{"src":"duclaw--pastryarchy-candy-cane.webp","flat":true}}
     ]},

@@ -290,6 +290,36 @@ export function stockBatch(lines, { dropSamples = false, listKey = '' } = {}) {
   };
 }
 
+/** Remember that a list or a one-off fix has been applied on this device. */
+export function markListLoaded(key) {
+  if (!key || stockListLoaded(key)) return;
+  store.settings.stockLists = [{ key, at: nowIso() }, ...(store.settings.stockLists || [])].slice(0, 40);
+  commit('settings');
+}
+
+/**
+ * Fold one fridge entry into another that is the same drink: counts and ratings add up,
+ * barcodes combine, and the ledger, beer run and learned barcodes follow the kept entry.
+ * The caller saves (persist) once it is done merging.
+ */
+export function mergeItems(keepId, dropId) {
+  const keep = findItem(keepId);
+  const drop = findItem(dropId);
+  if (!keep || !drop || keep === drop) return false;
+  keep.count += drop.count;
+  keep.ratingTotal += drop.ratingTotal;
+  keep.ratingCount += drop.ratingCount;
+  keep.barcodes = [...new Set([...keep.barcodes, ...drop.barcodes])];
+  if (keep.par == null) keep.par = drop.par;
+  if (drop.addedAt < keep.addedAt) keep.addedAt = drop.addedAt;
+  keep.updatedAt = nowIso();
+  store.items = store.items.filter(item => item !== drop);
+  store.activity.forEach(entry => { if (entry.itemId === drop.id) entry.itemId = keep.id; });
+  store.beerRun.forEach(entry => { if (entry.itemId === drop.id) entry.itemId = keep.id; });
+  Object.values(store.upcMap).forEach(entry => { if (entry.itemId === drop.id) entry.itemId = keep.id; });
+  return true;
+}
+
 export function checkout(lines, { by = '' } = {}) {
   const entries = [];
   lines.forEach(({ id, qty }) => {

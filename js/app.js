@@ -11,7 +11,7 @@ import { createWheel } from './wheel.js';
 import { decodeSnapshot, decodeStock, qrSvg, snapshotUrl, stockToken } from './share.js';
 import {
   addToBeerRun, adjustCount, brandHintFor, checkout, deleteItem, dismissSuggestion, eraseAll, exportData, findByBarcode, findItem, findSame,
-  importData, learnedProduct, linkCatalog, load, persist, rateItem, removeFromBeerRun, resetDemo, sampleItems, saveItem, stockBatch, stockIn, stockListLoaded, store, subscribe, updateSettings, attachBarcode,
+  importData, learnedProduct, linkCatalog, load, markListLoaded, mergeItems, persist, rateItem, removeFromBeerRun, resetDemo, sampleItems, saveItem, stockBatch, stockIn, stockListLoaded, store, subscribe, updateSettings, attachBarcode,
 } from './store.js';
 
 // ---------------------------------------------------------------------------
@@ -280,6 +280,12 @@ function renderFlow(lineup) {
     },
     // The owner's shelf only: press and hold a can, flick it up, and it leaves the fridge.
     onFlickUp: lineup.id === 'inv' ? index => removeFromFridge(lineup, index) : null,
+    // ...and press, hold and let go to edit it.
+    onHoldRelease: lineup.id === 'inv' ? index => {
+      const item = lineup.shown[index];
+      if (item && !ui.guest) openForm({ mode: 'edit', item });
+    } : null,
+    flickText: { idle: 'Let go to edit · flick up to remove', armed: 'Let go to remove' },
   });
   preloadLabels(lineup.shown);
   const signature = lineup.shown.map(cardKey).join('|');
@@ -1366,28 +1372,51 @@ let houseReady = Promise.resolve();
  * sample drinks. It adds only what is missing, never raises a count that is already there,
  * clears the sample drinks, and runs once per list id.
  */
-async function autoStock() {
-  if (ui.guest || !houseEnabled || !catalogSize()) return;
+async function autoStock(notes = []) {
+  const tell = () => { if (notes.length) toast(notes.join(' · '), { tone: 'ok', duration: 6000 }); };
+  if (ui.guest || !houseEnabled || !catalogSize()) { tell(); return; }
   let list;
   try {
     const response = await fetch(HOUSE_LIST, { cache: 'no-cache' });
-    if (!response.ok) return;
+    if (!response.ok) { tell(); return; }
     list = await response.json();
   } catch {
+    tell();
     return; // offline on the first visit: try again next time
   }
+  let loaded = null;
   const key = `house:${list?.id || ''}`;
-  if (!list?.id || !Array.isArray(list.lines) || stockListLoaded(key)) return;
-  const missing = list.lines
-    .map(([id, count]) => {
-      const catalogItem = getCatalogItem(id);
-      return catalogItem ? { data: fromCatalog(catalogItem), qty: count } : null;
-    })
-    .filter(line => line && !line.data.itemId);
-  const samples = sampleItems().length;
-  const result = stockBatch(missing, { dropSamples: true, listKey: key });
-  if (!result.drinks && !samples) return;
-  toast(result.drinks ? `Your fridge is loaded: ${plural(result.drinks, 'drink')}, ${result.units} cans and bottles` : 'Sample drinks cleared. Your beers were already here.', { undo: result.undo, tone: 'ok' });
+  if (list?.id && Array.isArray(list.lines) && !stockListLoaded(key)) {
+    const missing = list.lines
+      .map(([id, count]) => {
+        const catalogItem = getCatalogItem(id);
+        return catalogItem ? { data: fromCatalog(catalogItem), qty: count } : null;
+      })
+      .filter(line => line && !line.data.itemId);
+    const samples = sampleItems().length;
+    const result = stockBatch(missing, { dropSamples: true, listKey: key });
+    if (result.drinks || samples) loaded = result;
+  }
+  // One-off corrections: set a drink's count once on each device (a fix has its own id, so it
+  // does not run again when the list changes).
+  (Array.isArray(list?.fixes) ? list.fixes : []).forEach(fix => {
+    if (!fix?.id || stockListLoaded(`fix:${fix.id}`)) return;
+    const item = store.items.find(entry => entry.catalogId === fix.drink);
+    if (item && Number.isInteger(fix.count) && fix.count >= 0 && item.count !== fix.count) {
+      const before = item.count;
+      adjustCount(item.id, fix.count);
+      // One line per drink: a merge that was then corrected reads as a single change.
+      const mergedAt = notes.findIndex(note => note.startsWith(`${fullName(item)}: `) && note.includes('merged into one'));
+      if (mergedAt >= 0) notes[mergedAt] = notes[mergedAt].replace(/, \d+ on hand$/, `, now ${fix.count} on hand`);
+      else notes.push(`${fullName(item)}: set to ${fix.count} on hand (was ${before})`);
+    }
+    markListLoaded(`fix:${fix.id}`);
+  });
+  if (loaded) {
+    toast(loaded.drinks ? `Your fridge is loaded: ${plural(loaded.drinks, 'drink')}, ${loaded.units} cans and bottles` : 'Sample drinks cleared. Your beers were already here.', { undo: loaded.undo, tone: 'ok' });
+    return;
+  }
+  tell();
 }
 
 async function openStockList(text) {
@@ -1475,8 +1504,9 @@ function openForm({ mode = 'new', item = null, candidate = null, qty = 1, return
   $('#f-size').value = source.size || TYPE_META[type]?.size || '';
   $('#f-city').value = brewery?.city || source.city || '';
   $('#f-state').value = brewery?.state || source.state || '';
-  $('#f-qty-row').querySelector('label').hidden = mode === 'edit';
-  $('#f-qty').value = qty;
+  // A new drink says how many are going in; an existing one shows what is on hand, to correct.
+  $('#f-qty-label').textContent = mode === 'edit' ? 'On hand' : 'Adding now';
+  $('#f-qty').value = mode === 'edit' ? item.count : qty;
   $('#f-par').value = source.par ?? '';
   $('#f-par').placeholder = String(parPlaceholder());
   const pending = ui.form.pending;
@@ -1517,8 +1547,18 @@ function submitForm(event) {
     if (catalogItem && fold(catalogItem.name) === fold(name)) Object.assign(data, { catalogId: catalogItem.id, lat: catalogItem.lat, lng: catalogItem.lng, country: catalogItem.country });
   }
   if (ui.form.mode === 'edit') {
-    saveItem({ id: ui.form.itemId, ...data });
-    toast('Saved');
+    const saved = saveItem({ id: ui.form.itemId, ...data });
+    const raw = $('#f-qty').value.trim();
+    const count = raw === '' || Number.isNaN(Number(raw)) ? saved.count : Math.max(0, Math.round(Number(raw)));
+    const before = saved.count;
+    if (count !== before) {
+      flushCount(); // a wheel change still waiting to save comes first
+      if (count === 0) leaveShelf(saved.id);
+      const result = adjustCount(saved.id, count);
+      toast(count === 0 ? `Saved. ${fullName(saved)} is out: off the shelf, on the beer run (was ${before})` : `Saved. ${fullName(saved)}: now ${count} on hand (was ${before})`, { undo: result?.undo, tone: 'ok' });
+    } else {
+      toast('Saved');
+    }
     closeSheet('sheet-form');
     if ($('#sheet-item').open) renderItemSheet();
     return;
@@ -1934,17 +1974,48 @@ function bindEvents() {
 // ---------------------------------------------------------------------------
 // Startup
 
+/**
+ * Link fridge entries to the catalog, then fold doubles into one.
+ *
+ * The same drink can be in the fridge twice: once added by hand, often with the brewery spelled
+ * the way dictation heard it ("Dewclaw"), and once from the catalog with its real label. A
+ * hand-added entry whose name is exactly a catalog drink that is already in the fridge is that
+ * drink, even if the brewery spelling scores too low to link on its own.
+ * Returns a line for each merge, for the owner to read.
+ */
 function hydrateCatalogLinks() {
   let changed = false;
+  const owned = new Set(store.items.map(item => item.catalogId).filter(Boolean));
   store.items.forEach(item => {
     if (item.catalogId && getCatalogItem(item.catalogId)) return;
     const best = matchCandidates({ name: item.name, brand: item.brand })[0];
-    if (best && best.score >= (item.brand ? 0.8 : 0.86)) {
+    if (!best) return;
+    const sameName = [best.item.name, ...best.item.aka].some(name => fold(name) === fold(item.name));
+    const isDouble = owned.has(best.item.id) && sameName && best.score >= 0.72;
+    if (isDouble || best.score >= (item.brand ? 0.8 : 0.86)) {
       linkCatalog(item, best.item);
       changed = true;
     }
   });
+
+  const groups = new Map();
+  store.items.forEach(item => {
+    if (item.catalogId) groups.set(item.catalogId, [...(groups.get(item.catalogId) || []), item]);
+  });
+  const merged = [];
+  groups.forEach((entries, catalogId) => {
+    if (entries.length < 2) return;
+    const catalogItem = getCatalogItem(catalogId);
+    // Keep the entry that already reads like the catalog; it carries the right name and brewery.
+    const keeper = entries.find(item => catalogItem && fold(item.name) === fold(catalogItem.name) && fold(item.brand) === fold(catalogItem.brand)) || entries[0];
+    entries.filter(item => item !== keeper).forEach(item => mergeItems(keeper.id, item.id));
+    if (catalogItem) Object.assign(keeper, { name: catalogItem.name, brand: catalogItem.brand });
+    if (ui.itemId && !findItem(ui.itemId)) ui.itemId = keeper.id;
+    merged.push(`${fullName(keeper)}: ${entries.length} entries merged into one, ${keeper.count} on hand`);
+    changed = true;
+  });
   if (changed) persist('link');
+  return merged;
 }
 
 /** Open a fridge list that arrived in the link, and take it out of the address bar. */
@@ -1986,14 +2057,14 @@ async function init() {
   if (route === 'stock' && params.get('l') && !ui.guest) takeStockLink(params.get('l'));
 
   houseReady = loadCatalog().then(() => {
-    hydrateCatalogLinks();
+    const merged = ui.guest ? [] : hydrateCatalogLinks();
     hydrateGuestLabels();
     ui.breweries = cachedBreweries(store.settings.location);
     $('#qa-catalog-count').textContent = catalogSize() ? `${catalogSize()} drinks built in` : 'Search the catalog';
     ui.version += 1;
     renderScreen();
     if (store.settings.location && breweriesStale(store.settings.location)) refreshBreweries();
-    return autoStock();
+    return autoStock(merged);
   }).catch(error => console.warn('House list not loaded', error));
 
   if ('serviceWorker' in navigator && location.protocol !== 'file:') {
