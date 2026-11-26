@@ -243,6 +243,26 @@ function preloadLabels(items) {
   });
 }
 
+/** Take a drink off the shelf (the flick-up gesture). Confirms with a message that offers Undo. */
+function removeFromFridge(lineup, index) {
+  const item = lineup.shown[index];
+  if (!item || ui.guest) return;
+  flushCount(); // a count change still waiting to save belongs to the ledger first
+  // Keep the shelf where it is: the next can slides into the gap.
+  lineup.flowId = (lineup.shown[index + 1] || lineup.shown[index - 1])?.id || null;
+  const onHand = item.count;
+  const result = deleteItem(item.id);
+  if (!result) return;
+  delete ui.cart[item.id];
+  toast(`${fullName(item)} removed from the fridge${onHand ? ` (${onHand} on hand)` : ''}`, {
+    undo: () => {
+      lineup.flowId = item.id;
+      result.undo();
+    },
+    tone: 'ok',
+  });
+}
+
 function renderFlow(lineup) {
   lineup.flow ||= createCoverflow($(`#${lineup.id}-coverflow`), {
     onChange: index => {
@@ -254,6 +274,8 @@ function renderFlow(lineup) {
       const item = lineup.shown[index];
       if (item) openItem(item.id, lineup.id === 'inv' ? 'owner' : 'guest');
     },
+    // The owner's shelf only: press and hold a can, flick it up, and it leaves the fridge.
+    onFlickUp: lineup.id === 'inv' ? index => removeFromFridge(lineup, index) : null,
   });
   preloadLabels(lineup.shown);
   const signature = lineup.shown.map(cardKey).join('|');

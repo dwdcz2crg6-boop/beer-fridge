@@ -3,7 +3,7 @@
 // - Pinned CDN libraries (barcode reader, QR code): cache-first; their URLs are versioned.
 // - Label images (data/labels): cache-first. A changed label gets a new file name.
 // - Third-party APIs (Open Food Facts, Open Brewery DB, geocoding): not intercepted.
-const VERSION = 'fridge-v12-2026-11-26';
+const VERSION = 'fridge-v13-2026-11-26';
 const CORE = [
   './',
   './index.html',
