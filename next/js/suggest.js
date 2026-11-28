@@ -211,7 +211,7 @@ function findGaps(items, scored) {
   const hasAlcohol = stocked.some(item => ALCOHOLIC.includes(item.type) && !isNonAlcoholic(item));
   const hasNonAlcoholic = stocked.some(item => isNonAlcoholic(item) || ['Soft Drink', 'Carbonated', 'Water'].includes(item.type));
   if (hasAlcohol && !hasNonAlcoholic) {
-    gaps.push({ id: 'na', title: 'No non-alcoholic option', blurb: 'Drivers and kids will thank you.', picks: pick(entry => isNonAlcoholic(entry.item) || entry.item.type === 'Carbonated', 'Fills a gap: NA') });
+    gaps.push({ id: 'na', title: 'No non-alcoholic option', blurb: 'Drivers and kids will thank you.', picks: pick(entry => isNonAlcoholic(entry.item) || entry.item.type === 'Carbonated', 'Fills a gap: no alcohol') });
   }
   if (beers.length >= 2 && !beers.some(item => ['Lager', 'Pilsner', 'Blonde & Golden', 'Kölsch', 'Wheat'].includes(familyOf(item)))) {
     gaps.push({ id: 'easy', title: 'Add an easy-drinking lager', blurb: 'Not everyone wants an IPA.', picks: pick(entry => entry.item.type === 'Beer' && ['Lager', 'Pilsner', 'Kölsch'].includes(entry.item.family), 'Fills a gap: easy drinker') });

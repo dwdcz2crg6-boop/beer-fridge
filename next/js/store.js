@@ -59,6 +59,8 @@ export function normalizeItem(raw = {}) {
     size: raw.size ?? TYPE_META[type]?.size ?? '',
     count: Math.max(0, Math.round(Number(raw.count) || 0)),
     par: raw.par == null || raw.par === '' ? null : Math.max(0, Math.round(Number(raw.par))),
+    // true when the app chose this level itself (see stockIn); a level the owner set is never touched
+    parAuto: raw.par != null && raw.par !== '' && Boolean(raw.parAuto),
     ratingTotal: Number(raw.ratingTotal) || 0,
     ratingCount: Number(raw.ratingCount) || 0,
     barcodes: [...new Set((raw.barcodes || []).filter(Boolean))],
@@ -199,9 +201,19 @@ function rememberName(by) {
   store.settings.recentNames = [by, ...store.settings.recentNames.filter(name => name !== by)].slice(0, 6);
 }
 
+/**
+ * Is a beer-run line this drink? Two catalog drinks are the same only if their catalog ids are
+ * ("Stone IPA" is not "Lagunitas IPA"). Without ids on both sides it is the name, and the
+ * brewery too when both give one.
+ */
+function sameRunDrink(entry, drink) {
+  if (entry.catalogId && drink.catalogId) return entry.catalogId === drink.catalogId;
+  if (fold(entry.name) !== fold(drink.name)) return false;
+  return !entry.brand || !drink.brand || fold(entry.brand) === fold(drink.brand);
+}
+
 function checkOffBeerRun(item) {
-  const name = fold(item.name);
-  store.beerRun = store.beerRun.filter(entry => !(entry.itemId === item.id || (item.catalogId && entry.catalogId === item.catalogId) || fold(entry.name) === name));
+  store.beerRun = store.beerRun.filter(entry => !(entry.itemId === item.id || sameRunDrink(entry, item)));
 }
 
 /** Add stock. `data` can be an existing item or a new drink description. */
@@ -217,14 +229,25 @@ export function stockIn(data, qty, { code, format } = {}) {
   const undoBarcode = code ? attachBarcode(item, code, format) : null;
   item.count += qty;
   item.updatedAt = nowIso();
-  // A drink that was just bought is not "running low" at the number it came in with: if the
-  // new count is still at or under its alert level, the alert drops to one below the count.
-  // (Fridge lists have always worked this way.) So a single can leaves the beer run when it is
-  // bought, and comes back when it is drunk.
+  // A drink that was just bought is not "running low" at the number it came in with. When the
+  // owner has not set an alert level for it, and the new count is still at or under the default
+  // alert, the alert sits one below the count: a single can leaves the beer run when it is
+  // bought and comes back when it is drunk. Once a later stock-in lifts it above the default,
+  // the default applies again. A level the owner chose is never changed.
   const parBefore = item.par;
-  const alert = item.par ?? store.settings.defaultPar;
-  const eased = qty > 0 && item.count <= alert;
-  if (eased) item.par = Math.max(0, item.count - 1);
+  const autoBefore = item.parAuto;
+  const stillLow = item.count <= (item.par ?? store.settings.defaultPar); // at its new count, under its old alert
+  if (qty > 0 && (item.par == null || item.parAuto)) {
+    if (item.count <= store.settings.defaultPar) {
+      item.par = Math.max(0, item.count - 1);
+      item.parAuto = true;
+    } else if (item.parAuto) {
+      item.par = null;
+      item.parAuto = false;
+    }
+  }
+  const parAfter = item.par;
+  const eased = stillLow && parAfter !== parBefore && parAfter != null;
   const entry = { id: uid('a'), kind: 'in', itemId: item.id, name: fullName(item), qty, at: nowIso(), by: '' };
   store.activity.unshift(entry);
   const beerRunBefore = store.beerRun;
@@ -233,7 +256,8 @@ export function stockIn(data, qty, { code, format } = {}) {
   commit('stock');
   const undo = () => {
     item.count = Math.max(0, item.count - qty);
-    if (eased) item.par = parBefore;
+    // Put the alert back, unless the owner has chosen another level since.
+    if (parAfter !== parBefore && item.par === parAfter) { item.par = parBefore; item.parAuto = autoBefore; }
     undoBarcode?.();
     store.activity = store.activity.filter(activity => activity.id !== entry.id);
     if (created) store.items = store.items.filter(existing => existing.id !== item.id);
@@ -270,7 +294,7 @@ export function stockBatch(lines, { dropSamples = false, listKey = '' } = {}) {
       item = normalizeItem({ ...data, id: undefined, count: 0 });
       // A drink that arrives as a single or a pair isn't "running low" on day one:
       // alert once it drops below what it came in with.
-      if (item.par == null && count <= store.settings.defaultPar) item.par = Math.max(0, count - 1);
+      if (item.par == null && count <= store.settings.defaultPar) { item.par = Math.max(0, count - 1); item.parAuto = true; }
       store.items.push(item);
     } else if (data.catalogId && !item.catalogId) {
       item.catalogId = data.catalogId;
@@ -399,6 +423,7 @@ export function saveItem(data) {
   const existing = data.id ? findItem(data.id) : null;
   if (existing) {
     const next = normalizeItem({ ...existing, ...data, id: existing.id, count: existing.count, barcodes: existing.barcodes, addedAt: existing.addedAt, updatedAt: nowIso() });
+    if (next.par !== existing.par) next.parAuto = false;
     Object.assign(existing, next);
     commit('edit');
     return existing;
@@ -517,8 +542,7 @@ export function brandHintFor(code, format) {
 // Beer run (shopping list)
 
 export function addToBeerRun(entry) {
-  const name = fold(entry.name);
-  if (store.beerRun.some(existing => (entry.catalogId && existing.catalogId === entry.catalogId) || fold(existing.name) === name)) return false;
+  if (store.beerRun.some(existing => sameRunDrink(existing, entry))) return false;
   store.beerRun.unshift({ id: uid('run'), catalogId: entry.catalogId || null, itemId: entry.itemId || null, name: entry.name, brand: entry.brand || '', style: entry.style || '', addedAt: nowIso() });
   commit('beer-run');
   return true;

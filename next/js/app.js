@@ -39,6 +39,7 @@ const ui = {
   pack: null,          // the open "how many?" picker: { host, key }
   packAt: 0,
   tapGuard: 0,
+  backAt: 0,
   lastUndo: null,      // { label, undo }: the last change, still undoable from Activity
   discover: null,      // the kind of suggestion showing
   discoverScroll: {},
@@ -46,7 +47,7 @@ const ui = {
   justListed: new Set(), // put on the beer run from a card this session: it stays in view, marked
   actFilter: 'all',
   actItem: null,
-  find: { intent: 'shelf', open: null },
+  find: { intent: 'shelf' },
   booting: false,
   shareUrl: '',
   version: 0,
@@ -62,7 +63,9 @@ let suggestionCache = null;
 let suggestionKey = '';
 
 const ROUTES = { '': 'screen-home', menu: 'screen-home', run: 'screen-run', discover: 'screen-discover', activity: 'screen-activity' };
-const FACE_NAME = { 'screen-home': 'Fridge', 'screen-run': 'Beer run', 'screen-discover': 'Discover', 'screen-activity': 'Activity', 'screen-menu': 'Menu' };
+const FACE_NAME = { 'screen-home': 'Fridge', 'screen-run': 'Beer run', 'screen-discover': 'Discover', 'screen-activity': 'Activity' };
+const GUARD_MS = 350; // a second tap this soon after buttons changed under the finger is not a choice
+const reducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 const PACKS = [1, 4, 6, 12, 24];
 const parPlaceholder = () => store.settings.defaultPar;
 const icon = (name, extra = '') => `<svg aria-hidden="true"${extra}><use href="#${name}"/></svg>`;
@@ -81,19 +84,9 @@ function originText(item) {
   return place;
 }
 
-function starsHtml(item, { count = true } = {}) {
-  const avg = average(item);
-  if (!item.ratingCount) return '<span class="stars-empty">Not rated yet</span>';
-  return `<span class="stars" style="--rating:${avg.toFixed(2)}" aria-hidden="true"></span><span class="rating-num">${avg.toFixed(1)}${count ? ` <small>(${item.ratingCount})</small>` : ''}</span><span class="visually-hidden">${avg.toFixed(1)} out of 5 stars</span>`;
-}
-
 function familyColor(type, family) {
   const entry = Object.values(STYLES).find(info => info.type === type && info.family === family);
   return entry?.color || TYPE_META[type]?.color || '#ccc';
-}
-
-function chipsHtml(options, active, attribute) {
-  return options.map(option => `<button type="button" class="chip${option.value === active ? ' is-active' : ''}" data-${attribute}="${esc(option.value)}" aria-pressed="${option.value === active}">${option.dot ? `<i class="dot" style="background:${option.dot}"></i>` : ''}${esc(option.label)}${option.count != null ? `<span class="chip-count">${option.count}</span>` : ''}</button>`).join('');
 }
 
 function emptyHtml(title, body, action = '') {
@@ -243,8 +236,8 @@ function markRail(lineup) {
     // Keep the current group in view, unless a finger is busy with the row.
     const row = chip.parentElement;
     if (performance.now() - railTouched < 1500 || !row.clientWidth) return;
-    const left = chip.offsetLeft - row.offsetLeft - (row.clientWidth - chip.offsetWidth) / 2;
-    row.scrollTo({ left: Math.max(0, left), behavior: 'smooth' });
+    const left = chip.offsetLeft - (row.clientWidth - chip.offsetWidth) / 2;
+    row.scrollTo({ left: Math.max(0, left), behavior: reducedMotion() ? 'auto' : 'smooth' });
   });
 }
 
@@ -291,6 +284,9 @@ function leaveShelf(itemId) {
   const index = lineup.shown.findIndex(entry => entry.id === itemId);
   if (index < 0 || lineup.flowId !== itemId) return;
   lineup.flowId = (lineup.shown[index + 1] || lineup.shown[index - 1])?.id || null;
+  // What was open was about the drink that is leaving, not about its neighbour.
+  ui.back = false;
+  if (ui.pack?.host === 'dock') ui.pack = null;
 }
 
 /**
@@ -307,7 +303,7 @@ function markOut(id) {
   const onHand = item.count;
   const result = adjustCount(id, 0);
   if (!result) return;
-  toast(`${fullName(item)} is off the shelf and on the beer run (was ${onHand})`, {
+  toast(`Out of stock (was ${onHand}) · ${fullName(item)}`, {
     undo: () => {
       lineups.inv.flowId = id; // back to where it stood
       result.undo();
@@ -342,13 +338,18 @@ function renderFlow(lineup) {
       if (item && !ui.guest) openForm({ mode: 'edit', item });
     } : null,
     canLift: () => !ui.back,
+    onSettle: index => {
+      const item = lineup.shown[index];
+      if (item) $('#announce-can').textContent = `${fullName(item)}, ${item.count} ${owner ? 'on hand' : 'cold'}, ${index + 1} of ${lineup.shown.length}`;
+    },
     flickText: { idle: 'Let go to edit · flick up to remove', armed: 'Let go to remove' },
   });
   preloadLabels(lineup.shown);
   const signature = lineup.shown.map(cardKey).join('|');
   if (signature !== lineup.signature) {
     lineup.signature = signature;
-    const index = Math.max(0, lineup.shown.findIndex(item => item.id === lineup.flowId));
+    let index = lineup.shown.findIndex(item => item.id === lineup.flowId);
+    if (index < 0) index = Math.min(Math.max(lineup.flow.index, 0), Math.max(lineup.shown.length - 1, 0));
     lineup.flowId = lineup.shown[index]?.id || null;
     lineup.flow.setCards(lineup.shown.map(flowCard).join(''), { index });
   } else {
@@ -375,8 +376,15 @@ function captionHtml(lineup, item, extra = '') {
   const rating = item.ratingCount ? `<span class="cap-star"><span aria-hidden="true">★ ${average(item).toFixed(1)}</span><span class="visually-hidden">, ${average(item).toFixed(1)} out of 5 stars</span></span>` : '';
   return `${position}
     <p class="brand-line">${esc(item.brand || typeChip(item.type))}</p>
-    <h2 class="cap-name${item.name.length > 17 ? ' is-long' : ''}"><span>${esc(item.name)}</span></h2>
-    <p class="cap-meta">${esc(metaLine(item))}${rating}${extra}</p>`;
+    <h2 class="cap-name${item.name.length > 15 ? ' is-long' : ''}"><span>${esc(item.name)}</span></h2>
+    <p class="cap-meta"><span class="cap-meta-text">${esc(metaLine(item))}</span>${rating}${extra}</p>`;
+}
+
+/** A name that does not fit one line at full size takes two lines at the smaller size. */
+function fitName(root) {
+  const name = $('.cap-name', root);
+  const text = name?.firstElementChild;
+  if (text && !name.classList.contains('is-long') && text.scrollWidth > text.clientWidth + 1) name.classList.add('is-long');
 }
 
 // ---------------------------------------------------------------------------
@@ -440,7 +448,9 @@ function flushCount() {
   const actions = drop === 1 || drop === 2
     ? [{ label: 'Log as taken', run: () => logAsTaken(item.id, drop, result) }]
     : value === 0 ? [{ label: 'Beer run', run: () => showScreen('screen-run', { focus: true }) }] : [];
-  toast(value === 0 ? `${fullName(item)} is out: off the shelf, on the beer run (was ${before})` : `${fullName(item)}: now ${value} on hand (was ${before})`, {
+  // The dial itself now shows the saved number; a late report from it must not write an old one back.
+  Object.values(countCtls).forEach(ctl => { if (ctl.itemId === item.id) ctl.wheel.setValue(value, { force: true }); });
+  toast(value === 0 ? `Out of stock (was ${before}) · ${fullName(item)}` : `Now ${value} on hand (was ${before}) · ${fullName(item)}`, {
     undo: () => {
       if (value === 0) lineups.inv.flowId = item.id; // back to where it stood
       result.undo();
@@ -465,7 +475,8 @@ function syncCount(ctl, item) {
   // A change still in flight for the drink we're leaving gets saved, not dropped.
   if (switched && ctl.itemId && countEdit.itemId === ctl.itemId) setTimeout(flushCount, 0);
   ctl.itemId = item.id;
-  if (switched || countEdit.itemId !== item.id) ctl.wheel.setValue(item.count, { force: switched });
+  // With no change of its own pending, the dial shows what the fridge says, at once.
+  if (switched || countEdit.itemId !== item.id) ctl.wheel.setValue(item.count, { force: true });
   renderCountNotes();
 }
 
@@ -473,6 +484,7 @@ function syncCount(ctl, item) {
 // Sheets (native <dialog>). One at a time; each closes itself when its job is done.
 
 const openSheets = [];
+const afterClose = new Map(); // sheet id -> what to do once it has gone
 let closeToken = 0;
 
 function openSheet(id) {
@@ -496,6 +508,7 @@ function openSheet(id) {
 function closeSheet(id, { instant = false, replaced = false, then = null } = {}) {
   const dialog = $(`#${id}`);
   if (!dialog.open) { then?.(); return; }
+  if (then) afterClose.set(id, [...(afterClose.get(id) || []), then]);
   if (dialog.dataset.closing && !instant) return;
   const token = String(closeToken += 1);
   dialog.dataset.closing = token;
@@ -510,7 +523,9 @@ function closeSheet(id, { instant = false, replaced = false, then = null } = {})
     if (dialog.contains(toastEl)) (openSheets.length ? $(`#${openSheets.at(-1)}`) : document.body).append(toastEl);
     if (!openSheets.length) document.body.classList.remove('has-sheet');
     sheetClosed(id, { replaced });
-    then?.();
+    const after = afterClose.get(id) || [];
+    afterClose.delete(id);
+    after.forEach(run => run());
   };
   if (instant || window.matchMedia('(prefers-reduced-motion: reduce)').matches) { finish(); return; }
   dialog.classList.add('is-closing');
@@ -530,10 +545,7 @@ function sheetClosed(id, { replaced = false } = {}) {
   if (id === 'sheet-form' && ui.form?.returnTo === 'add' && $('#sheet-add').open) {
     if (ui.add.mode === 'scan' && !ui.add.candidate) scanner?.resume();
   }
-  if (id === 'sheet-find') {
-    ui.find.open = null;
-    if (ui.pack?.host === 'find') ui.pack = null;
-  }
+  if (id === 'sheet-find' && ui.pack?.host === 'find') ui.pack = null;
   if (id === 'sheet-item') {
     if (ui.pack?.host === 'item') ui.pack = null;
     if (!replaced) { ui.itemId = null; ui.itemCatalog = null; }
@@ -546,7 +558,7 @@ function sheetClosed(id, { replaced = false } = {}) {
 // touches through everywhere but its buttons. Either way it can carry Undo and one or two
 // next steps.
 
-const notice = { timer: 0, el: null, undo: null, actions: [], kind: '', duration: 0, held: false };
+const notice = { timer: 0, el: null, undo: null, actions: [], kind: '', duration: 0, held: false, at: 0 };
 
 function noticeHost() {
   if (openSheets.length) return { el: $('#toast'), parent: $(`#${openSheets.at(-1)}`) };
@@ -557,8 +569,11 @@ function noticeHost() {
 function toast(message, { undo = null, undoLabel = 'Undo', duration = 3600, tone = '', actions = [], kind = '', remember = true } = {}) {
   hideToast({ keepRound: kind === 'round' });
   const { el, parent } = noticeHost();
-  Object.assign(notice, { el, undo, actions, kind, duration: undo || actions.length ? Math.max(duration, 6000) : duration });
-  if (undo && remember && kind !== 'round') ui.lastUndo = { label: message, undo };
+  Object.assign(notice, { el, undo, actions, kind, duration: undo || actions.length ? Math.max(duration, 6000) : duration, at: performance.now() });
+  if (undo && remember && kind !== 'round') rememberUndo(message, undo);
+  // Said once, from a region that is always in the page (a line that is hidden and then shown
+  // is not reliably read out).
+  $('#announce').textContent = message;
   const buttons = actions.map((action, index) => `<button type="button" class="slip-btn${action.name ? ' is-name' : ''}" data-notice="${index}">${action.icon ? icon(action.icon) : ''}${esc(action.label)}</button>`).join('');
   if (el.id === 'slip') {
     el.innerHTML = `<span class="slip-text">${esc(message)}</span>${buttons}${undo ? `<button type="button" class="slip-btn" data-notice="undo">${esc(undoLabel)}</button>` : ''}`;
@@ -577,6 +592,17 @@ function toast(message, { undo = null, undoLabel = 'Undo', duration = 3600, tone
   armNotice();
 }
 
+/**
+ * Keep the last change undoable from Activity, but only until something else changes: an old
+ * undo run after later changes would take those with it.
+ */
+function rememberUndo(label, undo) {
+  ui.lastUndo = { label, undo, version: ui.version };
+  if (ui.screen === 'screen-activity') renderActivity(); // its Undo row shows the change just made there
+}
+
+const lastUndo = () => (ui.lastUndo && ui.lastUndo.version === ui.version ? ui.lastUndo : null);
+
 function armNotice(ms = notice.duration) {
   clearTimeout(notice.timer);
   if (notice.held) return;
@@ -589,12 +615,18 @@ function hideToast({ keepRound = false } = {}) {
   const slip = $('#slip');
   slip.hidden = true;
   slip.innerHTML = '';
+  // A toast that has faded must not leave its words and buttons behind for a keyboard to find.
+  $('#toast-text').textContent = '';
+  $('#toast-actions').innerHTML = '';
+  $('#toast-action').hidden = true;
   if (notice.kind === 'round' && !keepRound) ui.round = null;
   Object.assign(notice, { el: null, undo: null, actions: [], kind: '', held: false });
 }
 
 /** A button on the message was pressed. */
 function runNotice(which) {
+  // The buttons were only just drawn under the finger: this is the tail of a double tap.
+  if (performance.now() - notice.at < GUARD_MS) return;
   if (which === 'undo') {
     const { undo, kind } = notice;
     if (!undo) return;
@@ -617,15 +649,16 @@ function slipChoice(html) {
   const slip = $('#slip');
   if (slip.hidden) return false;
   slip.innerHTML = html;
+  notice.at = performance.now();
   armNotice(8000);
   return true;
 }
 
-/** Undo the last change again after its message has gone (the line at the top of Activity). */
+/** Undo the last change after its message has gone (the line at the top of Activity). */
 function undoLastChange() {
-  const last = ui.lastUndo;
-  if (!last) return;
+  const last = lastUndo();
   ui.lastUndo = null;
+  if (!last) return;
   hideToast();
   if (last.undo() !== false) toast('Undone');
   if (ui.screen === 'screen-activity') renderActivity();
@@ -650,7 +683,7 @@ function armed(button, label, action) {
   button.classList.add('is-armed');
   button.textContent = label;
   if (button.dataset.originalLabel) button.setAttribute('aria-label', label);
-  setTimeout(() => { if (button.isConnected && button.dataset.armed === 'true') disarm(); }, 3500);
+  setTimeout(() => { if (button.isConnected && button.dataset.armed === 'true') disarm(); }, 6000);
 }
 
 // ---------------------------------------------------------------------------
@@ -668,6 +701,7 @@ function showScreen(id, { updateUrl = true, focus = false } = {}) {
   if (ui.guest) id = 'screen-menu';
   flushCount();
   if (ui.screen !== id) {
+    [...openSheets].forEach(sheet => closeSheet(sheet, { instant: true, replaced: true }));
     ui.back = false;
     ui.pack = null;
     if (notice.el?.id === 'slip') hideToast();
@@ -707,6 +741,12 @@ function renderStrip() {
   const name = store.settings.fridgeName;
   $('#fridge-title').textContent = name;
   document.title = ui.screen === 'screen-home' ? name : `${FACE_NAME[ui.screen]} · ${name}`;
+  $('#inv-out').hidden = ui.booting;
+  $('.tab-bar').inert = ui.booting;
+  if (ui.booting) {
+    $('#tab-run').dataset.badge = '';
+    return;
+  }
   const items = store.items;
   const total = items.reduce((sum, item) => sum + item.count, 0);
   const kinds = items.filter(item => item.count > 0).length;
@@ -775,6 +815,7 @@ function renderInvCaption() {
   if (!item) return;
   const low = item.count <= parOf(item);
   $('#inv-cap-info').innerHTML = captionHtml(lineup, item, low ? '<span class="cap-avail is-low">Low</span>' : '');
+  fitName($('#inv-cap-info'));
   syncCount(countCtls.inv, item);
   renderDockActions();
   renderBack();
@@ -804,14 +845,19 @@ function toggleBack() {
   if (ui.guest || !flowItem(lineups.inv)) return;
   ui.back = !ui.back;
   ui.backAbout = false;
+  ui.backAt = performance.now();
   if (ui.back && ui.pack?.host === 'dock') { ui.pack = null; renderDockActions(); }
   renderBack();
+  // A keyboard goes into the label when it opens, and back to its button when it shuts.
+  if (document.activeElement?.closest?.('#inv-more, #inv-back, #inv-coverflow')) (ui.back ? $('#inv-back') : $('#inv-more')).focus({ preventScroll: true });
 }
 
 function closeBack() {
   if (!ui.back) return;
+  const inside = $('#inv-back').contains(document.activeElement);
   ui.back = false;
   renderBack();
+  if (inside) $('#inv-more').focus({ preventScroll: true });
 }
 
 function renderBack() {
@@ -849,7 +895,10 @@ function historyHtml(item, rows, { link = true } = {}) {
   return `<div class="d-history"><p class="results-title">History${link ? `<button type="button" data-history="${item.id}">All history</button>` : ''}</p>${history.map(entry => `<div class="hist-row"><span class="hist-${entry.kind}">${entry.kind === 'in' || (entry.kind === 'adjust' && entry.qty > 0) ? '+' : '−'}${Math.abs(entry.qty)}</span><span>${entry.kind === 'in' ? 'Stocked' : entry.kind === 'out' ? `Taken${entry.by ? ` by ${esc(entry.by)}` : ''}` : 'Count corrected'}</span><time>${esc(entry.at ? relativeTime(entry.at) : entry.whenLabel || '')}</time></div>`).join('')}</div>`;
 }
 
-const starPicker = item => `<div class="star-picker" role="group" aria-label="Rate ${esc(fullName(item))}">${[1, 2, 3, 4, 5].map(stars => `<button type="button" data-rate="${item.id}" data-stars="${stars}" class="${item.ratingCount && stars <= Math.round(average(item)) ? 'is-on' : ''}" aria-label="${plural(stars, 'star')}">${icon('i-star')}</button>`).join('')}</div>`;
+const starPicker = item => `<div class="star-picker" role="group" aria-label="Rate ${esc(fullName(item))}">${[1, 2, 3, 4, 5].map(stars => {
+  const on = Boolean(item.ratingCount) && stars <= Math.round(average(item));
+  return `<button type="button" data-rate="${item.id}" data-stars="${stars}" class="${on ? 'is-on' : ''}" aria-pressed="${on}" aria-label="${plural(stars, 'star')}">${icon('i-star')}</button>`;
+}).join('')}</div>`;
 
 /**
  * What the back of a can says. `where` is 'back' (over the cans, for a drink on the shelf),
@@ -862,18 +911,20 @@ function detailsHtml(item, { where = 'back' } = {}) {
   if (where === 'idea') {
     const listed = store.beerRun.some(entry => entry.catalogId === item.id);
     const key = `cat:${item.id}`;
-    return `${description}${breweryHtml(item, { open: true })}
+    return `${description}${breweryHtml(item, { open: true, button: false })}
       <div class="d-actions">${ui.pack?.host === 'item' && ui.pack.key === key
         ? packHtml(key)
-        : `<button class="btn btn-ghost" type="button" data-cat-run="${esc(item.id)}" aria-pressed="${listed}">${icon(listed ? 'i-check' : 'i-list')}${listed ? 'On the list' : 'Beer run'}</button>
+        : `<button class="btn btn-ghost" type="button" data-cat-run="${esc(item.id)}" aria-pressed="${listed}">${icon(listed ? 'i-check' : 'i-list')}${listed ? 'On the list' : 'Add to list'}</button>
            <button class="btn" type="button" data-pack-open="item" data-pack-key="${esc(key)}">${icon('i-in')}Stock in</button>`}</div>`;
   }
   const about = where === 'sheet' || ui.backAbout;
-  const rated = item.ratingCount ? `${average(item).toFixed(1)} (${item.ratingCount})` : 'Rate it';
-  const rate = `<div class="d-row d-rate">${starPicker(item)}<span class="d-avg">${rated}</span></div>
+  const rated = item.ratingCount ? `${average(item).toFixed(1)} (${item.ratingCount})` : '';
+  const origin = originText(item);
+  const brewery = breweryHtml(item, { open: about, button: where === 'back' })
+    || (origin ? `<p class="d-codes d-origin">${item.type === 'Beer' ? 'Brewed in' : 'From'} ${esc(origin)}</p>` : '');
+  const rate = `<div class="d-row d-rate">${starPicker(item)}<span class="d-avg">${rated}</span>${where === 'back' ? `<button class="d-all" type="button" data-history="${item.id}">History${icon('i-right')}</button>` : ''}</div>
     <div class="d-row d-alertrow">
       <div class="d-alert"><span>Low-stock alert at</span><div class="stepper" role="group" aria-label="Low-stock alert level"><button type="button" data-par-step="-1" data-par-id="${item.id}" aria-label="Lower">${icon('i-minus')}</button><output>${parOf(item)}</output><button type="button" data-par-step="1" data-par-id="${item.id}" aria-label="Higher">${icon('i-plus')}</button></div></div>
-      ${where === 'back' ? `<button class="d-all" type="button" data-history="${item.id}">History${icon('i-right')}</button>` : ''}
     </div>`;
   const codes = `<p class="d-codes">${item.barcodes.length ? `Barcode${item.barcodes.length > 1 ? 's' : ''}: ${item.barcodes.map(displayCode).join(', ')}` : 'No barcode linked yet. Scan it once and it will be remembered.'}</p>`;
   const name = esc(fullName(item));
@@ -885,12 +936,12 @@ function detailsHtml(item, { where = 'back' } = {}) {
         : `<button class="btn" type="button" data-pack-open="item" data-pack-key="${key}">${icon('i-in')}Got it</button>
            <button class="btn btn-ghost" type="button" data-edit="${item.id}">${icon('i-edit')}Edit</button>
            <button class="btn btn-ghost btn-danger" type="button" data-delete="${item.id}" aria-label="Delete ${name}">Delete</button>`}</div>
-      ${description}${breweryHtml(item, { open: true })}${rate}${historyHtml(item, 5)}${codes}`;
+      ${description}${brewery}${rate}${historyHtml(item, 5)}${codes}`;
   }
-  return `${about ? '' : description}${breweryHtml(item, { open: about })}${about ? '' : `${rate}${historyHtml(item, 3, { link: false })}${codes}`}
+  return `${about ? '' : description}${brewery}${about ? '' : `${rate}${historyHtml(item, 3, { link: false })}${codes}`}
     <div class="d-actions">
       <button class="btn btn-ghost" type="button" data-edit="${item.id}">Edit</button>
-      <button class="btn btn-ghost" type="button" data-item-run="${item.id}">Beer run</button>
+      <button class="btn btn-ghost" type="button" data-item-run="${item.id}">Add to list</button>
       <button class="btn btn-ghost" type="button" data-mark-out="${item.id}">Out of stock</button>
       <button class="btn btn-ghost btn-danger d-trash" type="button" data-delete="${item.id}" aria-label="Delete ${name}">${icon('i-trash')}</button>
     </div>`;
@@ -936,16 +987,20 @@ function showReceipt() {
   const item = findItem(last.itemId);
   const left = !item ? '' : item.count ? `${item.count} left` : 'the last one';
   const total = round.takes.reduce((sum, take) => sum + take.qty, 0);
+  // The fact first, the name last: when the line is short, it is the name that gets shortened.
   const text = [
-    round.takes.length > 1 ? `Round of ${total} · last: ${last.name}` : `Took ${last.qty} × ${last.name}`,
+    round.takes.length > 1 ? `Round of ${total}` : `Took ${last.qty}`,
     round.takes.length > 1 ? '' : left,
     last.rated ? `${last.rated} ★` : '',
+    last.name,
   ].filter(Boolean).join(' · ');
+  const onSlip = noticeHost().el.id === 'slip';
   // Undo peels back one take at a time, never the whole round at once.
   const peel = () => {
     const take = round.takes.pop();
     if (!take) { ui.lastUndo = null; return false; }
     lineups.inv.flowId = take.itemId; // back to where it stood
+    take.rateUndo?.(); // a rating given on the receipt goes with the take
     take.undo();
     if (!round.takes.length) {
       ui.lastUndo = null;
@@ -959,7 +1014,6 @@ function showReceipt() {
     }
     return false;
   };
-  ui.lastUndo = { label: text, undo: peel };
   toast(text, {
     kind: 'round',
     tone: 'ok',
@@ -968,15 +1022,17 @@ function showReceipt() {
     undoLabel: round.takes.length > 1 ? 'Undo last' : 'Undo',
     actions: [
       { label: round.by || 'Who?', name: Boolean(round.by), keep: true, run: showWho },
-      ...(last.rated ? [] : [{ label: 'Rate', icon: 'i-star', keep: true, run: showStars }]),
+      // The stars are drawn on the slip; a receipt that had to be a toast leaves them to Activity.
+      ...(last.rated || !onSlip ? [] : [{ label: 'Rate', icon: 'i-star', keep: true, run: showStars }]),
     ],
   });
+  rememberUndo(text, peel);
 }
 
 function showWho() {
   const round = ui.round;
   if (!round) return;
-  const names = store.settings.recentNames.slice(0, 3);
+  const names = store.settings.recentNames.slice(0, window.innerWidth < 400 ? 2 : 3);
   const shown = slipChoice(`<span class="slip-text">Who?</span>${names.map(name => `<button type="button" class="slip-btn is-name" data-round-by="${esc(name)}">${esc(name)}</button>`).join('')}<button type="button" class="slip-btn" data-round-other="1">${names.length ? 'Other' : 'Add a name'}</button>`);
   if (!shown) openWho(round.takes.map(take => take.entryId));
 }
@@ -998,7 +1054,8 @@ function nameRound(by) {
 function rateRound(stars) {
   const take = ui.round?.takes.at(-1);
   if (!take) return;
-  if (rateItem(take.itemId, stars)) take.rated = stars;
+  const result = rateItem(take.itemId, stars);
+  if (result) Object.assign(take, { rated: stars, rateUndo: result.undo });
   showReceipt();
 }
 
@@ -1095,28 +1152,37 @@ function renderPackHost(host) {
 }
 
 function openPack(host, key) {
-  if (ui.guest) return;
+  if (ui.guest || performance.now() < ui.tapGuard) return; // (a second tap on Cancel must not reopen it)
   const before = ui.pack?.host;
-  if (ui.pack?.host === host && ui.pack.key === key) { closePack(); return; } // the same button again puts it away
+  if (ui.pack?.host === host && ui.pack.key === key) { // the same button again puts it away
+    if (performance.now() - ui.packAt >= GUARD_MS) closePack();
+    return;
+  }
   ui.pack = { host, key };
   ui.packAt = performance.now();
   if (host === 'dock' && ui.back) closeBack();
   if (before && before !== host) renderPackHost(before);
   renderPackHost(host);
+  const picker = $(`.pack [data-pack-key="${CSS.escape(key)}"]`)?.closest('.pack');
+  (picker?.querySelector('.is-usual') || picker?.querySelector('.pack-chip'))?.focus({ preventScroll: true });
 }
+
+const packOpener = (host, key) => $(`[data-pack-open="${host}"][data-pack-key="${CSS.escape(key)}"]`);
 
 function closePack() {
   if (!ui.pack) return;
-  const { host } = ui.pack;
+  const { host, key } = ui.pack;
   ui.pack = null;
-  ui.tapGuard = performance.now() + 350; // a late second tap must not land on Take one
+  ui.tapGuard = performance.now() + GUARD_MS; // a late second tap must not land on Take one
   renderPackHost(host);
+  packOpener(host, key)?.focus({ preventScroll: true });
 }
 
 /** Stock a drink the app already knows: the ledger line, the catalog link, the beer-run check-off. */
 function stockCandidate(candidate, qty, pending = {}) {
   flushCount();
-  const data = candidate.itemId ? { id: candidate.itemId } : { ...candidate };
+  // (A drink that was undone since its card was drawn is stocked as a new drink again.)
+  const data = candidate.itemId && findItem(candidate.itemId) ? { id: candidate.itemId } : { ...candidate, itemId: undefined };
   const result = stockIn(data, qty, pending);
   if (candidate.catalogId && !result.item.catalogId) {
     const catalogItem = getCatalogItem(candidate.catalogId);
@@ -1125,15 +1191,15 @@ function stockCandidate(candidate, qty, pending = {}) {
   return result;
 }
 
-const addedText = (result, qty) => `Added ${qty} × ${fullName(result.item)}${result.checkedOff ? ' · checked off the beer run' : ''}${result.eased != null ? ` · low-stock alert now at ${result.eased}` : ''}`;
+const addedText = (result, qty) => `Added ${qty}${result.eased != null ? ` · low-stock alert now at ${result.eased}` : ''}${result.checkedOff ? ' · off the beer run' : ''} · ${fullName(result.item)}`;
 
 function commitPack(key, qty) {
   // A double tap on the button that opened the picker lands here too early to be a choice.
-  if (!ui.pack || ui.pack.key !== key || performance.now() - ui.packAt < 350) return;
+  if (!ui.pack || ui.pack.key !== key || performance.now() - ui.packAt < GUARD_MS) return;
   const { host } = ui.pack;
   const target = packTarget(key);
   ui.pack = null;
-  ui.tapGuard = performance.now() + 350;
+  ui.tapGuard = performance.now() + GUARD_MS;
   if (!target) { renderPackHost(host); return; }
   const result = stockCandidate(target.candidate, qty);
   const text = addedText(result, qty);
@@ -1145,11 +1211,16 @@ function commitPack(key, qty) {
   if (host === 'dock') lineups.inv.flowId = id;
   const tell = () => toast(text, { undo: result.undo, tone: 'ok', actions: host === 'dock' ? [] : [{ label: 'Show', run: () => showDrink(id) }] });
   if (host === 'item') closeSheet('sheet-item', { then: tell });
-  else { renderPackHost(host); tell(); }
+  else {
+    renderPackHost(host);
+    tell();
+    (packOpener(host, key) || (host === 'dock' ? $('[data-pack-open="dock"]') : null))?.focus({ preventScroll: true });
+  }
 }
 
 /** An odd amount: the scanner sheet's own card, with its stepper, opened on this drink. */
 function packOther(key) {
+  if (performance.now() - ui.packAt < GUARD_MS) return; // the tail of a double tap on Stock in
   const target = packTarget(key);
   const host = ui.pack?.host;
   ui.pack = null;
@@ -1197,7 +1268,8 @@ function landAfterAdds(added) {
 function renderMenu() {
   const available = ui.guest.items.filter(item => item.count > 0);
   $('#guest-name').textContent = ui.guest.name;
-  $('#guest-when').textContent = `Menu · shared ${relativeTime(ui.guest.at).toLowerCase()}`;
+  const when = relativeTime(ui.guest.at);
+  $('#guest-when').textContent = `Menu · shared ${/^(just|\d|yesterday|today)/i.test(when) ? when.toLowerCase() : `on ${when}`}`;
   const lineup = lineups.menu;
   Object.assign(lineup, { type: 'all', group: 'all', query: '' });
   organize(lineup, available, groupingSetting('menuGroup'));
@@ -1220,6 +1292,7 @@ function renderGuestCaption() {
   const item = flowItem(lineup);
   if (!item) return;
   $('#menu-caption').innerHTML = captionHtml(lineup, item, `<span class="cap-avail">${item.count} cold</span>`);
+  fitName($('#menu-caption'));
   const desc = describe(item);
   $('#menu-story').innerHTML = `${desc ? `<p class="d-desc">${esc(desc)}</p>` : ''}${breweryHtml(item, { open: true, button: false })}`;
 }
@@ -1296,12 +1369,15 @@ function toggleListed(catalogId) {
   if (entry) {
     removeFromBeerRun(entry.id);
     ui.justListed.delete(catalogId);
-    toast(`${item.fullName} is off the beer run`);
+    toast(`Off the beer run · ${item.fullName}`);
+    return;
+  }
+  if (!addToBeerRun({ catalogId: item.id, name: item.name, brand: item.brand, style: item.style })) {
+    toast('Already on the beer run');
     return;
   }
   ui.justListed.add(catalogId); // it stays in view, marked, instead of vanishing under the finger
-  addToBeerRun({ catalogId: item.id, name: item.name, brand: item.brand, style: item.style });
-  toast(`${item.fullName} is on the beer run`, { tone: 'ok', actions: ui.screen === 'screen-run' ? [] : [{ label: 'Beer run', run: () => showScreen('screen-run', { focus: true }) }] });
+  toast(`On the beer run · ${item.fullName}`, { tone: 'ok', actions: ui.screen === 'screen-run' ? [] : [{ label: 'Beer run', run: () => showScreen('screen-run', { focus: true }) }] });
 }
 
 // ---------------------------------------------------------------------------
@@ -1378,7 +1454,9 @@ function discoverPanels() {
     chip: 'Near you',
     eyebrow: 'Close to home',
     title: location ? `Brewed near ${location.city || 'you'}` : 'Brewed near you',
-    blurbHtml: location ? `Home base: ${esc(location.label)}<button class="text-btn" type="button" data-loc-change="1">Change</button>` : 'Set a home base to see what is brewed nearby.',
+    blurbHtml: location
+      ? `Home base: ${esc(location.label)}<button class="text-btn" type="button" data-loc-change="1">Change</button>${ui.breweriesLoading || ui.breweries.length ? '' : ui.breweriesError ? ' · Couldn’t reach Open Brewery DB. Try again later.' : ' · No breweries found nearby yet.'}`
+      : 'Set a home base to see what is brewed nearby.',
     picks: data.local,
     setup: !location || ui.locOpen,
     none: 'Nothing from the catalog is brewed near this home base yet.',
@@ -1476,14 +1554,15 @@ function renderActivity() {
   };
   const topDrink = tally('name');
   const topPerson = tally('by');
-  $('#act-summary').textContent = topDrink ? `Most popular: ${topDrink[0]}${topPerson ? ` · top grabber: ${topPerson[0]} (${topPerson[1]})` : ''}` : 'Every drink in and out.';
+  $('#act-summary').textContent = topDrink ? `Most popular this week: ${topDrink[0]}${topPerson ? ` · top grabber: ${topPerson[0]} (${topPerson[1]})` : ''}` : 'Every drink in and out of the fridge.';
   const tile = (value, label, figure, tone = '') => `<button class="stat" type="button" data-act-filter="${value}" aria-pressed="${ui.actFilter === value}"><span>${label}</span><b class="${tone}">${figure}</b></button>`;
   $('#act-stats').innerHTML = tile('all', 'Everything', store.activity.length) + tile('in', 'In this week', `+${sum('in')}`, 'stat-in') + tile('out', 'Out this week', `−${sum('out')}`, 'stat-out');
 
   // Undo is not only a six-second button: the last change can still be taken back here.
+  const last = lastUndo();
   const undoEl = $('#act-undo');
-  undoEl.hidden = !ui.lastUndo;
-  undoEl.innerHTML = ui.lastUndo ? `<span>${esc(ui.lastUndo.label)}</span><button class="btn btn-small btn-ghost" type="button" data-undo-last="1">${icon('i-undo')}Undo</button>` : '';
+  undoEl.hidden = !last;
+  undoEl.innerHTML = last ? `<span>${esc(last.label)}</span><button class="btn btn-small btn-ghost" type="button" data-undo-last="1">${icon('i-undo')}Undo</button>` : '';
 
   // The latest round keeps its questions open: who took it, and how was it.
   const twoHours = Date.now() - 2 * 3600000;
@@ -1534,14 +1613,13 @@ function renderActivity() {
     }).join('')}`).join('') : '<p class="muted">Nothing here for this week yet.</p>');
 }
 
-function resultRow(item, { actions = false, tag = '', attr = `data-cat-stock="${esc(item.id)}"` } = {}) {
+function resultRow(item, { tag = '', attr = '' } = {}) {
   const origin = originText(item);
   return `<div class="result">
     <button class="result-main" type="button" ${attr}>
       <span class="thumb">${art(item)}</span>
       <span class="result-text"><span class="brand-line">${esc(item.brand || typeChip(item.type))}${tag ? ` <em class="tag">${esc(tag)}</em>` : ''}</span><b>${esc(item.name)}</b><span class="result-meta">${esc([metaLine(item, { size: false }), origin].filter(Boolean).join(' · '))}</span></span>
     </button>
-    ${actions ? `<button class="icon-btn icon-btn-small" type="button" data-cat-run="${esc(item.id)}" aria-label="Add ${esc(item.fullName || item.name)} to the beer run"><svg><use href="#i-list"/></svg></button>` : ''}
   </div>`;
 }
 
@@ -1706,7 +1784,11 @@ function showConfirm(candidate, { source = '', tone = '', image: rawImage = '', 
 function setQty(qty) {
   ui.add.qty = Math.max(1, Math.min(999, qty));
   $('#confirm-qty').textContent = ui.add.qty;
-  $$('#qty-chips [data-qty]').forEach(button => button.classList.toggle('is-active', Number(button.dataset.qty) === ui.add.qty));
+  $$('#qty-chips [data-qty]').forEach(button => {
+    const on = Number(button.dataset.qty) === ui.add.qty;
+    button.classList.toggle('is-active', on);
+    button.setAttribute('aria-pressed', String(on));
+  });
   $('#confirm-add').textContent = `Add ${ui.add.qty} to the fridge`;
 }
 
@@ -1859,13 +1941,15 @@ function deleteHere(button, id) {
   const item = findItem(id);
   if (!item) return;
   armed(button, 'Tap again to delete', () => {
-    flushCount();
-    leaveShelf(id);
-    ui.back = false;
-    const result = deleteItem(id);
-    const tell = () => { if (result) toast(`${fullName(result.item)} deleted`, { undo: result.undo }); };
-    if ($('#sheet-item').open) closeSheet('sheet-item', { then: tell });
-    else tell();
+    const go = () => {
+      flushCount();
+      leaveShelf(id);
+      ui.back = false;
+      const result = deleteItem(id);
+      if (result) toast(`Deleted · ${fullName(result.item)}`, { undo: result.undo });
+    };
+    if ($('#sheet-item').open) closeSheet('sheet-item', { then: go });
+    else go();
   });
 }
 
@@ -1925,15 +2009,15 @@ async function autoStock(notes = []) {
       const before = item.count;
       adjustCount(item.id, fix.count);
       // One line per drink: a merge that was then corrected reads as a single change.
-      const mergedAt = notes.findIndex(note => note.startsWith(`${fullName(item)}: `) && note.includes('merged into one'));
-      if (mergedAt >= 0) notes[mergedAt] = notes[mergedAt].replace(/, \d+ on hand$/, `, now ${fix.count} on hand`);
-      else notes.push(`${fullName(item)}: set to ${fix.count} on hand (was ${before})`);
+      const mergedAt = notes.findIndex(note => note.endsWith(` · ${fullName(item)}`) && note.includes('merged into one'));
+      if (mergedAt >= 0) notes[mergedAt] = notes[mergedAt].replace(/, \d+ on hand · /, `, now ${fix.count} on hand · `);
+      else notes.push(`Set to ${fix.count} on hand (was ${before}) · ${fullName(item)}`);
     }
     markListLoaded(`fix:${fix.id}`);
   });
   if (loaded) {
     endBoot();
-    toast(loaded.drinks ? `Your fridge is loaded: ${plural(loaded.drinks, 'drink')}, ${loaded.units} cans and bottles` : 'Sample drinks cleared. Your beers were already here.', { undo: loaded.undo, tone: 'ok', remember: false });
+    toast(loaded.drinks ? `Fridge loaded: ${plural(loaded.drinks, 'drink')}, ${loaded.units} in all` : 'Sample drinks cleared. Your beers were already here.', { undo: loaded.undo, tone: 'ok', remember: false });
     return;
   }
   tell();
@@ -2011,7 +2095,7 @@ function fillStyleOptions(type, selected = '') {
   $('#f-style').innerHTML = `<option value="">${groups.length ? 'Not sure' : '—'}</option>${groups.map(group => `<optgroup label="${esc(group.family)}">${group.styles.map(style => `<option${style === selected ? ' selected' : ''}>${esc(style)}</option>`).join('')}</optgroup>`).join('')}${selected && !known ? `<option selected>${esc(selected)}</option>` : ''}`;
 }
 
-function openForm({ mode = 'new', item = null, candidate = null, qty = 1, returnTo = null, brewery = null, focus = '' } = {}) {
+function openForm({ mode = 'new', item = null, candidate = null, qty = 1, returnTo = null, brewery = null } = {}) {
   if (ui.guest) return;
   flushCount();
   const source = item || candidate || {};
@@ -2034,7 +2118,10 @@ function openForm({ mode = 'new', item = null, candidate = null, qty = 1, return
   $('#f-par').value = source.par ?? '';
   $('#f-par').placeholder = String(parPlaceholder());
   const pending = ui.form.pending;
-  $('#form-note').textContent = pending ? `Barcode ${displayCode(canonicalCode(pending.code, pending.format))} will be linked to this drink.` : brewery ? `From ${brewery.name}, ${brewery.miles < 1 ? 'under a mile' : `${Math.round(brewery.miles)} miles`} away.` : '';
+  $('#form-note').textContent = pending ? `Barcode ${displayCode(canonicalCode(pending.code, pending.format))} will be linked to this drink.`
+    : brewery ? `From ${brewery.name}, ${brewery.miles < 1 ? 'under a mile' : `${Math.round(brewery.miles)} miles`} away.`
+      : mode === 'edit' ? (item.barcodes.length ? `Barcode${item.barcodes.length > 1 ? 's' : ''}: ${item.barcodes.map(displayCode).join(', ')}` : 'No barcode linked yet. Scan it once and it will be remembered.') : '';
+  $('#f-name-error').hidden = true;
   $('#form-note').hidden = !$('#form-note').textContent;
   $('#form-submit').textContent = mode === 'edit' ? 'Save' : 'Add';
   const brands = new Set([...makersList().map(maker => maker.brand || maker.name), ...ui.breweries.map(entry => shortBrewery(entry.name)), ...store.items.map(entry => entry.brand).filter(Boolean)]);
@@ -2043,20 +2130,21 @@ function openForm({ mode = 'new', item = null, candidate = null, qty = 1, return
   scanner?.pause();
   openSheet('sheet-form');
   $('.form-body').scrollTop = 0;
-  if (focus) $(`#f-${focus}`)?.focus();
-  else if (!source.name) $('#f-name').focus();
+  if (!source.name) $('#f-name').focus();
 }
 
 function submitForm(event) {
   event.preventDefault();
-  if (!ui.form) return;
+  if (!ui.form || $('#sheet-form').dataset.closing) return;
   const name = $('#f-name').value.trim();
   if (!name) {
     $('#f-name').focus();
     $('#f-name').setAttribute('aria-invalid', 'true');
+    $('#f-name-error').hidden = false;
     return;
   }
   $('#f-name').removeAttribute('aria-invalid');
+  $('#f-name-error').hidden = true;
   const data = {
     name,
     brand: $('#f-brand').value.trim(),
@@ -2075,18 +2163,28 @@ function submitForm(event) {
   }
 
   if (ui.form.mode === 'edit') {
+    const current = findItem(ui.form.itemId);
+    if (!current) { closeSheet('sheet-form'); return; }
+    const fields = ['name', 'brand', 'type', 'style', 'abv', 'size', 'city', 'state', 'par', 'parAuto', 'image', 'catalogId', 'lat', 'lng', 'country'];
+    const was = Object.fromEntries(fields.map(field => [field, current[field]]));
     const saved = saveItem({ id: ui.form.itemId, ...data });
     const raw = $('#f-qty').value.trim();
     const count = raw === '' || Number.isNaN(Number(raw)) ? saved.count : Math.max(0, Math.round(Number(raw)));
     const before = saved.count;
-    let message = 'Saved';
-    let undo = null;
+    let message = `Saved · ${fullName(saved)}`;
+    let undoCount = null;
     if (count !== before) {
       flushCount(); // a dial change still waiting to save comes first
       if (count === 0) leaveShelf(saved.id);
-      undo = adjustCount(saved.id, count)?.undo || null;
-      message = count === 0 ? `Saved. ${fullName(saved)} is out: off the shelf, on the beer run (was ${before})` : `Saved. ${fullName(saved)}: now ${count} on hand (was ${before})`;
+      undoCount = adjustCount(saved.id, count)?.undo || null;
+      message = count === 0 ? `Saved · out of stock (was ${before}) · ${fullName(saved)}` : `Saved · now ${count} on hand (was ${before}) · ${fullName(saved)}`;
     }
+    // Undo takes back everything the form changed, not only the count.
+    const undo = () => {
+      undoCount?.();
+      const item = findItem(saved.id);
+      if (item) { Object.assign(item, was); persist('undo'); }
+    };
     // The form closes onto wherever the drink was being looked at; it never drops back onto
     // another sheet.
     closeSheet('sheet-form', { then: () => toast(message, { undo, tone: 'ok' }) });
@@ -2132,7 +2230,8 @@ function submitForm(event) {
         } else if (qty > 0) {
           closeSheet('sheet-add'); // lands on the shelf with the receipt
         } else {
-          closeSheet('sheet-add', { then: () => toast(text) });
+          // (after the landing message for anything added before it in this session)
+          closeSheet('sheet-add', { then: () => setTimeout(() => toast(text), 200) });
         }
       },
     });
@@ -2218,7 +2317,8 @@ function openFind(intent = 'shelf') {
   renderFind();
   openSheet('sheet-find');
   $('#find-list').scrollTop = 0;
-  if (intent !== 'guest') field.focus(); // a guest gets the whole list first
+  if (intent !== 'guest') field.focus();
+  else $('#inventory-list .inv-row')?.focus({ preventScroll: true }); // a guest gets the whole list first
 }
 
 function findCatalogRow(item, { tag = 'Catalog', key = `cat:${item.id}`, list = false } = {}) {
@@ -2226,7 +2326,7 @@ function findCatalogRow(item, { tag = 'Catalog', key = `cat:${item.id}`, list = 
   const listed = store.beerRun.some(run => run.catalogId === item.catalogId || run.catalogId === item.id);
   const origin = originText(item);
   const catalogId = key.startsWith('cat:') ? item.id : item.catalogId;
-  const listButton = catalogId ? `<button class="mini-btn" type="button" data-cat-run="${esc(catalogId)}" aria-pressed="${listed}">${icon(listed ? 'i-check' : 'i-list')}${listed ? 'On the list' : 'Beer run'}</button>` : '';
+  const listButton = catalogId ? `<button class="mini-btn" type="button" data-cat-run="${esc(catalogId)}" aria-pressed="${listed}">${icon(listed ? 'i-check' : 'i-list')}${listed ? 'On the list' : 'Add to list'}</button>` : '';
   return `<div class="result${open ? ' is-open' : ''}">
       <button class="result-main" type="button" ${list ? `data-cat-run="${esc(catalogId)}"` : `data-pack-open="find" data-pack-key="${esc(key)}" aria-expanded="${open}"`}>
         <span class="thumb">${art(item)}</span>
@@ -2320,6 +2420,13 @@ function onClick(event) {
   if (!target) return;
   const data = target.dataset;
 
+  if (target.classList.contains('skip-link')) { // (its plain #main would wipe a guest's menu link)
+    event.preventDefault();
+    $('.screen.is-active h1')?.focus({ preventScroll: true });
+    return;
+  }
+  // The back label was only just drawn under the finger: the tail of a double tap on the can.
+  if (target.closest('#inv-back') && performance.now() - ui.backAt < GUARD_MS) return;
   if (data.notice !== undefined) { runNotice(data.notice); return; }
   if (data.close !== undefined) { closeSheet(target.closest('dialog').id); return; }
   if (data.screen) { showScreen(data.screen, { focus: true }); return; }
@@ -2345,9 +2452,13 @@ function onClick(event) {
   if (data.packQty) { commitPack(data.packKey, Number(data.packQty)); return; }
   if (data.packOther) { packOther(data.packOther); return; }
   if (data.packCancel) { closePack(); return; }
-  if (data.roundBy) { nameRound(data.roundBy); return; }
-  if (data.roundOther) { if (ui.round) openWho(ui.round.takes.map(take => take.entryId)); return; }
-  if (data.roundStar) { rateRound(Number(data.roundStar)); return; }
+  if (data.roundBy || data.roundOther || data.roundStar) {
+    if (performance.now() - notice.at < GUARD_MS) return; // the tail of a double tap on Who? or Rate
+    if (data.roundBy) nameRound(data.roundBy);
+    else if (data.roundStar) rateRound(Number(data.roundStar));
+    else if (ui.round) openWho(ui.round.takes.map(take => take.entryId));
+    return;
+  }
 
   // The back of a can, and the Details sheet
   if (data.backAbout) { ui.backAbout = !ui.backAbout; renderBack(); return; }
@@ -2368,7 +2479,7 @@ function onClick(event) {
   if (data.edit) { const item = findItem(data.edit); if (item) openForm({ mode: 'edit', item }); return; }
   if (data.itemRun) {
     const item = findItem(data.itemRun);
-    if (item) toast(addToBeerRun({ itemId: item.id, catalogId: item.catalogId, name: item.name, brand: item.brand, style: item.style }) ? `${fullName(item)} is on the beer run` : 'Already on the beer run', { tone: 'ok' });
+    if (item) toast(addToBeerRun({ itemId: item.id, catalogId: item.catalogId, name: item.name, brand: item.brand, style: item.style }) ? `On the beer run · ${fullName(item)}` : 'Already on the beer run', { tone: 'ok' });
     return;
   }
   if (data.markOut) { markOut(data.markOut); return; }
@@ -2378,7 +2489,7 @@ function onClick(event) {
   if (data.runOpen) { openRunRow(data.runOpen); return; }
   if (data.runRemove) {
     const result = removeFromBeerRun(data.runRemove);
-    if (result) toast(`${entryName(result.entry)} is off the list`, { undo: result.undo });
+    if (result) toast(`Off the list · ${entryName(result.entry)}`, { undo: result.undo });
     return;
   }
   if (data.catRun) { toggleListed(data.catRun); return; }
@@ -2474,7 +2585,7 @@ function onClick(event) {
       download(`fridge-backup-${new Date().toISOString().slice(0, 10)}.json`, exportData());
       closeSheet('sheet-settings', { then: () => toast('Backup file saved to your downloads', { tone: 'ok' }) });
       break;
-    case 's-reset': armed(target, 'Tap again to load the demo', () => { resetDemo(); closeSheet('sheet-settings', { then: () => { showScreen('screen-home'); toast('Demo fridge loaded'); } }); }); break;
+    case 's-reset': armed(target, 'Tap again to load the demo', () => { resetDemo(); ui.lastUndo = null; closeSheet('sheet-settings', { then: () => { showScreen('screen-home'); toast('Demo fridge loaded'); } }); }); break;
     case 's-erase': armed(target, 'Tap again to erase', () => { eraseAll(); ui.lastUndo = null; closeSheet('sheet-settings', { then: () => { showScreen('screen-home'); toast('Everything erased'); } }); }); break;
     case 's-stock-go': openStockList($('#s-stock').value).then(() => { if ($('#sheet-stock').open) $('#s-stock').value = ''; }); break;
     case 'stock-apply': applyStockList(); break;
@@ -2540,6 +2651,22 @@ async function handlePhoto(input) {
   } catch (error) {
     toast(cameraErrorMessage(error));
   }
+}
+
+/**
+ * A redraw replaces buttons with new ones, which would drop the keyboard's (and VoiceOver's)
+ * place onto the page body. Note what had focus, redraw, and give the same control focus again.
+ */
+function keepFocus(redraw) {
+  const el = document.activeElement;
+  let key = null;
+  if (el && el !== document.body) {
+    const host = el.closest('[id]');
+    const attrs = [...el.attributes].filter(attr => attr.name.startsWith('data-')).map(attr => `[${attr.name}="${CSS.escape(attr.value)}"]`).join('');
+    key = el.id ? `#${CSS.escape(el.id)}` : host && attrs ? `#${CSS.escape(host.id)} ${el.tagName.toLowerCase()}${attrs}` : null;
+  }
+  redraw();
+  if (key && (document.activeElement === document.body || !document.activeElement)) $(key)?.focus({ preventScroll: true });
 }
 
 function bindEvents() {
@@ -2678,9 +2805,17 @@ function bindEvents() {
 
   subscribe(() => {
     ui.version += 1;
-    renderScreen();
-    if ($('#sheet-item').open && !$('#sheet-item').dataset.closing) renderItemSheet();
-    if ($('#sheet-find').open && !$('#sheet-find').dataset.closing) renderFind();
+    keepFocus(() => {
+      renderScreen();
+      if ($('#sheet-item').open && !$('#sheet-item').dataset.closing) renderItemSheet();
+      if ($('#sheet-find').open && !$('#sheet-find').dataset.closing) renderFind();
+    });
+  });
+
+  // iOS can leave the page shifted after the keyboard closes; a page that never scrolls goes back to the top.
+  document.addEventListener('focusout', event => {
+    if (!event.target.matches?.('input, select, textarea')) return;
+    setTimeout(() => { if (!document.activeElement?.matches?.('input, select, textarea')) window.scrollTo(0, 0); }, 80);
   });
 }
 
@@ -2723,7 +2858,7 @@ function hydrateCatalogLinks() {
     const keeper = entries.find(item => catalogItem && fold(item.name) === fold(catalogItem.name) && fold(item.brand) === fold(catalogItem.brand)) || entries[0];
     entries.filter(item => item !== keeper).forEach(item => mergeItems(keeper.id, item.id));
     if (catalogItem) Object.assign(keeper, { name: catalogItem.name, brand: catalogItem.brand });
-    merged.push(`${fullName(keeper)}: ${entries.length} entries merged into one, ${keeper.count} on hand`);
+    merged.push(`${entries.length} entries merged into one, ${keeper.count} on hand · ${fullName(keeper)}`);
     changed = true;
   });
   if (changed) persist('link');
@@ -2741,8 +2876,10 @@ function takeStockLink(token) {
 function hydrateGuestLabels() {
   if (!ui.guest) return;
   ui.guest.items.forEach(item => {
-    const best = matchCandidates({ name: item.name, brand: item.brand })[0];
+    const [best, next] = matchCandidates({ name: item.name, brand: item.brand });
     if (!best || best.score < (item.brand ? 0.8 : 0.9)) return;
+    // With no brewery to go by, two catalog drinks of the same name cannot be told apart.
+    if (!item.brand && next && fold(next.item.name) === fold(best.item.name)) return;
     item.catalogId = best.item.id;
     item.size ||= best.item.size;
   });

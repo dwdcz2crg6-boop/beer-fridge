@@ -17,6 +17,6 @@
   ],
   "shortcuts": [
     { "name": "Scan drinks in", "short_name": "Scan", "url": "./#scan", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Fridge menu", "short_name": "Menu", "url": "./#menu", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+    { "name": "Beer run", "short_name": "Beer run", "url": "./#run", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
   ]
 }

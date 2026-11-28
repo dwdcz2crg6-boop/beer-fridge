@@ -27,6 +27,7 @@ export function createCoverflow(root, { onChange, onActivate, onSettle, onFlickU
   let settleTimer = 0;
   let fitted = '';
   let seen = false;
+  let wanted = -1; // where the shelf was last asked to be
 
   // The shelf fills whatever height the screen gives it, and the cans are sized to fit that
   // height (a can is 1.8 times as tall as it is wide), never wider than leaves its neighbours
@@ -102,6 +103,7 @@ export function createCoverflow(root, { onChange, onActivate, onSettle, onFlickU
   function goTo(index, smooth = true) {
     const card = cards[clamp(index, 0, cards.length - 1)];
     if (!card) return;
+    wanted = cards.indexOf(card);
     const left = card.offsetLeft + card.offsetWidth / 2 - track.clientWidth / 2;
     track.scrollTo({ left, behavior: smooth && !reduceMotion.matches ? 'smooth' : 'auto' });
   }
@@ -280,12 +282,19 @@ export function createCoverflow(root, { onChange, onActivate, onSettle, onFlickU
   });
 
   root.addEventListener('keydown', event => {
-    if (event.key === 'ArrowRight') {
+    if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
       event.preventDefault();
-      goTo(active + 1);
-    } else if (event.key === 'ArrowLeft') {
+      const next = clamp(active + (event.key === 'ArrowRight' ? 1 : -1), 0, cards.length - 1);
+      const onCard = cards.includes(document.activeElement);
+      goTo(next);
+      // Focus goes with the shelf, so Enter acts on the can now in the middle.
+      if (onCard && cards[next]) {
+        cards[next].tabIndex = 0;
+        cards[next].focus({ preventScroll: true });
+      }
+    } else if ((event.key === 'Enter' || event.key === ' ') && event.target === root && active >= 0) {
       event.preventDefault();
-      goTo(active - 1);
+      onActivate?.(active);
     }
   });
 
@@ -335,9 +344,11 @@ export function createCoverflow(root, { onChange, onActivate, onSettle, onFlickU
       active = -1;
       // Place the cards right away (no one-frame jump back to the first card), then
       // once more after layout in case the stage was hidden or just resized.
+      wanted = index;
       const place = () => {
-        goTo(index, false);
+        goTo(wanted >= 0 ? wanted : index, false);
         if (frame) cancelAnimationFrame(frame);
+        frame = 0;
         layout();
       };
       if (track.clientWidth) place();
