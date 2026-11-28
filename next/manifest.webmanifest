@@ -1,0 +1,22 @@
+{
+  "id": "./",
+  "name": "Uncle Mike's Beer Fridge",
+  "short_name": "Beer Fridge",
+  "description": "Scan-first beverage fridge inventory with a guest menu, cover flow and local brewery suggestions.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#f4f1ea",
+  "theme_color": "#1f5c45",
+  "categories": ["food", "lifestyle", "utilities"],
+  "icons": [
+    { "src": "icons/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" },
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any maskable" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Scan drinks in", "short_name": "Scan", "url": "./#scan", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
+    { "name": "Fridge menu", "short_name": "Menu", "url": "./#menu", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+  ]
+}

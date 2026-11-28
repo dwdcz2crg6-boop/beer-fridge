@@ -1,0 +1,464 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#f4f1ea" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#0f1513" media="(prefers-color-scheme: dark)" />
+    <meta name="description" content="Scan-first beverage fridge inventory with a guest menu, cover flow and local brewery suggestions." />
+    <meta name="robots" content="noindex" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="Beer Fridge" />
+    <link rel="manifest" href="manifest.webmanifest" />
+    <link rel="icon" href="icons/icon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+    <link rel="stylesheet" href="styles.css" />
+    <title>Uncle Mike's Beer Fridge</title>
+  </head>
+  <body>
+    <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+      <defs>
+        <symbol id="i-fridge" viewBox="0 0 24 24"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M5 10h14M8.5 5.5v2M8.5 13v3"/></symbol>
+        <symbol id="i-mug" viewBox="0 0 24 24"><path d="M5.5 7h9.5v11.5A2.5 2.5 0 0 1 12.5 21h-4.5a2.5 2.5 0 0 1-2.5-2.5z"/><path d="M15 9.5h2a2 2 0 0 1 2 2v2.5a2 2 0 0 1-2 2h-2"/><path d="M5.5 7a2.5 2.5 0 0 1 2.6-2.5 3 3 0 0 1 5.4.2A2 2 0 0 1 15 7"/><path d="M9 11v6M12 11v6"/></symbol>
+        <symbol id="i-scan" viewBox="0 0 24 24"><path d="M3 7.5V5.5A2.5 2.5 0 0 1 5.5 3h2M16.5 3h2A2.5 2.5 0 0 1 21 5.5v2M21 16.5v2a2.5 2.5 0 0 1-2.5 2.5h-2M7.5 21h-2A2.5 2.5 0 0 1 3 18.5v-2"/><path d="M7 8v8M9.5 8v8M12 8v8M15.5 8v8M17.5 8v8"/></symbol>
+        <symbol id="i-compass" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.6 8.4l-2.1 5.1-5.1 2.1 2.1-5.1z"/></symbol>
+        <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.2 2"/></symbol>
+        <symbol id="i-sliders" viewBox="0 0 24 24"><path d="M4 6.5h9M17 6.5h3M4 12h3M11 12h9M4 17.5h11M19 17.5h1"/><circle cx="15" cy="6.5" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17.5" r="2"/></symbol>
+        <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+        <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+        <symbol id="i-minus" viewBox="0 0 24 24"><path d="M5 12h14"/></symbol>
+        <symbol id="i-x" viewBox="0 0 24 24"><path d="M6.5 6.5l11 11M17.5 6.5l-11 11"/></symbol>
+        <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12.5l4.5 4.5L19 7.5"/></symbol>
+        <symbol id="i-flash" viewBox="0 0 24 24"><path d="M13 2.5L5.5 13H11l-1 8.5L18.5 11H13z"/></symbol>
+        <symbol id="i-camera" viewBox="0 0 24 24"><path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z"/><circle cx="12" cy="12.5" r="3.5"/></symbol>
+        <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11z"/><circle cx="12" cy="10" r="2.4"/></symbol>
+        <symbol id="i-locate" viewBox="0 0 24 24"><circle cx="12" cy="12" r="7"/><circle cx="12" cy="12" r="2"/><path d="M12 2.5v3M12 18.5v3M2.5 12h3M18.5 12h3"/></symbol>
+        <symbol id="i-share" viewBox="0 0 24 24"><path d="M12 3v12M7.5 7.5L12 3l4.5 4.5"/><path d="M5 12v6.5A2.5 2.5 0 0 0 7.5 21h9a2.5 2.5 0 0 0 2.5-2.5V12"/></symbol>
+        <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8.5" y="8.5" width="12" height="12" rx="2.5"/><path d="M15.5 8.5V6A2.5 2.5 0 0 0 13 3.5H6A2.5 2.5 0 0 0 3.5 6v7A2.5 2.5 0 0 0 6 15.5h2.5"/></symbol>
+        <symbol id="i-star" viewBox="0 0 24 24"><path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 16.9l-5.2 2.7 1-5.8-4.3-4.1 5.9-.9z"/></symbol>
+        <symbol id="i-bag" viewBox="0 0 24 24"><path d="M5 8h14l-1.2 11.2A2 2 0 0 1 15.8 21H8.2a2 2 0 0 1-2-1.8z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></symbol>
+        <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6.5h11M9 12h11M9 17.5h11M4.5 6.5h.5M4.5 12h.5M4.5 17.5h.5"/></symbol>
+        <symbol id="i-left" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+        <symbol id="i-right" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+        <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 11v6M14 11v6M6 7l1 12.5A1.5 1.5 0 0 0 8.5 21h7a1.5 1.5 0 0 0 1.5-1.5L18 7M9 7V4.5A1.5 1.5 0 0 1 10.5 3h3A1.5 1.5 0 0 1 15 4.5V7"/></symbol>
+        <symbol id="i-edit" viewBox="0 0 24 24"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></symbol>
+        <symbol id="i-spark" viewBox="0 0 24 24"><path d="M11 3l1.8 5.2L18 10l-5.2 1.8L11 17l-1.8-5.2L4 10l5.2-1.8z"/><path d="M18.5 14.5l.8 2.2 2.2.8-2.2.8-.8 2.2-.8-2.2-2.2-.8 2.2-.8z"/></symbol>
+        <symbol id="i-snow" viewBox="0 0 24 24"><path d="M12 2.5v19M3.8 7.2l16.4 9.6M20.2 7.2L3.8 16.8"/><path d="M9.5 4.5L12 7l2.5-2.5M9.5 19.5L12 17l2.5 2.5"/></symbol>
+        <symbol id="i-image" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="14" rx="2.5"/><circle cx="9" cy="10" r="1.6"/><path d="M20.5 16l-5-5-8.5 8"/></symbol>
+        <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/></symbol>
+        <symbol id="i-in" viewBox="0 0 24 24"><path d="M12 3.5v12M7 10.5l5 5 5-5M5 20.5h14"/></symbol>
+        <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v5.5M12 7.6v.2"/></symbol>
+        <symbol id="i-undo" viewBox="0 0 24 24"><path d="M8.5 5L4 9.5 8.5 14"/><path d="M4.5 9.5H14a5.5 5.5 0 0 1 0 11h-3"/></symbol>
+        <symbol id="i-out" viewBox="0 0 24 24"><path d="M12 20.5v-12M7 13.5l5-5 5 5M5 3.5h14"/></symbol>
+      </defs>
+    </svg>
+
+    <a class="skip-link" href="#main">Skip to content</a>
+
+    <div class="app-shell" id="app">
+      <!-- The strip: the glance, on every owner screen. -->
+      <header class="strip owner-only" id="strip">
+        <div class="strip-text">
+          <p class="strip-name" id="fridge-title">Uncle Mike's Beer Fridge</p>
+          <button class="glance" type="button" id="inv-out" data-go-run="1">
+            <span class="glance-main"><b id="hero-total">0</b> <span id="hero-drinks">drinks</span> · <span id="hero-sub">0 kinds</span></span><span class="glance-alert" id="glance-alert"></span><svg class="glance-go" aria-hidden="true"><use href="#i-right"/></svg>
+          </button>
+        </div>
+        <button class="icon-btn" id="open-share" type="button" aria-label="Share the menu with guests"><svg><use href="#i-share"/></svg></button>
+        <button class="icon-btn" id="open-settings" type="button" aria-label="Settings"><svg><use href="#i-sliders"/></svg></button>
+      </header>
+
+      <main class="faces" id="main">
+        <!-- ============================== FRIDGE (the shelf) ============================== -->
+        <section class="screen face-shelf is-active" id="screen-home" data-route="" aria-labelledby="face-home-title">
+          <h1 class="visually-hidden" id="face-home-title" tabindex="-1">Fridge</h1>
+          <div class="stage" id="inv-flow">
+            <div class="cans">
+              <div class="coverflow" id="inv-coverflow" tabindex="0" role="listbox" aria-label="Drinks in the fridge">
+                <button class="cf-nav cf-prev" type="button" aria-label="Previous drink"><svg><use href="#i-left"/></svg></button>
+                <div class="cf-track"></div>
+                <button class="cf-nav cf-next" type="button" aria-label="Next drink"><svg><use href="#i-right"/></svg></button>
+              </div>
+              <div class="back" id="inv-back" role="region" aria-label="About this drink" hidden></div>
+              <div class="stage-empty" id="inv-empty" hidden></div>
+            </div>
+            <div class="dock" id="inv-dock">
+              <div class="cap">
+                <div class="cap-info" id="inv-cap-info" aria-live="polite"></div>
+                <button class="cap-more" type="button" id="inv-more" aria-expanded="false" aria-controls="inv-back" aria-label="Details"><svg aria-hidden="true"><use href="#i-info"/></svg></button>
+              </div>
+              <div class="ctl">
+                <div class="count-ctl" id="inv-count-ctl">
+                  <p class="count-label visually-hidden">On hand</p>
+                  <p class="count-note"></p>
+                  <div class="count-row">
+                    <button class="count-step" type="button" data-wheel-step="-1" aria-label="One fewer"><svg aria-hidden="true"><use href="#i-minus"/></svg></button>
+                    <div class="wheel" role="spinbutton" tabindex="0" aria-label="Number on hand">
+                      <div class="wheel-track"></div>
+                    </div>
+                    <button class="count-step" type="button" data-wheel-step="1" aria-label="One more"><svg aria-hidden="true"><use href="#i-plus"/></svg></button>
+                  </div>
+                </div>
+                <div class="slip" id="slip" role="status" aria-live="polite" hidden></div>
+              </div>
+              <div class="cap-actions" id="inv-cap-actions"></div>
+              <div class="rail" id="inv-rail">
+                <button class="rail-btn" type="button" id="find-open" data-find="shelf"><svg aria-hidden="true"><use href="#i-search"/></svg>Find</button>
+                <div class="chips rail-chips" id="inv-group-chips" role="group" aria-label="Jump to a group"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ============================== BEER RUN ============================== -->
+        <section class="screen face-list owner-only" id="screen-run" data-route="run" aria-labelledby="face-run-title">
+          <header class="face-head">
+            <h1 id="face-run-title" tabindex="-1">Beer run</h1>
+            <p class="face-sub" id="run-count"></p>
+          </header>
+          <div class="panel" id="run-panel">
+            <div class="run-list" id="run-list"></div>
+          </div>
+          <div class="run-idea" id="run-idea" hidden></div>
+          <div class="rail rail-light">
+            <button class="btn btn-small btn-ghost" type="button" data-find="list"><svg aria-hidden="true"><use href="#i-plus"/></svg>Add to the list</button>
+            <button class="btn btn-small btn-ghost" type="button" id="run-share"><svg aria-hidden="true"><use href="#i-share"/></svg>Share list</button>
+          </div>
+        </section>
+
+        <!-- ============================== DISCOVER ============================== -->
+        <section class="screen face-list owner-only" id="screen-discover" data-route="discover" aria-labelledby="discover-title">
+          <header class="face-head face-head-tall">
+            <p class="eyebrow" id="discover-eyebrow"><svg class="eyebrow-icon" aria-hidden="true"><use href="#i-spark"/></svg><span>Smart suggest</span></p>
+            <h1 id="discover-title" tabindex="-1">Discover</h1>
+            <p class="face-sub" id="discover-blurb"></p>
+          </header>
+          <div class="panel panel-x" id="discover-panel"></div>
+          <div class="rail rail-light">
+            <div class="chips rail-chips" id="discover-chips" role="group" aria-label="Kinds of suggestion"></div>
+          </div>
+        </section>
+
+        <!-- ============================== ACTIVITY ============================== -->
+        <section class="screen face-list owner-only" id="screen-activity" data-route="activity" aria-labelledby="activity-title">
+          <header class="face-head">
+            <h1 id="activity-title" tabindex="-1">Cummings &amp; Goings</h1>
+            <p class="face-sub" id="act-summary"></p>
+          </header>
+          <div class="panel" id="act-panel">
+            <div class="act-undo" id="act-undo" hidden></div>
+            <div class="act-round" id="act-round" hidden></div>
+            <div class="activity-list" id="activity-list"></div>
+          </div>
+          <div class="rail rail-light stat-row" id="act-stats" role="group" aria-label="Show"></div>
+        </section>
+
+        <!-- ============================== GUEST MENU (shared links only) ============================== -->
+        <section class="screen face-shelf face-guest" id="screen-menu" data-route="menu" aria-labelledby="menu-title">
+          <header class="strip strip-guest" id="guest-banner">
+            <div class="strip-text">
+              <h1 class="strip-name" id="menu-title" tabindex="-1"><span id="guest-name">The fridge</span></h1>
+              <p class="glance" id="guest-when">Menu snapshot</p>
+            </div>
+          </header>
+          <div class="stage" id="menu-flow">
+            <div class="cans">
+              <div class="coverflow" id="menu-coverflow" tabindex="0" role="listbox" aria-label="Drinks in the fridge" aria-describedby="menu-caption">
+                <button class="cf-nav cf-prev" type="button" aria-label="Previous drink"><svg><use href="#i-left"/></svg></button>
+                <div class="cf-track"></div>
+                <button class="cf-nav cf-next" type="button" aria-label="Next drink"><svg><use href="#i-right"/></svg></button>
+              </div>
+              <div class="stage-empty" id="menu-empty" hidden></div>
+            </div>
+            <div class="dock" id="menu-dock">
+              <div class="cap"><div class="cap-info" id="menu-caption" aria-live="polite"></div></div>
+              <div class="story" id="menu-story"></div>
+              <div class="rail">
+                <button class="rail-btn" type="button" id="menu-find" data-find="guest"><svg aria-hidden="true"><use href="#i-list"/></svg><span id="menu-find-text">See all</span></button>
+                <div class="chips rail-chips" id="menu-group-chips" role="group" aria-label="Jump to a group"></div>
+              </div>
+              <p class="guest-foot">A snapshot: ask the host for a fresh link. <a href="./" id="guest-home">Open your own fridge</a></p>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <nav class="tab-bar" aria-label="Main">
+        <button class="tab is-active" type="button" data-screen="screen-home"><svg aria-hidden="true"><use href="#i-fridge"/></svg><span>Fridge</span></button>
+        <button class="tab" type="button" data-screen="screen-run" id="tab-run"><svg aria-hidden="true"><use href="#i-list"/></svg><span>Beer run</span></button>
+        <button class="tab tab-scan" type="button" id="tab-scan" aria-label="Scan drinks in"><svg aria-hidden="true"><use href="#i-scan"/></svg></button>
+        <button class="tab" type="button" data-screen="screen-discover"><svg aria-hidden="true"><use href="#i-compass"/></svg><span>Discover</span></button>
+        <button class="tab" type="button" data-screen="screen-activity"><svg aria-hidden="true"><use href="#i-clock"/></svg><span>Activity</span></button>
+      </nav>
+    </div>
+
+    <!-- ============================== ADD / SCAN SHEET ============================== -->
+    <dialog class="sheet sheet-tall" id="sheet-add" aria-labelledby="add-title">
+      <div class="sheet-panel add-panel">
+        <header class="sheet-head">
+          <h2 class="visually-hidden" id="add-title">Add drinks</h2>
+          <div class="seg seg-dark" id="add-mode" role="group" aria-label="How to add">
+            <button type="button" data-mode="scan" aria-pressed="true"><svg aria-hidden="true"><use href="#i-scan"/></svg>Scan</button>
+            <button type="button" data-mode="search" aria-pressed="false"><svg aria-hidden="true"><use href="#i-search"/></svg>Search</button>
+          </div>
+          <button class="icon-btn" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+        </header>
+
+        <div class="scan-stage" id="scan-stage">
+          <video id="scan-video" playsinline muted autoplay></video>
+          <div class="reticle" aria-hidden="true"><i></i><i></i><i></i><i></i><span class="laser"></span></div>
+          <p class="scan-status" id="scan-status" aria-live="polite">Starting camera…</p>
+          <div class="scan-tools">
+            <button class="round-btn" type="button" id="torch-btn" hidden aria-pressed="false" aria-label="Flashlight"><svg><use href="#i-flash"/></svg></button>
+            <label class="round-btn" id="photo-btn" aria-label="Scan from a photo"><svg aria-hidden="true"><use href="#i-camera"/></svg><input type="file" id="photo-input" accept="image/*" capture="environment" /></label>
+          </div>
+          <div class="scan-fallback" id="scan-fallback" hidden>
+            <svg aria-hidden="true"><use href="#i-camera"/></svg>
+            <p id="scan-fallback-msg">Camera unavailable.</p>
+            <div class="scan-fallback-actions">
+              <label class="btn btn-small btn-amber"><svg aria-hidden="true"><use href="#i-camera"/></svg>Take a photo<input type="file" id="photo-input-2" accept="image/*" capture="environment" /></label>
+              <button class="btn btn-small btn-glass" type="button" id="scan-retry">Try again</button>
+            </div>
+          </div>
+          <div class="session-strip" id="session-strip" aria-live="polite"></div>
+        </div>
+
+        <div class="add-search">
+          <label class="search-field search-big"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="add-query" type="search" inputmode="search" placeholder="Search drinks or type a UPC" autocomplete="off" enterkeyhint="search" /></label>
+          <p class="add-hint" id="add-hint"></p>
+          <div class="result-list" id="add-results" role="listbox" aria-label="Matching drinks"></div>
+          <button class="text-btn add-custom" type="button" id="add-custom"><svg aria-hidden="true"><use href="#i-plus"/></svg>Can't find it? Add a new drink</button>
+        </div>
+
+        <section class="confirm" id="confirm" hidden aria-labelledby="confirm-name">
+          <div class="confirm-top">
+            <div class="confirm-art" id="confirm-art"></div>
+            <div class="confirm-info">
+              <span class="badge" id="confirm-source">Catalog</span>
+              <p class="confirm-brand" id="confirm-brand"></p>
+              <h3 id="confirm-name">Drink</h3>
+              <p class="confirm-meta" id="confirm-meta"></p>
+              <p class="confirm-stock" id="confirm-stock"></p>
+            </div>
+            <button class="icon-btn icon-btn-small" type="button" id="confirm-close" aria-label="Dismiss"><svg><use href="#i-x"/></svg></button>
+          </div>
+          <div class="qty-row">
+            <div class="qty-chips" id="qty-chips" role="group" aria-label="Quick quantity">
+              <button type="button" data-qty="1">1</button><button type="button" data-qty="4">4</button><button type="button" data-qty="6">6</button><button type="button" data-qty="12">12</button><button type="button" data-qty="24">24</button>
+            </div>
+            <div class="stepper" role="group" aria-label="Quantity">
+              <button type="button" data-step="-1" aria-label="One fewer"><svg><use href="#i-minus"/></svg></button>
+              <output id="confirm-qty">1</output>
+              <button type="button" data-step="1" aria-label="One more"><svg><use href="#i-plus"/></svg></button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block" type="button" id="confirm-add">Add to fridge</button>
+          <div class="confirm-links">
+            <button class="text-btn" type="button" id="confirm-edit"><svg aria-hidden="true"><use href="#i-edit"/></svg>Edit details</button>
+            <button class="text-btn" type="button" id="confirm-other">Not this one?</button>
+          </div>
+          <div class="alts" id="confirm-alts" hidden></div>
+        </section>
+
+        <footer class="add-foot">
+          <label class="switch"><input type="checkbox" id="rapid-toggle" /><span class="switch-ui" aria-hidden="true"></span>Keep scanning after each add</label>
+          <button class="btn btn-small btn-ghost" type="button" data-close>Done</button>
+        </footer>
+      </div>
+    </dialog>
+
+    <!-- ============================== FIND ============================== -->
+    <dialog class="sheet sheet-tall" id="sheet-find" aria-labelledby="find-title">
+      <div class="sheet-panel find-panel">
+        <header class="find-head">
+          <h2 class="visually-hidden" id="find-title">Find a drink</h2>
+          <label class="search-field"><svg aria-hidden="true"><use href="#i-search"/></svg><input id="inv-search" type="search" placeholder="Find a drink" autocomplete="off" enterkeyhint="search" /></label>
+          <button class="text-btn find-close" type="button" data-close>Cancel</button>
+        </header>
+        <div class="find-tools" id="find-tools">
+          <label class="select-pill group-pill"><span class="visually-hidden">Group by</span>
+            <select id="inv-group-by" data-group-by="inv"></select>
+          </label>
+          <label class="select-pill"><span class="visually-hidden">Sort</span>
+            <select id="inv-sort">
+              <option value="name">A–Z</option>
+              <option value="count">Most stocked</option>
+              <option value="low">Running low first</option>
+              <option value="recent">Recently added</option>
+              <option value="rating">Top rated</option>
+            </select>
+          </label>
+        </div>
+        <div class="find-list" id="find-list">
+          <div class="inventory-list" id="inventory-list"></div>
+          <div class="find-extra" id="find-extra"></div>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- ============================== DETAILS (drinks that are not on the shelf) ============================== -->
+    <dialog class="sheet" id="sheet-item" aria-labelledby="item-name">
+      <div class="sheet-panel item-panel">
+        <div class="sheet-top"><div class="sheet-handle" aria-hidden="true"></div><button class="icon-btn sheet-x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+        <div class="item-hero">
+          <div class="item-art" id="item-art"></div>
+          <div class="item-heading">
+            <p class="item-brand" id="item-brand"></p>
+            <h2 id="item-name">Drink</h2>
+            <p class="item-origin" id="item-origin"></p>
+            <div class="tag-row" id="item-tags"></div>
+          </div>
+        </div>
+        <div class="item-body" id="item-body"></div>
+      </div>
+    </dialog>
+
+    <!-- ============================== EDIT / NEW DRINK ============================== -->
+    <dialog class="sheet" id="sheet-form" aria-labelledby="form-title">
+      <form class="sheet-panel form-panel" id="item-form" method="dialog" novalidate>
+        <header class="form-head">
+          <button class="text-btn" type="button" data-close>Cancel</button>
+          <div class="form-head-text">
+            <p class="eyebrow" id="form-eyebrow">New drink</p>
+            <h2 id="form-title">Add a drink</h2>
+          </div>
+          <button class="btn btn-small" type="submit" id="form-submit">Save</button>
+        </header>
+        <div class="form-body">
+          <p class="form-note" id="form-note"></p>
+          <label class="field">Name<input id="f-name" required placeholder="e.g. All Day IPA" autocomplete="off" /></label>
+          <label class="field">Brewery / brand<input id="f-brand" list="brand-options" placeholder="e.g. Founders" autocomplete="off" /></label>
+          <datalist id="brand-options"></datalist>
+          <div class="field-row">
+            <label class="field">Type<select id="f-type"></select></label>
+            <label class="field">Style<select id="f-style"></select></label>
+          </div>
+          <div class="field-row">
+            <label class="field">ABV %<input id="f-abv" type="number" inputmode="decimal" min="0" max="70" step="0.1" placeholder="5.0" /></label>
+            <label class="field">Size<input id="f-size" list="size-options" placeholder="12 fl oz" autocomplete="off" /></label>
+          </div>
+          <datalist id="size-options"></datalist>
+          <div class="field-row">
+            <label class="field">Brewed in (city)<input id="f-city" placeholder="City" autocomplete="off" /></label>
+            <label class="field">State<input id="f-state" placeholder="ST" maxlength="2" autocomplete="off" /></label>
+          </div>
+          <div class="field-row" id="f-qty-row">
+            <label class="field"><span id="f-qty-label">Adding now</span><input id="f-qty" type="number" inputmode="numeric" min="0" step="1" value="1" /></label>
+            <label class="field">Low-stock alert at<input id="f-par" type="number" inputmode="numeric" min="0" step="1" placeholder="3" /></label>
+          </div>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- ============================== WHO TOOK IT (a new name) ============================== -->
+    <dialog class="sheet" id="sheet-who" aria-labelledby="who-title">
+      <form class="sheet-panel who-panel" id="who-form" method="dialog" novalidate>
+        <div class="sheet-top"><div class="sheet-handle" aria-hidden="true"></div><button class="icon-btn sheet-x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+        <h2 id="who-title">Who's grabbing?</h2>
+        <div class="who-row">
+          <label class="field"><span class="visually-hidden">Name</span><input id="order-by" placeholder="Name" autocomplete="off" maxlength="24" enterkeyhint="done" /></label>
+          <button class="btn" type="submit" id="who-save">Save</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- ============================== SHARE THE MENU ============================== -->
+    <dialog class="sheet" id="sheet-share" aria-labelledby="share-title">
+      <div class="sheet-panel share-panel">
+        <div class="sheet-top"><div class="sheet-handle" aria-hidden="true"></div><button class="icon-btn sheet-x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+        <p class="eyebrow">For guests</p>
+        <h2 id="share-title">Share the menu</h2>
+        <p class="form-note" id="share-note">Guests scan this to see what's cold right now, no app needed.</p>
+        <div class="qr-card"><div class="qr" id="share-qr" aria-busy="true"></div><span>Scan for the menu</span></div>
+        <div class="share-actions">
+          <button class="btn" type="button" id="share-btn"><svg aria-hidden="true"><use href="#i-share"/></svg>Share link</button>
+          <button class="btn btn-ghost" type="button" id="copy-link"><svg aria-hidden="true"><use href="#i-copy"/></svg>Copy</button>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- ============================== FRIDGE LIST (from a link) ============================== -->
+    <dialog class="sheet sheet-tall" id="sheet-stock" aria-labelledby="stock-title">
+      <div class="sheet-panel stock-panel">
+        <div class="sheet-handle" aria-hidden="true"></div>
+        <button class="icon-btn sheet-x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button>
+        <p class="eyebrow">Fridge list</p>
+        <h2 id="stock-title">Your fridge list</h2>
+        <p class="form-note" id="stock-summary"></p>
+        <p class="form-note stock-again" id="stock-again" hidden></p>
+        <div class="stock-rows" id="stock-rows"></div>
+        <label class="switch stock-drop" id="stock-drop-row"><input type="checkbox" id="stock-drop" checked /><span class="switch-ui" aria-hidden="true"></span><span id="stock-drop-text">Remove the sample drinks first</span></label>
+        <button class="btn btn-primary btn-block" type="button" id="stock-apply">Add to fridge</button>
+        <button class="text-btn btn-block" type="button" data-close>Not now</button>
+      </div>
+    </dialog>
+
+    <!-- ============================== SETTINGS ============================== -->
+    <dialog class="sheet sheet-tall" id="sheet-settings" aria-labelledby="settings-title">
+      <div class="sheet-panel settings-panel">
+        <div class="sheet-top"><div class="sheet-handle" aria-hidden="true"></div><button class="icon-btn sheet-x" type="button" data-close aria-label="Close"><svg><use href="#i-x"/></svg></button></div>
+        <p class="eyebrow">Fridge controls</p>
+        <h2 id="settings-title">Settings</h2>
+
+        <div class="settings-group">
+          <label class="field">Fridge name<input id="s-name" maxlength="40" autocomplete="off" /></label>
+          <div class="settings-row"><div><b>Home base</b><span id="s-loc">Not set</span></div><button class="text-btn" type="button" id="s-loc-edit">Change</button></div>
+          <div class="loc-box" id="s-loc-box" hidden>
+            <form class="loc-form" data-loc-form>
+              <label class="search-field"><svg aria-hidden="true"><use href="#i-pin"/></svg><input placeholder="ZIP code or city" autocomplete="postal-code" enterkeyhint="go" data-loc-input /></label>
+              <button class="btn btn-small" type="submit">Set</button>
+              <button class="btn btn-small btn-ghost" type="button" data-loc-device><svg aria-hidden="true"><use href="#i-locate"/></svg>Use my location</button>
+              <button class="text-btn" type="button" data-loc-cancel>Cancel</button>
+            </form>
+            <p class="form-note" data-loc-status aria-live="polite"></p>
+          </div>
+        </div>
+
+        <div class="settings-group">
+          <h3>Scanning</h3>
+          <label class="switch"><input type="checkbox" id="s-rapid" /><span class="switch-ui" aria-hidden="true"></span>Keep scanning after each add</label>
+          <label class="switch"><input type="checkbox" id="s-beep" /><span class="switch-ui" aria-hidden="true"></span>Beep when a barcode is read</label>
+          <label class="field field-inline">Default low-stock alert<input id="s-par" type="number" inputmode="numeric" min="0" max="48" step="1" /></label>
+          <details class="advanced">
+            <summary>Advanced: extra UPC lookup</summary>
+            <p>Open Food Facts is checked first. For wider US beer coverage you can deploy the small proxy in <code>tools/upc-proxy-worker.js</code> and paste its URL here (use <code>{code}</code> where the UPC goes).</p>
+            <label class="field">Lookup URL<input id="s-proxy" type="url" inputmode="url" placeholder="https://your-worker.workers.dev/?upc={code}" autocomplete="off" /></label>
+          </details>
+        </div>
+
+        <div class="settings-group">
+          <h3>Your data</h3>
+          <p class="form-note">Everything is stored on this device. Export a backup to move it or keep it safe.</p>
+          <div class="settings-buttons">
+            <button class="btn btn-small btn-ghost" type="button" id="s-export">Export backup</button>
+            <label class="btn btn-small btn-ghost">Import backup<input type="file" id="s-import" accept="application/json,.json" /></label>
+          </div>
+          <details class="advanced">
+            <summary>Load a fridge list</summary>
+            <label class="field">List link<input id="s-stock" inputmode="url" placeholder="Paste a list link" autocomplete="off" autocapitalize="off" spellcheck="false" /></label>
+            <button class="btn btn-small btn-ghost" type="button" id="s-stock-go">Load list</button>
+          </details>
+          <details class="advanced danger-zone">
+            <summary>Start over</summary>
+            <p>These replace what is on this device. Export a backup first if you want to keep it.</p>
+            <div class="settings-buttons">
+              <button class="btn btn-small btn-ghost" type="button" id="s-reset">Load demo fridge</button>
+              <button class="btn btn-small btn-ghost btn-danger" type="button" id="s-erase">Erase everything</button>
+            </div>
+          </details>
+        </div>
+
+        <details class="settings-group about advanced">
+          <summary>About the data</summary>
+          <p id="s-about">Catalog loading…</p>
+          <p>Barcode lookups: <a href="https://world.openfoodfacts.org/" target="_blank" rel="noopener">Open Food Facts</a> (ODbL). Breweries: <a href="https://www.openbrewerydb.org/" target="_blank" rel="noopener">Open Brewery DB</a>. Places: Zippopotam.us and Open-Meteo.</p>
+        </details>
+      </div>
+    </dialog>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"><span id="toast-text"></span><span class="toast-actions" id="toast-actions"></span><button type="button" id="toast-action" hidden>Undo</button></div>
+
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>

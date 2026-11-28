@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#2b7a5b"/>
+      <stop offset="1" stop-color="#123a2c"/>
+    </linearGradient>
+    <linearGradient id="metal" x1="0" x2="1">
+      <stop offset="0" stop-color="#8b9198"/>
+      <stop offset=".25" stop-color="#f1f3f5"/>
+      <stop offset=".55" stop-color="#bcc2c8"/>
+      <stop offset="1" stop-color="#737980"/>
+    </linearGradient>
+    <linearGradient id="shade" x1="0" x2="1">
+      <stop offset="0" stop-color="#000" stop-opacity=".25"/>
+      <stop offset=".28" stop-color="#fff" stop-opacity=".35"/>
+      <stop offset=".45" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#000" stop-opacity=".3"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+  <circle cx="256" cy="230" r="190" fill="#fff" opacity=".06"/>
+  <g transform="translate(166 86)">
+    <path d="M18 20 H162 Q168 20 169 26 L176 50 V300 L168 324 Q166 330 160 330 H20 Q14 330 12 324 L4 300 V50 L11 26 Q12 20 18 20 Z" fill="#eaa53d"/>
+    <rect x="4" y="20" width="172" height="30" fill="url(#metal)"/>
+    <rect x="4" y="300" width="172" height="30" fill="url(#metal)"/>
+    <ellipse cx="90" cy="22" rx="78" ry="9" fill="#dfe3e7" stroke="#8d939a" stroke-width="2"/>
+    <circle cx="90" cy="140" r="54" fill="#1f5c45"/>
+    <circle cx="90" cy="140" r="47" fill="none" stroke="#eaa53d" stroke-width="3"/>
+    <text x="90" y="141" text-anchor="middle" dominant-baseline="central" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="50" fill="#f6f1e4">UM</text>
+    <rect x="4" y="232" width="172" height="40" fill="#1f5c45"/>
+    <g fill="#f6f1e4"><rect x="34" y="240" width="4" height="24"/><rect x="42" y="240" width="2" height="24"/><rect x="48" y="240" width="6" height="24"/><rect x="58" y="240" width="2" height="24"/><rect x="64" y="240" width="4" height="24"/><rect x="72" y="240" width="8" height="24"/><rect x="84" y="240" width="2" height="24"/><rect x="90" y="240" width="4" height="24"/><rect x="98" y="240" width="2" height="24"/><rect x="104" y="240" width="6" height="24"/><rect x="114" y="240" width="2" height="24"/><rect x="120" y="240" width="4" height="24"/><rect x="128" y="240" width="8" height="24"/><rect x="140" y="240" width="2" height="24"/><rect x="146" y="240" width="4" height="24"/></g>
+    <rect x="4" y="20" width="172" height="310" fill="url(#shade)"/>
+  </g>
+  <path d="M120 432 H392" stroke="#fff" stroke-opacity=".35" stroke-width="4" stroke-linecap="round"/>
+</svg>
